@@ -1,3 +1,6 @@
-title: zew0z Cyber Blog
+title: zew0z Blog
 descreption: My journey into the space of cyber security and tech!
-theme: jekyll-theme-hacker 
+theme: jekyll-theme-hacker
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
