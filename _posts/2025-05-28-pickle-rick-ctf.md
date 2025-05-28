@@ -107,5 +107,5 @@ It felt really satisfying to piece everything together and slowly escalate from 
 
 ---
 
-💬 **If you're trying this room too and get stuck, feel free to DM me or just throw commands at the wall like I did — eventually something sticks.** 🧠🔥
+💬 **If you're trying this room too and get stuck, feel free to DM me or just throw commands at the wall like I did — eventually something sticks.** 🧠🔥  
 [![Buy Me a Coffee](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/zew0z)
