@@ -70,7 +70,7 @@ I messed around a bit and finally got around it using a **quote-based injection*
 ## 🧪 Source Code Weirdness
 
 Later, I spotted a weird string in the source code. It looked like Base64 (ended with `==`), but it didn’t decode cleanly. There was even a `1` in it, which kinda threw me off. Probably a red herring? Either way, I noted it down and moved on.
-![](/assets/img/binary.png)
+![](/assets/img/pickle-rick/binary.png)
 ---
 
 ## 🧬 “Potions” Page and More Clues
@@ -89,9 +89,9 @@ Inside Ricks home folder, I spotted the **second ingredients file**. Couldn’t 
 ## 🔓 Root Access?!?
 
 Surprisingly, the user had **full sudo rights** with no password required. So I just ran `sudo cat` and read the second ingredient file. Easy win.
-![](/assets/img/sudo-cat.png)
+![](/assets/img/pickle-rick/sudo-cat.png)
 From there, I decided to check out some of the other user's files too — especially `.bash_history` — and guess what? That’s where the **third and final flag** was hiding.
-![](/assets/img/history.png)
+![](/assets/img/pickle-rick/history.png)
 ---
 
 ## 🎉 Conclusion
