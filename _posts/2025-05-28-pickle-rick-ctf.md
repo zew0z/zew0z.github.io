@@ -8,7 +8,8 @@ tags: [tryhackme, ctf, cybersecurity, pickle-rick]
 # 🧠 My First TryHackMe CTF: Pickle Rick
 
 Alright, this was my first actual CTF room on TryHackMe that I fully completed, and honestly? It was pretty fun. This post is more like a **casual recap** of what I did, what worked, and what I learned. 
-Note: I obviously did not show the whole process. But i tried many things and failed. This is the normal CTF experience don't think that everything will go as smoothly as you see in a writeup.
+Note: I obviously did not show the whole process. But i tried many things and failed. This is the normal CTF experience don't think that everything will go as smoothly as you see in a writeup.  
+[Link for the CTF](https://tryhackme.com/room/picklerick)
 
 ---
 
@@ -36,9 +37,7 @@ No useful links or forms at this point, so I moved on to try some basic enumerat
 
 ## 🤖 robots.txt Shenanigans
 
-Before running anything fancy, I checked `robots.txt`. Surprisingly, there was a **weird phrase** in there:  
-`Wubbalubbadubdub`
-
+Before running anything fancy, I checked `robots.txt`. Surprisingly, there was a **weird phrase** in there.
 It looked important, maybe a password or a keyphrase. I saved it just in case.
 
 ---
