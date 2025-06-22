@@ -8,6 +8,7 @@ I'm documenting everything I learn — the wins, the fails, and the flags.
 
 ## 🗂️ Latest CTF Writeups 
 - [Pickle Rick - TryHackMe CTF](/_posts/2025-05-28-pickle-rick-ctf.md)
+- [Flag Command - HackTheBox Challenge](/_posts/2025-06-22-flag-command-htb.md)
 
 ## 👾 About Me
 I'm just a student trying to get good at hacking.  
