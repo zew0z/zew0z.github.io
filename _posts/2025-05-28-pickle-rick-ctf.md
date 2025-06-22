@@ -3,6 +3,7 @@ title: "Pickle Rick - TryHackMe CTF Writeup 2025"
 date: 2025-05-28
 description: "My first completed TryHackMe CTF - exploring web login, command injection, and privilege escalation."
 tags: [tryhackme, ctf, cybersecurity, pickle-rick]
+author: zew0z
 ---
 
 # 🧠 My First TryHackMe CTF: Pickle Rick

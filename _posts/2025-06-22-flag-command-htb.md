@@ -1,7 +1,9 @@
-----
+---
 layout: post
 title: "HTB: Flag Command Challenge"
 tags: [htb, ctf, beginner, web, javascript]
+date: 2025-06-22
+author: zew0z
 ---
 
 > Short and fun CTF that reminded me of an important rule: **always check the source code**.
