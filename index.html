@@ -1,0 +1,70 @@
+---
+layout: default
+title: zew0z
+permalink: /
+---
+
+<section class="hero" id="home">
+  <pre class="ascii-banner" aria-label="zew0z">███████╗███████╗██╗    ██╗ ██████╗ ███████╗
+╚══███╔╝██╔════╝██║    ██║██╔═████╗╚══███╔╝
+  ███╔╝ █████╗  ██║ █╗ ██║██║██╔██║  ███╔╝
+ ███╔╝  ██╔══╝  ██║███╗██║████╔╝██║ ███╔╝
+███████╗███████╗╚███╔███╔╝╚██████╔╝███████╗
+╚══════╝╚══════╝ ╚══╝╚══╝  ╚═════╝ ╚══════╝</pre>
+  <p class="hero-line" aria-hidden="true"><span class="prompt-char">z@zew0z.github.io:~$</span> <span data-typewriter="cat about_me.txt">cat about_me.txt</span><span class="caret caret-inline" aria-hidden="true"></span></p>
+  <p class="hero-sub">documenting the journey through CTFs, challenges, and digital puzzles. the wins, the fails, and the flags.</p>
+</section>
+
+<section class="panel" id="writeups">
+  <div class="panel-tab">writeups &mdash; ls -la</div>
+  <p class="ls-total">total {{ site.posts | size }}</p>
+  {% for post in site.posts %}
+  <article class="ls-row">
+    <a class="ls-name" href="{{ post.url | relative_url }}">{{ post.title }}</a>
+    <span class="ls-meta">
+      <span class="ls-perm" aria-hidden="true">-rw-r--r--</span>
+      <span class="ls-date">{{ post.date | date: '%Y-%m-%d' }}</span>
+      {% if post.tags %}<span class="ls-tags">{% for tag in post.tags %}#{{ tag }} {% endfor %}</span>{% endif %}
+    </span>
+    {% if post.description %}<p class="ls-desc">{{ post.description }}</p>{% endif %}
+  </article>
+  {% else %}
+  <p class="ls-total">no writeups yet. check back soon.</p>
+  {% endfor %}
+</section>
+
+<section class="panel" id="about">
+  <div class="panel-tab">about &mdash; neofetch</div>
+  <div class="neofetch">
+    <pre class="neofetch-logo" aria-hidden="true">           /\
+          /  \
+         /\   \
+        /      \
+       /   ,,   \
+      /   |  |  -\
+     /_-''    ''-_\</pre>
+    <dl class="neofetch-info">
+      <dt>z</dt><dd>@zew0z.github.io</dd>
+      <dt>OS</dt><dd>Arch Linux (btw)</dd>
+      <dt>Host</dt><dd>GitHub Pages</dd>
+      <dt>Kernel</dt><dd>student 24.7-ctf</dd>
+      <dt>Shell</dt><dd>zsh + tmux</dd>
+      <dt>Focus</dt><dd>web exploitation, privesc</dd>
+      <dt>Flags</dt><dd>{{ site.posts | size }} writeups captured</dd>
+      <dt>Editor</dt><dd>vim (still learning :q)</dd>
+    </dl>
+  </div>
+  <p class="about-note">
+    just a student trying to get good at hacking. every writeup here is raw: what worked,
+    what didn't, and what I'd do differently next time. if it's documented here, it actually happened.
+  </p>
+</section>
+
+<section class="panel" id="contact">
+  <div class="panel-tab">contact &mdash; ss -tlnp</div>
+  <ul class="contact-list">
+    <li><span class="contact-key">discord</span><span class="contact-plain">@zew0z</span></li>
+    <li><span class="contact-key">ko-fi</span><a href="https://ko-fi.com/zew0z" target="_blank" rel="noopener">ko-fi.com/zew0z</a></li>
+    <li><span class="contact-key">rss</span><a href="{{ '/feed.xml' | relative_url }}">/feed.xml</a></li>
+  </ul>
+</section>

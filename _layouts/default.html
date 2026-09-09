@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="{{ site.lang | default: 'en' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1d2021">
+  {% seo %}
+  <link rel="icon" href="{{ '/favicon.ico' | relative_url }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+</head>
+<body>
+  <a class="skip-link" href="#main">skip to content</a>
+
+  <header class="titlebar">
+    <a class="brand" href="{{ '/' | relative_url }}">
+      <span class="brand-prompt">z@zew0z.github.io</span><span class="caret" aria-hidden="true"></span>
+    </a>
+    <nav class="titlebar-nav" aria-label="Primary">
+      <a href="{{ '/' | relative_url }}#writeups">writeups/</a>
+      <a href="{{ '/' | relative_url }}#about">about/</a>
+      <a href="{{ '/' | relative_url }}#contact">contact/</a>
+    </nav>
+  </header>
+
+  <main id="main" class="site-main">
+    {{ content }}
+  </main>
+
+  <footer class="tmuxbar" role="contentinfo">
+    <div class="tmuxbar-left">
+      <span class="tmux-session">[z@blog]</span>
+      <a class="tmux-win tmux-win-active" href="{{ '/' | relative_url }}">0:home</a>
+      <a class="tmux-win" href="{{ '/' | relative_url }}#writeups">1:writeups</a>
+      <a class="tmux-win" href="{{ '/' | relative_url }}#about">2:about</a>
+      <a class="tmux-win" href="https://ko-fi.com/zew0z" target="_blank" rel="noopener">3:support</a>
+    </div>
+    <div class="tmuxbar-right">
+      <span class="tmux-clock" id="tmux-clock" aria-hidden="true"></span>
+    </div>
+  </footer>
+
+  <div class="crt" aria-hidden="true"></div>
+
+  <script>
+    (function () {
+      // mark the active tmux "window" based on the current path
+      var onHome = location.pathname === '/' || location.pathname === '/index.html';
+      document.querySelectorAll('.tmux-win').forEach(function (win) {
+        var isHome = win.textContent.indexOf('0:home') === 0;
+        var isWriteups = win.textContent.indexOf('1:writeups') === 0;
+        var matches = onHome ? isHome : isWriteups;
+        win.classList.toggle('tmux-win-active', matches);
+      });
+
+      var clock = document.getElementById('tmux-clock');
+      function tick() {
+        var d = new Date();
+        var p = function (n) { return String(n).padStart(2, '0'); };
+        clock.textContent = p(d.getHours()) + ':' + p(d.getMinutes()) + ' ' +
+          d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+      }
+      tick();
+      setInterval(tick, 30000);
+
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      document.querySelectorAll('[data-typewriter]').forEach(function (el) {
+        var text = el.getAttribute('data-typewriter');
+        el.setAttribute('aria-label', text);
+        if (reduce) { el.textContent = text; return; }
+        el.textContent = '';
+        var i = 0;
+        (function type() {
+          if (i <= text.length) {
+            el.textContent = text.slice(0, i);
+            i += 1;
+            setTimeout(type, 22 + Math.random() * 40);
+          }
+        })();
+      });
+    })();
+  </script>
+</body>
+</html>

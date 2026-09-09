@@ -1,6 +1,22 @@
-title: zew0z Blog
-descreption: My journey into the space of cyber security and tech!
-theme: jekyll-theme-hacker
+title: zew0z
+description: My journey into the space of cyber security and tech. CTF writeups, notes, and flags.
+url: https://zew0z.github.io
+lang: en
+author: zew0z
+
+permalink: /:year/:month/:day/:title.html
+
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
+
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
+  - scope:
+      path: ""
+    values:
+      image: /favicon.ico

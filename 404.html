@@ -1,0 +1,18 @@
+---
+layout: default
+permalink: /404.html
+title: 404
+---
+
+<section class="hero hero-404">
+  <pre class="ascii-banner ascii-banner-sm" aria-label="404">██████╗ ██╗  ██╗ ██████╗
+╚══██╔╝██║  ██║██╔═══██╗
+   ██║ ╚██╗ ██╔╝██║   ██║
+   ██║  ╚████╔╝ ██║   ██║
+   ██║   ╚██╔╝  ╚██████╔╝
+   ╚═╝    ╚═╝    ╚═════╝</pre>
+  <p class="hero-line"><span class="prompt-char">z@zew0z.github.io:~$</span> cat {{ page.url }}</p>
+  <p class="err-line">cat: {{ page.url }}: No such file or directory</p>
+  <p class="hero-sub">the path you requested doesn't exist on this host.</p>
+  <p class="hero-line"><span class="prompt-char">z@zew0z.github.io:~$</span> <a href="{{ '/' | relative_url }}">cd ~/</a></p>
+</section>

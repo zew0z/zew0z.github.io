@@ -1,0 +1,29 @@
+---
+layout: default
+---
+
+<article class="post">
+  <header class="post-header">
+    <p class="post-crumb" aria-hidden="true">
+      <span class="prompt-char">z@zew0z.github.io:~$</span> cat writeups/{{ page.title | slugify }}.md
+    </p>
+    <h1 class="post-title">{{ page.title }}</h1>
+    <p class="post-meta">
+      <span class="meta-item">{{ page.date | date: '%Y-%m-%d' }}</span>
+      {% if page.tags %}{% for tag in page.tags %}<span class="meta-tag">{{ tag }}</span>{% endfor %}{% endif %}
+      {% assign words = content | number_of_words %}
+      <span class="meta-item">~{{ words | divided_by: 200 | at_least: 1 }} min read</span>
+    </p>
+  </header>
+
+  <div class="post-content">
+    {{ content }}
+  </div>
+
+  <footer class="post-footer">
+    <p><span class="prompt-char">z@zew0z.github.io:~$</span> cd <a href="{{ '/' | relative_url }}#writeups">~/writeups</a></p>
+    <p class="post-kofi">
+      learned something? <a href="https://ko-fi.com/zew0z" target="_blank" rel="noopener">buy me a coffee</a> &gt;&gt; ko-fi.com/zew0z
+    </p>
+  </footer>
+</article>
