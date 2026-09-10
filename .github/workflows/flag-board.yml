@@ -1,0 +1,74 @@
+name: flag board
+
+# visitors claim their flag-board spot by opening an issue from the
+# guest shell (publish command); this action validates the claim and
+# commits it to leaderboard.json
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: flag-board
+  cancel-in-progress: false
+
+jobs:
+  add-entry:
+    if: startsWith(github.event.issue.title, '[flag-capture]')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: validate and add entry
+        env:
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import json, os, re, datetime
+
+          title = os.environ["ISSUE_TITLE"].strip()
+          m = re.match(r"^\[flag-capture\]\s+([a-z0-9_.\-]{2,20})$", title, re.IGNORECASE)
+          if not m:
+              result = ("invalid", "could not add your entry. names are 2-20 chars: a-z 0-9 _ . - (use the publish command in the guest shell)")
+          else:
+              name = m.group(1).lower()
+              with open("leaderboard.json", "r", encoding="utf-8") as f:
+                  board = json.load(f)
+              entries = board.get("entries", [])
+              if any(e.get("name", "").lower() == name for e in entries):
+                  result = ("duplicate", f"'{name}' is already on the flag board.")
+              else:
+                  entries.append({
+                      "name": name,
+                      "date": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d"),
+                  })
+                  board["entries"] = entries
+                  with open("leaderboard.json", "w", encoding="utf-8") as f:
+                      json.dump(board, f, indent=2)
+                      f.write("\n")
+                  result = ("added", f"'{name}' is now on the flag board. gg.")
+
+          with open("/tmp/result_mode", "w") as f:
+              f.write(result[0])
+          with open("/tmp/result_msg", "w") as f:
+              f.write(result[1])
+          PY
+
+          MODE=$(cat /tmp/result_mode)
+          MSG=$(cat /tmp/result_msg)
+
+          if [ "$MODE" = "added" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add leaderboard.json
+            git commit -m "flag board: add entry from issue #$ISSUE_NUMBER"
+            git push
+          fi
+
+          gh issue close "$ISSUE_NUMBER" -c "$MSG"

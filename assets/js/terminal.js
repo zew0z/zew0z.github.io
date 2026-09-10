@@ -36,6 +36,9 @@
   var isRoot = false;
   try { isRoot = localStorage.getItem('zew0z-root') === '1'; } catch (e) {}
 
+  var myName = '';
+  try { myName = localStorage.getItem('zew0z-name') || ''; } catch (e) {}
+
   var promptLabel = document.querySelector('.term-prompt');
   var promptText = PROMPT;
 
@@ -148,6 +151,7 @@
     applyPrompt();
     row('[ ok ] flag accepted. permissions elevated: you are root of this blog now.', 't-green');
     row('(this shell will remember you.)', 't-gray');
+    if (!myName) row('claim your spot on the flag board: register <name>', 't-yellow');
     if (window.zew0z) {
       window.zew0z.matrixRain();
       window.zew0z.toast('[ ok ] flag captured. root shell unlocked.');
@@ -167,6 +171,7 @@
         '  neofetch          guest system info\n' +
         '  history           your command history\n' +
         '  echo <text>       repeat after you\n' +
+        '  leaderboard       flag hunters, hall of fame\n' +
         '  date uname        the usual suspects\n' +
         '  banner            redraw the banner\n' +
         '  clear             wipe the screen\n' +
@@ -227,7 +232,10 @@
 
     writeups: function () { listWriteups(); },
 
-    whoami: function () { row('guest'); },
+    whoami: function () {
+      if (myName) row(myName + (isRoot ? ' (root of this blog)' : ''));
+      else row('guest');
+    },
     id: function () { row('uid=1337(guest) gid=100(users) groups=100(users),1337(ctf),42(coffee-enjoyers)'); },
     pwd: function () { row('/home/guest'); },
 
@@ -257,7 +265,7 @@
         { t: 'Memory: ' + (navigator.deviceMemory || 'enough'), c: 't-fg1' },
         { t: 'Coffee: funded by ko-fi', c: 't-fg1' }
       ];
-      if (isRoot) info.push({ t: 'Honor: flag captured', c: 't-orange' });
+      if (isRoot) info.push({ t: 'Honor: flag captured' + (myName ? ' as ' + myName : ''), c: 't-orange' });
       var max = Math.max(logo.length, info.length);
       for (var i = 0; i < max; i++) {
         var seg = [];
@@ -333,6 +341,66 @@
       ];
       row(hints[Math.min(hintLevel, hints.length - 1)], 't-yellow');
       hintLevel += 1;
+    },
+
+    register: function (args) {
+      if (!isRoot) { row('register: capture the flag first. (submit flag{...})', 't-red'); return; }
+      var name = args.join('').trim().toLowerCase();
+      if (!/^[a-z0-9_.\-]{2,20}$/.test(name)) {
+        row('register: names are 2-20 chars from a-z 0-9 _ . -', 't-red');
+        return;
+      }
+      myName = name;
+      try { localStorage.setItem('zew0z-name', name); } catch (e) {}
+      row([{ t: 'registered as ', c: 't-gray' }, { t: name, c: 't-green' }, { t: '. this shell will call you nothing else.', c: 't-gray' }]);
+      row('to appear on the global board: publish', 't-gray');
+    },
+
+    top: function () {
+      row('== flag board :: hunters who checked the source ==', 't-green');
+      fetch('/leaderboard.json?cb=' + Date.now())
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .catch(function () { return null; })
+        .then(function (data) {
+          var entries = (data && data.entries) || [];
+          var iAmGlobal = entries.some(function (e) { return (e.name || '').toLowerCase() === myName; });
+          if (myName && !iAmGlobal) {
+            entries = entries.concat([{ name: myName, date: '', local: true }]);
+          }
+          if (!entries.length) {
+            row('the board is empty. be the first: submit flag{...}', 't-gray');
+            return;
+          }
+          entries.forEach(function (e, i) {
+            var mine = myName && (e.name || '').toLowerCase() === myName;
+            var tags = [];
+            if (mine) tags.push('<- you');
+            if (e.local) tags.push('not published yet (run: publish)');
+            row([
+              { t: ' ' + (i + 1) + '. ', c: 't-gray' },
+              { t: e.name, c: mine ? 't-green' : 't-fg1' },
+              { t: tags.length ? '  ' + tags.join(' -- ') + ' ' : '  ', c: 't-gray' },
+              { t: e.date || '', c: 't-fg4' }
+            ]);
+          });
+        });
+    },
+    leaderboard: function () { COMMANDS.top(); },
+
+    publish: function () {
+      if (!isRoot) { row('publish: capture the flag first.', 't-red'); return; }
+      if (!myName) { row('publish: pick a callsign first: register <name>', 't-red'); return; }
+      var url = 'https://github.com/zew0z/zew0z.github.io/issues/new?title=' +
+        encodeURIComponent('[flag-capture] ' + myName) +
+        '&body=' + encodeURIComponent(
+          'flag board claim from the guest shell on zew0z.github.io\n' +
+          'name: ' + myName + '\n' +
+          'date: ' + new Date().toISOString().slice(0, 10) + '\n' +
+          '(a github action will add this to leaderboard.json and close the issue)'
+        );
+      row([{ t: 'claim filed. open the issue and a bot will stamp the board: ', c: 't-gray' },
+           { t: 'github.com/zew0z/issues', c: 't-green', href: url, external: true }]);
+      try { window.open(url, '_blank', 'noopener'); } catch (e) {}
     },
 
     rm: function (args) {
@@ -443,7 +511,8 @@
 
   if (isRoot) {
     row('welcome back, root. the shell kept your seat warm.', 't-orange');
-    row([{ t: "type ", c: 't-gray' }, { t: 'help', c: 't-green' }, { t: " for commands, or just show off with ", c: 't-gray' }, { t: 'neofetch', c: 't-green' }, { t: '.', c: 't-gray' }]);
+    if (!myName) row('claim your spot on the flag board: register <name>', 't-yellow');
+    row([{ t: "type ", c: 't-gray' }, { t: 'help', c: 't-green' }, { t: " for commands, or just show off with ", c: 't-gray' }, { t: 'leaderboard', c: 't-green' }, { t: '.', c: 't-gray' }]);
   } else {
     row('zew0z guest shell v1.0 -- unauthorized access actively encouraged.', 't-gray');
     row([{ t: "type ", c: 't-gray' }, { t: 'help', c: 't-green' }, { t: " to see what this thing can do. rumor: one real flag hides in here.", c: 't-gray' }]);
