@@ -15,24 +15,12 @@
 <body>
   <a class="skip-link" href="#main">skip to content</a>
 
-  <header class="titlebar">
-    <a class="brand" href="{{ '/' | relative_url }}">
-      <span class="brand-prompt">z@zew0z.github.io</span><span class="caret" aria-hidden="true"></span>
-    </a>
-    <nav class="titlebar-nav" aria-label="Primary">
-      <a href="{{ '/' | relative_url }}#terminal">terminal/</a>
-      <a href="{{ '/' | relative_url }}#writeups">writeups/</a>
-      <a href="{{ '/' | relative_url }}#about">about/</a>
-      <a href="{{ '/' | relative_url }}#contact">contact/</a>
-    </nav>
-  </header>
-
   <main id="main" class="site-main">
     {{ content }}
   </main>
 
   <footer class="tmuxbar" role="contentinfo">
-    <div class="tmuxbar-left">
+    <nav class="tmuxbar-left" aria-label="Primary">
       <span class="tmux-session">[z@blog]</span>
       <a class="tmux-win tmux-win-active" data-section="home" href="{{ '/' | relative_url }}">0:home</a>
       <a class="tmux-win" data-section="writeups" href="{{ '/' | relative_url }}#writeups">1:writeups</a>
@@ -40,7 +28,7 @@
       <a class="tmux-win" data-section="about" href="{{ '/' | relative_url }}#about">3:about</a>
       <a class="tmux-win" data-section="contact" href="{{ '/' | relative_url }}#contact">4:contact</a>
       <a class="tmux-win" href="https://ko-fi.com/zew0z" target="_blank" rel="noopener">5:support</a>
-    </div>
+    </nav>
     <div class="tmuxbar-right">
       <span class="tmux-clock" id="tmux-clock" aria-hidden="true"></span>
     </div>

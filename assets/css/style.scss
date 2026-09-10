@@ -24,7 +24,6 @@
   --red: #fb4934;
   --purple: #d3869b;
   --mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
-  --titlebar-h: 3rem;
   --tmuxbar-h: 2.25rem;
 }
 
@@ -109,41 +108,6 @@ h1, h2, h3, h4 { text-wrap: balance; line-height: 1.3; }
   .caret, .caret-inline { animation: none; }
   * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
 }
-
-/* ---------- titlebar ---------- */
-
-.titlebar {
-  position: sticky;
-  top: 0;
-  z-index: 40;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  height: var(--titlebar-h);
-  padding: 0 1.25rem;
-  background: color-mix(in srgb, var(--bg0) 88%, transparent);
-  backdrop-filter: blur(6px);
-  border-bottom: 1px solid var(--bg3);
-}
-
-.brand {
-  color: var(--fg1);
-  font-weight: 700;
-  white-space: nowrap;
-}
-.brand-prompt { color: var(--green); }
-.brand:hover { background: transparent; color: var(--fg0); }
-.brand:hover .brand-prompt { color: var(--fg0); }
-
-.titlebar-nav { display: flex; gap: 1.25rem; overflow-x: auto; }
-.titlebar-nav a {
-  color: var(--fg4);
-  white-space: nowrap;
-  font-size: 0.9rem;
-  padding: 0.15rem 0;
-}
-.titlebar-nav a:hover { color: var(--bg0); }
 
 /* ---------- main container ---------- */
 
@@ -561,17 +525,6 @@ h1, h2, h3, h4 { text-wrap: balance; line-height: 1.3; }
 @media (max-width: 720px) {
   .site-main { padding-top: 1.8rem; padding-left: 1rem; padding-right: 1rem; }
   .hero { padding: 2rem 0 2rem; }
-
-  .titlebar {
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    gap: 0.1rem;
-    height: auto;
-    padding: 0.45rem 1rem;
-  }
-  .titlebar-nav { gap: 1rem; }
-  .titlebar-nav a { font-size: 0.82rem; }
 
   .ls-row { grid-template-columns: 1fr; gap: 0.15rem; padding: 0.8rem 0.15rem; }
   .ls-perm { display: none; }
