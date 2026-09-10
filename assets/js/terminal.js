@@ -29,6 +29,27 @@
 
   var PROMPT = 'guest@zew0z.github.io:~$';
 
+  /* the one real flag on this blog. view-source counts as a solve.
+     base64 of: flag{always_check_the_source_code} */
+  var FLAG_B64 = 'ZmxhZ3thbHdheXNfY2hlY2tfdGhlX3NvdXJjZV9jb2RlfQ==';
+
+  var isRoot = false;
+  try { isRoot = localStorage.getItem('zew0z-root') === '1'; } catch (e) {}
+
+  var promptLabel = document.querySelector('.term-prompt');
+  var promptText = PROMPT;
+
+  function applyPrompt() {
+    if (isRoot) {
+      promptText = 'root@zew0z.github.io:~#';
+      if (promptLabel) {
+        promptLabel.textContent = promptText;
+        promptLabel.classList.add('root-prompt');
+      }
+    }
+  }
+  applyPrompt();
+
   var history = [];
   var histIdx = 0;
 
@@ -78,6 +99,13 @@
     'motd': [
       'tip of the session: always check the source code.',
       '(a writeup exists because someone forgot that once.)'
+    ].join('\n'),
+    '.zsh_history': [
+      'neofetch',
+      'sudo !!',
+      'rm -rf /tmp/regret',
+      'curl blog | zsh  # never again',
+      'exit  # for real this time'
     ].join('\n')
   };
 
@@ -112,6 +140,20 @@
 
   /* ---------- command registry ---------- */
 
+  var hintLevel = 0;
+
+  function grantRoot() {
+    isRoot = true;
+    try { localStorage.setItem('zew0z-root', '1'); } catch (e) {}
+    applyPrompt();
+    row('[ ok ] flag accepted. permissions elevated: you are root of this blog now.', 't-green');
+    row('(this shell will remember you.)', 't-gray');
+    if (window.zew0z) {
+      window.zew0z.matrixRain();
+      window.zew0z.toast('[ ok ] flag captured. root shell unlocked.');
+    }
+  }
+
   var COMMANDS = {
 
     help: function () {
@@ -134,20 +176,33 @@
     },
 
     ls: function (args) {
-      var target = args[0];
-      if (target && target.indexOf('writeup') !== -1) { listWriteups(); return; }
+      var joined = args.join(' ');
+      if (joined.indexOf('writeup') !== -1) { listWriteups(); return; }
+      if (/(^|\s)-[a-z]*a/i.test(joined)) {
+        row([
+          { t: '.  ..  ', c: 't-fg4' },
+          { t: '.flag.enc  .zsh_history  ', c: 't-yellow' },
+          { t: 'about_me.txt   contact.txt   flag.txt   motd   ', c: 't-fg1' },
+          { t: 'writeups/', c: 't-aqua' }
+        ]);
+        row('that .flag.enc looks suspicious. (cat it)', 't-gray');
+        return;
+      }
       row([
         { t: 'about_me.txt   contact.txt   flag.txt   motd   ', c: 't-fg1' },
         { t: 'writeups/', c: 't-aqua' }
       ]);
-      row("try: ls writeups", 't-gray');
+      row("hidden things exist here. (try: ls -a)", 't-gray');
     },
 
     cat: function (args) {
       if (!args.length) { row('cat: missing file operand', 't-red'); return; }
       var name = args[0];
       if (name === 'flag.txt') {
-        row('cat: flag.txt: permission denied (flags are earned, see ls writeups)', 't-red');
+        row('cat: flag.txt: permission denied (root only. plain ls will not save you either.)', 't-red');
+      } else if (name === '.flag.enc') {
+        row(FLAG_B64, 't-yellow');
+        row('this string smells like base64. (decode it)', 't-gray');
       } else if (name.indexOf('urandom') !== -1) {
         var junk = '';
         for (var i = 0; i < 96; i++) junk += RANDOM_POOL[Math.floor(Math.random() * RANDOM_POOL.length)];
@@ -202,6 +257,7 @@
         { t: 'Memory: ' + (navigator.deviceMemory || 'enough'), c: 't-fg1' },
         { t: 'Coffee: funded by ko-fi', c: 't-fg1' }
       ];
+      if (isRoot) info.push({ t: 'Honor: flag captured', c: 't-orange' });
       var max = Math.max(logo.length, info.length);
       for (var i = 0; i < max; i++) {
         var seg = [];
@@ -227,11 +283,56 @@
     motd: function () { lines(FILES.motd); },
 
     sudo: function (args) {
+      if (isRoot) {
+        row('sudo: granted. you are already root though. stay humble.', 't-aqua');
+        return;
+      }
       if (args.join(' ').indexOf('rm') !== -1 && args.join(' ').indexOf('-rf') !== -1) {
         COMMANDS.rm(args.slice(1));
       } else {
         row('guest is not in the sudoers file. this incident will be reported.', 't-red');
       }
+    },
+
+    decode: function (args) {
+      if (!args.length) { row('decode: missing operand (try decode .flag.enc)', 't-red'); return; }
+      var target = args.join('');
+      var raw = target === '.flag.enc' ? FLAG_B64 : target.replace(/\s+/g, '');
+      var decoded = null;
+      try { decoded = atob(raw); } catch (e) {}
+      if (!decoded || decoded.indexOf('flag{') === -1) {
+        row('decode: input does not decode to a flag (try decode .flag.enc)', 't-red');
+        return;
+      }
+      row([{ t: 'decoded: ', c: 't-gray' }, { t: decoded, c: 't-green' }]);
+      row('now make it official: submit <flag>', 't-gray');
+    },
+
+    base64: function (args) {
+      if (args.length && args[0].indexOf('d') === 0 && args[0].indexOf('-') === 0) args = args.slice(1);
+      COMMANDS.decode(args);
+    },
+
+    submit: function (args) {
+      if (isRoot) { row('submit: already captured. stay humble.', 't-aqua'); return; }
+      if (!args.length) { row('usage: submit flag{...}', 't-gray'); return; }
+      var guess = args.join(' ').trim().toLowerCase();
+      if (guess === atob(FLAG_B64)) {
+        grantRoot();
+      } else {
+        row('submit: not the flag. keep hunting. (stuck? type hint)', 't-red');
+      }
+    },
+
+    hint: function () {
+      if (isRoot) { row('hint: you already won. now help someone else find it.', 't-aqua'); return; }
+      var hints = [
+        "hint 1: flag.txt is bait. secrets hide from plain ls. hidden files need: ls -a",
+        'hint 2: .flag.enc is encoded. your old friend base64 can read it: decode .flag.enc',
+        'hint 3: take the decoded string and make it official: submit flag{...}'
+      ];
+      row(hints[Math.min(hintLevel, hints.length - 1)], 't-yellow');
+      hintLevel += 1;
     },
 
     rm: function (args) {
@@ -264,7 +365,10 @@
       ]);
     },
 
-    flag: function () { row("flags live inside the writeups. go get them: 'ls writeups'", 't-yellow'); },
+    flag: function () {
+      row('one real flag hides in this very shell. start with: cat flag.txt', 't-yellow');
+      row('(the writeup flags stay in their rooms. no spoilers here.)', 't-gray');
+    },
     flags: function () { COMMANDS.flag(); },
 
     exit: function () { row('exit: nice try. this shell stays with you.', 't-gray'); },
@@ -273,6 +377,9 @@
 
   var UNKNOWN = function (cmd) {
     row("zsh: command not found: " + cmd + " (try 'help')", 't-red');
+    if (/flag|secret|hint|root|sudo/.test(cmd)) {
+      row('...that smells related to something. (type hint)', 't-yellow');
+    }
   };
 
   /* ---------- input handling ---------- */
@@ -280,7 +387,7 @@
   function run(raw) {
     var trimmed = raw.trim();
     row([
-      { t: PROMPT + ' ', c: 't-green' },
+      { t: promptText + ' ', c: isRoot ? 't-orange' : 't-green' },
       { t: trimmed, c: 't-fg0' }
     ], 'cmd');
     if (!trimmed) return;
@@ -334,6 +441,11 @@
 
   /* ---------- greeting ---------- */
 
-  row('zew0z guest shell v1.0 -- unauthorized access actively encouraged.', 't-gray');
-  row([{ t: "type ", c: 't-gray' }, { t: 'help', c: 't-green' }, { t: " to see what this thing can do. try ", c: 't-gray' }, { t: 'ls writeups', c: 't-green' }, { t: '.', c: 't-gray' }]);
+  if (isRoot) {
+    row('welcome back, root. the shell kept your seat warm.', 't-orange');
+    row([{ t: "type ", c: 't-gray' }, { t: 'help', c: 't-green' }, { t: " for commands, or just show off with ", c: 't-gray' }, { t: 'neofetch', c: 't-green' }, { t: '.', c: 't-gray' }]);
+  } else {
+    row('zew0z guest shell v1.0 -- unauthorized access actively encouraged.', 't-gray');
+    row([{ t: "type ", c: 't-gray' }, { t: 'help', c: 't-green' }, { t: " to see what this thing can do. rumor: one real flag hides in here.", c: 't-gray' }]);
+  }
 })();

@@ -663,6 +663,9 @@ h1, h2, h3, h4 { text-wrap: balance; line-height: 1.3; }
 .t-red { color: var(--red); }
 .t-purple { color: var(--purple); }
 .t-blue { color: var(--blue); }
+.t-orange { color: var(--orange); }
+
+.term-prompt.root-prompt { color: var(--orange); }
 
 /* ---------- code block titlebars + copy button ---------- */
 
