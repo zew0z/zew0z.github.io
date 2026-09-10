@@ -32,6 +32,8 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
+[hidden] { display: none !important; }
+
 html { scroll-behavior: smooth; }
 
 body {
@@ -210,41 +212,112 @@ h1, h2, h3, h4 { text-wrap: balance; line-height: 1.3; }
 
 .ls-row {
   display: grid;
-  grid-template-columns: 11ch auto 1fr;
+  grid-template-columns: 11ch 1fr;
   align-items: baseline;
-  gap: 0.35rem 1.25rem;
+  gap: 0.1rem 1.25rem;
   padding: 0.85rem 0.35rem;
   border-bottom: 1px dashed var(--bg3);
+  transition: background 0.15s ease;
 }
 .ls-row:last-of-type { border-bottom: 0; }
+.ls-row:hover { background: color-mix(in srgb, var(--bg2) 55%, transparent); }
 
 .ls-perm { color: var(--gray); font-size: 0.85rem; }
+.ls-size { color: var(--gray); font-size: 0.85rem; }
 .ls-date { color: var(--fg4); font-size: 0.85rem; }
+
+.ls-main { min-width: 0; }
+
+.ls-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
 
 .ls-name {
   color: var(--fg0);
   font-weight: 700;
   font-size: 1.05rem;
-  grid-column: 3;
 }
 .ls-name:hover { color: var(--bg0); }
-.ls-row:hover .ls-perm, .ls-row:hover .ls-date { color: var(--aqua); }
 
 .ls-meta {
-  grid-column: 3;
-  grid-row: 1;
-  justify-self: end;
   display: flex;
-  gap: 0.9rem;
   align-items: baseline;
+  gap: 0.9rem;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.ls-platform {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0 0.4rem;
+  letter-spacing: 0.05em;
+}
+.plat-thm { color: var(--bg0); background: var(--aqua); }
+.plat-htb { color: var(--bg0); background: var(--green); }
+.plat-blog { color: var(--bg0); background: var(--purple); }
+
+.ls-foot {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
 .ls-desc {
-  grid-column: 3;
   margin: 0;
   color: var(--fg4);
   font-size: 0.88rem;
 }
+
+.ls-tags {
+  color: var(--fg4);
+  font-size: 0.82rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.ls-year {
+  margin: 1.5rem 0 0.2rem;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--yellow);
+}
+.ls-year::before { content: './ '; color: var(--bg4); }
+.ls-year:first-of-type { margin-top: 0.4rem; }
+
+/* ---------- writeups: tag filters ---------- */
+
+.ls-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0 0 1.1rem;
+}
+.ls-filter {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  background: transparent;
+  color: var(--fg4);
+  border: 1px solid var(--bg4);
+  border-radius: 2px;
+  padding: 0.1rem 0.55rem;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+.ls-filter:hover { color: var(--fg0); border-color: var(--gray); }
+.ls-filter.is-active {
+  color: var(--bg0);
+  background: var(--green);
+  border-color: var(--green);
+  font-weight: 700;
+}
+.ls-filter:focus-visible { outline: 2px dashed var(--green); outline-offset: 2px; }
+
+.ls-row:hover .ls-perm, .ls-row:hover .ls-size, .ls-row:hover .ls-date { color: var(--aqua); }
 
 /* ---------- neofetch about ---------- */
 
@@ -406,20 +479,21 @@ h1, h2, h3, h4 { text-wrap: balance; line-height: 1.3; }
   overflow-wrap: break-word;
 }
 
-/* code blocks: real terminal windows */
-.post-content .highlight {
+/* code blocks: real terminal windows
+   (div.highlight only: rouge also puts .highlight on the inner pre) */
+.post-content div.highlight {
   margin: 1.4rem 0;
   border: 1px solid var(--bg4);
   background: var(--bg0);
 }
-.post-content .highlight pre {
+.post-content div.highlight pre {
   margin: 0;
   padding: 1rem 1.1rem;
   overflow-x: auto;
   font-size: 0.85rem;
   line-height: 1.65;
 }
-.post-content .highlight code {
+.post-content div.highlight code {
   background: transparent;
   color: inherit;
   padding: 0;
@@ -501,8 +575,10 @@ h1, h2, h3, h4 { text-wrap: balance; line-height: 1.3; }
 
   .ls-row { grid-template-columns: 1fr; gap: 0.15rem; padding: 0.8rem 0.15rem; }
   .ls-perm { display: none; }
-  .ls-name, .ls-meta, .ls-desc { grid-column: 1; }
-  .ls-meta { grid-row: auto; justify-self: start; gap: 0.7rem; flex-wrap: wrap; }
+  .ls-head { flex-wrap: wrap; row-gap: 0.15rem; }
+  .ls-meta { flex-wrap: wrap; gap: 0.7rem; row-gap: 0.2rem; }
+  .ls-foot { flex-direction: column; align-items: flex-start; gap: 0.25rem; }
+  .ls-tags { white-space: normal; }
 
   .neofetch { flex-direction: column; align-items: flex-start; gap: 1.25rem; }
 
@@ -563,4 +639,240 @@ h1, h2, h3, h4 { text-wrap: balance; line-height: 1.3; }
   background: var(--blue);
   padding: 0 0.5rem;
   font-weight: 500;
+}
+
+/* ---------- guest terminal ---------- */
+
+.panel-term { padding-bottom: 1.75rem; }
+
+.term {
+  background: var(--bg0);
+  border: 1px solid var(--bg4);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.term-out {
+  height: 17rem;
+  overflow-y: auto;
+  overflow-x: auto;
+  padding: 1rem 1.1rem;
+  font-size: 0.85rem;
+  line-height: 1.65;
+}
+
+.term-row { white-space: pre-wrap; overflow-wrap: break-word; min-height: 1.1em; }
+.term-row.cmd { margin-top: 0.45rem; }
+
+.term-hint {
+  margin: 0.6rem 0 0;
+  color: var(--gray);
+  font-size: 0.78rem;
+}
+
+.term-line {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6ch;
+  border-top: 1px dashed var(--bg3);
+  padding: 0.55rem 1.1rem 0.7rem;
+}
+
+.term-prompt {
+  color: var(--green);
+  font-weight: 500;
+  white-space: nowrap;
+  font-size: 0.85rem;
+}
+
+.term-input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  color: var(--fg0);
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  caret-color: var(--green);
+}
+.term-input:focus-visible { outline: none; }
+
+.term a { border-bottom: 1px dashed var(--bg4); }
+.term a:hover { color: var(--bg0); }
+
+.t-gray { color: var(--gray); }
+.t-fg4 { color: var(--fg4); }
+.t-fg1 { color: var(--fg1); }
+.t-fg0 { color: var(--fg0); }
+.t-green { color: var(--green); }
+.t-aqua { color: var(--aqua); }
+.t-yellow { color: var(--yellow); }
+.t-red { color: var(--red); }
+.t-purple { color: var(--purple); }
+.t-blue { color: var(--blue); }
+
+/* ---------- code block titlebars + copy button ---------- */
+
+.code-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--bg1);
+  border-bottom: 1px solid var(--bg4);
+  padding: 0.25rem 0.45rem 0.25rem 0.8rem;
+  font-size: 0.75rem;
+  color: var(--gray);
+}
+.code-lang { letter-spacing: 0.06em; }
+.code-lang::before { content: '> '; color: var(--green); }
+
+.copy-btn {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  background: transparent;
+  border: 1px solid var(--bg4);
+  color: var(--fg4);
+  padding: 0.05rem 0.5rem;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+.copy-btn:hover { color: var(--fg0); border-color: var(--gray); }
+.copy-btn:focus-visible { outline: 2px dashed var(--green); outline-offset: 2px; }
+.copy-btn.copied {
+  color: var(--bg0);
+  background: var(--green);
+  border-color: var(--green);
+  font-weight: 700;
+}
+
+/* ---------- table of contents (post) ---------- */
+
+.toc {
+  border: 1px solid var(--bg3);
+  background: color-mix(in srgb, var(--bg1) 40%, transparent);
+  margin: 0 0 2rem;
+  font-size: 0.88rem;
+}
+.toc summary {
+  cursor: pointer;
+  padding: 0.55rem 0.9rem;
+  color: var(--fg4);
+  list-style: none;
+  user-select: none;
+}
+.toc summary::-webkit-details-marker { display: none; }
+.toc summary::before { content: '+ '; color: var(--green); font-weight: 700; }
+.toc[open] summary::before { content: '- '; }
+.toc summary:hover { color: var(--fg1); }
+
+.toc-list { list-style: none; margin: 0; padding: 0.1rem 0.9rem 0.7rem; }
+.toc-list a {
+  color: var(--fg2);
+  display: inline-block;
+  padding: 0.14rem 0;
+}
+.toc-list a::before { content: '|-- '; color: var(--bg4); }
+.toc-list li:last-child > a::before { content: '`-- '; }
+.toc-list .toc-h3 { padding-left: 1.4rem; }
+.toc-list a:hover { color: var(--bg0); }
+
+/* ---------- reading progress bar ---------- */
+
+.progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 45;
+  background: var(--green);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  pointer-events: none;
+}
+
+/* ---------- post navigation (prev/next) ---------- */
+
+.post-nav { margin-bottom: 0.9rem; }
+.post-nav p { margin: 0 0 0.3rem; overflow-wrap: break-word; }
+.t-gray { color: var(--gray); }
+
+/* ---------- boot overlay ---------- */
+
+.boot {
+  position: fixed;
+  inset: 0;
+  z-index: 65;
+  background: var(--bg0);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 1.5rem;
+  transition: opacity 0.4s ease;
+  cursor: pointer;
+}
+.boot-done { opacity: 0; pointer-events: none; }
+.boot-text {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  line-height: 1.9;
+  color: var(--fg1);
+  white-space: pre-wrap;
+}
+.boot-hint { margin-top: 1.5rem; color: var(--gray); font-size: 0.78rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .boot { display: none; }
+}
+
+/* ---------- toast ---------- */
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--tmuxbar-h) + 1rem);
+  transform: translate(-50%, 0.5rem);
+  z-index: 70;
+  background: var(--bg1);
+  border: 1px solid var(--green);
+  color: var(--green);
+  padding: 0.45rem 0.9rem;
+  font-size: 0.85rem;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.toast-on { opacity: 1; transform: translate(-50%, 0); }
+
+/* ---------- matrix rain canvas ---------- */
+
+.matrix-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 65;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+.matrix-canvas.matrix-on { opacity: 0.85; }
+
+/* ---------- responsive additions ---------- */
+
+@media (max-width: 720px) {
+  .term-out { height: 13rem; font-size: 0.82rem; }
+  .term-prompt { white-space: nowrap; }
+  .term-input { font-size: 16px; } /* prevents iOS focus zoom */
+  .term-line { padding: 0.5rem 0.8rem 0.6rem; }
+
+  .ls-size { display: none; }
+  .ls-filters { gap: 0.3rem; }
+  .ls-filter { font-size: 0.74rem; }
+
+  .code-head { padding-left: 0.6rem; }
+  .boot-text { font-size: 0.72rem; }
 }

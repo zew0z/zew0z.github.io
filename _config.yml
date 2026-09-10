@@ -10,6 +10,12 @@ plugins:
   - jekyll-feed
   - jekyll-seo-tag
 
+exclude:
+  - docs
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+
 defaults:
   - scope:
       path: ""

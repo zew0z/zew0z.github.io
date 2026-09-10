@@ -15,18 +15,54 @@ permalink: /
   <p class="hero-sub">documenting the journey through CTFs, challenges, and digital puzzles. the wins, the fails, and the flags.</p>
 </section>
 
+<section class="panel panel-term" id="terminal">
+  <div class="panel-tab">guest shell :: /bin/fake-zsh</div>
+  <div class="term" id="guest-term">
+    <div class="term-out" id="term-out" role="log" aria-label="guest terminal output"></div>
+    <form class="term-line" id="term-form" autocomplete="off">
+      <label class="term-prompt" for="term-input">guest@zew0z.github.io:~$</label>
+      <input class="term-input" id="term-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="guest terminal input. type help for commands.">
+    </form>
+  </div>
+  <p class="term-hint" aria-hidden="true">a real shell would be irresponsible. this one just talks. try 'sudo rm -rf /'</p>
+</section>
+
 <section class="panel" id="writeups">
-  <div class="panel-tab">writeups &mdash; ls -la</div>
-  <p class="ls-total">total {{ site.posts | size }}</p>
+  <div class="panel-tab">writeups :: ls -la</div>
+  <p class="ls-total" id="ls-total">total {{ site.posts | size }} writeups</p>
+  <div class="ls-filters" id="ls-filters" role="group" aria-label="filter writeups by tag">
+    <button class="ls-filter is-active" type="button" data-tag="all" aria-pressed="true">all</button>
+    {% assign all_tags = site.posts | map: 'tags' | join: ',' | split: ',' | uniq | sort %}
+    {% for tag in all_tags %}
+    <button class="ls-filter" type="button" data-tag="{{ tag }}" aria-pressed="false">#{{ tag }}</button>
+    {% endfor %}
+  </div>
+  {% assign current_year = '' %}
   {% for post in site.posts %}
-  <article class="ls-row">
-    <a class="ls-name" href="{{ post.url | relative_url }}">{{ post.title }}</a>
-    <span class="ls-meta">
-      <span class="ls-perm" aria-hidden="true">-rw-r--r--</span>
-      <span class="ls-date">{{ post.date | date: '%Y-%m-%d' }}</span>
-      {% if post.tags %}<span class="ls-tags">{% for tag in post.tags %}#{{ tag }} {% endfor %}</span>{% endif %}
-    </span>
-    {% if post.description %}<p class="ls-desc">{{ post.description }}</p>{% endif %}
+  {% assign post_year = post.date | date: '%Y' %}
+  {% if post_year != current_year %}
+  {% assign current_year = post_year %}
+  <h2 class="ls-year">{{ post_year }}/</h2>
+  {% endif %}
+  {% assign size_k = post.content | size | divided_by: 1024 | at_least: 1 %}
+  <article class="ls-row" data-tags="{{ post.tags | join: ' ' | downcase }}">
+    <span class="ls-perm" aria-hidden="true">-rw-r--r--</span>
+    <div class="ls-main">
+      <div class="ls-head">
+        <a class="ls-name" href="{{ post.url | relative_url }}">{{ post.title }}</a>
+        <span class="ls-meta">
+          <span class="ls-size" aria-hidden="true">{{ size_k }}K</span>
+          <span class="ls-date">{{ post.date | date: '%Y-%m-%d' }}</span>
+          {% if post.tags contains 'tryhackme' %}<span class="ls-platform plat-thm" title="TryHackMe">thm</span>
+          {% elsif post.tags contains 'htb' %}<span class="ls-platform plat-htb" title="HackTheBox">htb</span>
+          {% else %}<span class="ls-platform plat-blog" title="blog post">blog</span>{% endif %}
+        </span>
+      </div>
+      <div class="ls-foot">
+        {% if post.description %}<p class="ls-desc">{{ post.description }}</p>{% endif %}
+        {% if post.tags %}<span class="ls-tags">{% for tag in post.tags %}#{{ tag }} {% endfor %}</span>{% endif %}
+      </div>
+    </div>
   </article>
   {% else %}
   <p class="ls-total">no writeups yet. check back soon.</p>
@@ -34,7 +70,7 @@ permalink: /
 </section>
 
 <section class="panel" id="about">
-  <div class="panel-tab">about &mdash; neofetch</div>
+  <div class="panel-tab">about :: neofetch</div>
   <div class="neofetch">
     <pre class="neofetch-logo" aria-hidden="true">           /\
           /  \
@@ -42,7 +78,7 @@ permalink: /
         /      \
        /   ,,   \
       /   |  |  -\
-     /_-''    ''-_\</pre>
+     /_-''    ''-_</pre>
     <dl class="neofetch-info">
       <dt>z</dt><dd>@zew0z.github.io</dd>
       <dt>OS</dt><dd>Arch Linux (btw)</dd>
@@ -61,10 +97,13 @@ permalink: /
 </section>
 
 <section class="panel" id="contact">
-  <div class="panel-tab">contact &mdash; ss -tlnp</div>
+  <div class="panel-tab">contact :: ss -tlnp</div>
   <ul class="contact-list">
     <li><span class="contact-key">discord</span><span class="contact-plain">@zew0z</span></li>
+    <li><span class="contact-key">github</span><a href="https://github.com/zew0z" target="_blank" rel="noopener">github.com/zew0z</a></li>
     <li><span class="contact-key">ko-fi</span><a href="https://ko-fi.com/zew0z" target="_blank" rel="noopener">ko-fi.com/zew0z</a></li>
     <li><span class="contact-key">rss</span><a href="{{ '/feed.xml' | relative_url }}">/feed.xml</a></li>
   </ul>
 </section>
+
+<script id="site-data" type="application/json">{"posts":[{% for post in site.posts %}{"title":{{ post.title | jsonify }},"url":{{ post.url | relative_url | jsonify }},"date":"{{ post.date | date: '%Y-%m-%d' }}","tags":{{ post.tags | jsonify }},"platform":"{% if post.tags contains 'tryhackme' %}thm{% elsif post.tags contains 'htb' %}htb{% else %}blog{% endif %}"}{% unless forloop.last %},{% endunless %}{% endfor %}]}</script>

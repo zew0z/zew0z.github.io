@@ -21,6 +21,16 @@ layout: default
   </div>
 
   <footer class="post-footer">
+    <nav class="post-nav" aria-label="more writeups">
+      <p>
+        <span class="prompt-char">z@zew0z.github.io:~$</span>
+        cd ../{% if page.previous %}<a href="{{ page.previous.url | relative_url }}">{{ page.previous.title | truncate: 32 }}</a>{% else %}<span class="t-gray"># oldest writeup. you started at the beginning.</span>{% endif %}
+      </p>
+      <p>
+        <span class="prompt-char">z@zew0z.github.io:~$</span>
+        cd {% if page.next %}<a href="{{ page.next.url | relative_url }}">{{ page.next.title | truncate: 32 }}</a>{% else %}<span class="t-gray"># all caught up. new writeups land here.</span>{% endif %}
+      </p>
+    </nav>
     <p><span class="prompt-char">z@zew0z.github.io:~$</span> cd <a href="{{ '/' | relative_url }}#writeups">~/writeups</a></p>
     <p class="post-kofi">
       learned something? <a href="https://ko-fi.com/zew0z" target="_blank" rel="noopener">buy me a coffee</a> &gt;&gt; ko-fi.com/zew0z

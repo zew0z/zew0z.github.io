@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;0,800;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+  <noscript><style>.boot { display: none; }</style></noscript>
 </head>
 <body>
   <a class="skip-link" href="#main">skip to content</a>
@@ -19,6 +20,7 @@
       <span class="brand-prompt">z@zew0z.github.io</span><span class="caret" aria-hidden="true"></span>
     </a>
     <nav class="titlebar-nav" aria-label="Primary">
+      <a href="{{ '/' | relative_url }}#terminal">terminal/</a>
       <a href="{{ '/' | relative_url }}#writeups">writeups/</a>
       <a href="{{ '/' | relative_url }}#about">about/</a>
       <a href="{{ '/' | relative_url }}#contact">contact/</a>
@@ -32,10 +34,12 @@
   <footer class="tmuxbar" role="contentinfo">
     <div class="tmuxbar-left">
       <span class="tmux-session">[z@blog]</span>
-      <a class="tmux-win tmux-win-active" href="{{ '/' | relative_url }}">0:home</a>
-      <a class="tmux-win" href="{{ '/' | relative_url }}#writeups">1:writeups</a>
-      <a class="tmux-win" href="{{ '/' | relative_url }}#about">2:about</a>
-      <a class="tmux-win" href="https://ko-fi.com/zew0z" target="_blank" rel="noopener">3:support</a>
+      <a class="tmux-win tmux-win-active" data-section="home" href="{{ '/' | relative_url }}">0:home</a>
+      <a class="tmux-win" data-section="writeups" href="{{ '/' | relative_url }}#writeups">1:writeups</a>
+      <a class="tmux-win" data-section="terminal" href="{{ '/' | relative_url }}#terminal">2:terminal</a>
+      <a class="tmux-win" data-section="about" href="{{ '/' | relative_url }}#about">3:about</a>
+      <a class="tmux-win" data-section="contact" href="{{ '/' | relative_url }}#contact">4:contact</a>
+      <a class="tmux-win" href="https://ko-fi.com/zew0z" target="_blank" rel="noopener">5:support</a>
     </div>
     <div class="tmuxbar-right">
       <span class="tmux-clock" id="tmux-clock" aria-hidden="true"></span>
@@ -44,43 +48,13 @@
 
   <div class="crt" aria-hidden="true"></div>
 
-  <script>
-    (function () {
-      // mark the active tmux "window" based on the current path
-      var onHome = location.pathname === '/' || location.pathname === '/index.html';
-      document.querySelectorAll('.tmux-win').forEach(function (win) {
-        var isHome = win.textContent.indexOf('0:home') === 0;
-        var isWriteups = win.textContent.indexOf('1:writeups') === 0;
-        var matches = onHome ? isHome : isWriteups;
-        win.classList.toggle('tmux-win-active', matches);
-      });
+  <div class="boot" id="boot" data-posts="{{ site.posts | size }}" aria-hidden="true">
+    <pre class="boot-text" id="boot-text"></pre>
+    <span class="boot-hint">press any key to skip</span>
+  </div>
 
-      var clock = document.getElementById('tmux-clock');
-      function tick() {
-        var d = new Date();
-        var p = function (n) { return String(n).padStart(2, '0'); };
-        clock.textContent = p(d.getHours()) + ':' + p(d.getMinutes()) + ' ' +
-          d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
-      }
-      tick();
-      setInterval(tick, 30000);
-
-      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      document.querySelectorAll('[data-typewriter]').forEach(function (el) {
-        var text = el.getAttribute('data-typewriter');
-        el.setAttribute('aria-label', text);
-        if (reduce) { el.textContent = text; return; }
-        el.textContent = '';
-        var i = 0;
-        (function type() {
-          if (i <= text.length) {
-            el.textContent = text.slice(0, i);
-            i += 1;
-            setTimeout(type, 22 + Math.random() * 40);
-          }
-        })();
-      });
-    })();
-  </script>
+  {% assign asset_v = site.time | date: '%Y%m%d%H%M%S' %}
+  <script src="{{ '/assets/js/main.js' | relative_url }}?v={{ asset_v }}" defer></script>
+  {% if page.url == '/' %}<script src="{{ '/assets/js/terminal.js' | relative_url }}?v={{ asset_v }}" defer></script>{% endif %}
 </body>
 </html>
