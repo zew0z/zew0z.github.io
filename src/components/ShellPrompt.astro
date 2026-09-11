@@ -1,0 +1,12 @@
+---
+interface Props {
+  path?: string;
+  command?: string;
+}
+
+const { path = '~', command } = Astro.props;
+---
+
+<p class="shell-prompt" aria-hidden="true">
+  <span class="shell-user">guest</span><span class="shell-at">@</span><span class="shell-host">zew0z</span><span class="shell-colon">:</span><span class="shell-path">{path}</span><span class="shell-dollar">$</span>{command && <span class="shell-cmd"> {command}</span>}<span class="shell-cursor"></span>
+</p>

@@ -1,29 +1,36 @@
 ---
 import { Icon } from 'astro-icon/components';
-import { portfolioItems, type PortfolioItem } from '../lib/portfolio';
+import type { PortfolioItem } from '../lib/portfolio';
 
 interface Props {
-  items?: PortfolioItem[];
-  compact?: boolean;
+  items: PortfolioItem[];
 }
 
-const { items = portfolioItems, compact = false } = Astro.props;
+const { items } = Astro.props;
+
+function modeOf(item: PortfolioItem): string {
+  if (item.link || item.links?.length) return 'lrwxr-xr-x';
+  if (item.chip === 'own tool' || item.chip === 'open source') return '-rwxr-xr-x';
+  return '-rw-r--r--';
+}
 ---
 
-<div class={compact ? 'ach-grid ach-grid-compact' : 'ach-grid ach-grid-pro'}>
+<div class="work-listing" role="list">
+  <div class="work-listing-head" aria-hidden="true">
+    <span class="wl-mode">perms</span>
+    <span class="wl-name">name</span>
+    <span class="wl-chip">type</span>
+  </div>
   {items.map((item) => (
-    <article class="ach" style={`--tile: ${item.hue}`}>
-      <div class="ach-icon" aria-hidden="true">
-        <Icon name={item.icon} />
-      </div>
-      <div class="ach-body">
-        <h3 class="ach-title">
+    <article class="work-row" role="listitem" style={`--tile: ${item.hue}`}>
+      <span class="wl-mode" aria-hidden="true">{modeOf(item)}</span>
+      <div class="wl-main">
+        <h3 class="wl-title">
           {item.link ? (
             <a href={item.link} target="_blank" rel="noopener">{item.title} <span class="ext" aria-hidden="true">↗</span></a>
           ) : (
             <span>{item.title}</span>
           )}
-          {item.chip && <span class="ach-chip">{item.chip}</span>}
           {item.star && (
             <span class="star-tip" tabindex="0" role="note" aria-label="with the help of my AI agent team">
               <Icon name="tabler:star-filled" />
@@ -31,19 +38,15 @@ const { items = portfolioItems, compact = false } = Astro.props;
             </span>
           )}
         </h3>
-        <p class="ach-desc">
+        <p class="wl-desc">
           {item.desc}
           {item.links && item.links.map((l, i) => (
             <>{i > 0 && ', '}<a href={l.href} target="_blank" rel="noopener">{l.label}</a></>
           ))}
           {item.descAfter && ` ${item.descAfter}`}
         </p>
-        {!compact && (
-          <div class="ach-tags">
-            {item.tags.map((t) => <span class="tag">#{t}</span>)}
-          </div>
-        )}
       </div>
+      {item.chip && <span class="wl-chip">{item.chip}</span>}
     </article>
   ))}
 </div>

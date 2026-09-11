@@ -1032,10 +1032,12 @@
   /* ---------- greeting ---------- */
 
   if (isRoot) {
+    lines(BANNER, 't-green');
     row('welcome back, root. the shell kept your seat warm.', 't-orange');
     if (!myName) row('claim your spot on the flag board: register <name>', 't-yellow');
     row([{ t: "type ", c: 't-gray' }, { t: 'help', c: 't-green' }, { t: " for commands. show off with ", c: 't-gray' }, { t: 'leaderboard', c: 't-green' }, { t: ' or ', c: 't-gray' }, { t: 'achievements', c: 't-green' }, { t: '.', c: 't-gray' }]);
   } else {
+    lines(BANNER, 't-aqua');
     row('zew0z guest shell v2.0 -- unauthorized access actively encouraged.', 't-gray');
     row([{ t: "type ", c: 't-gray' }, { t: 'help', c: 't-green' }, { t: " to see what this thing can do. rumor: one real flag hides in here.", c: 't-gray' }]);
   }
