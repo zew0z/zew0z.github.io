@@ -10,6 +10,12 @@ tags:
   - simple-ctf
   - sqli
   - privesc
+tools:
+  - nmap
+  - gobuster
+  - exploit-db
+  - python
+  - vim
 author: zew0z
 platform: thm
 ---

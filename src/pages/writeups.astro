@@ -2,9 +2,30 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ShellPrompt from '../components/ShellPrompt.astro';
 import WriteupCatalog from '../components/WriteupCatalog.astro';
-import { getWriteups, searchItem } from '../lib/writeups';
+import { getWriteups, postUrl, searchItem, shortTitle } from '../lib/writeups';
 
 const posts = await getWriteups();
+
+// the record so far: every room as a tick on one timeline.
+// proportional positioning, but with a minimum visual gap so clusters
+// (8 rooms in 3 days) stay readable instead of stacking into one blob
+const firstDate = posts[posts.length - 1].data.date.valueOf();
+const span = Math.max(Date.now() - firstDate, 86400000);
+const days = Math.round(span / 86400000);
+const MIN_GAP = 3.5;
+let prevRaw = -MIN_GAP;
+const adjusted = [...posts].reverse().map((post) => {
+  const raw = ((post.data.date.valueOf() - firstDate) / span) * 100;
+  const pos = Math.max(raw, prevRaw + MIN_GAP);
+  prevRaw = pos;
+  return { post, pos };
+});
+const maxPos = adjusted[adjusted.length - 1].pos;
+const rescale = maxPos > 97 ? (97 - 3) / (maxPos - 3) : 1;
+const ticks = adjusted.map(({ post, pos }) => ({
+  post,
+  pct: 3 + (pos - 3) * rescale,
+}));
 ---
 
 <BaseLayout
@@ -18,6 +39,33 @@ const posts = await getWriteups();
       <h1 class="page-title">writeups <span class="count">:: {posts.length} files</span></h1>
       <p class="page-lede">
         every room fully documented. flags and passwords never printed; solutions sit behind a spoiler gate.
+      </p>
+    </div>
+  </section>
+
+  <section class="record-strip">
+    <div class="container">
+      <p class="record-caption" aria-hidden="true"># the record so far :: {posts.length} rooms / {days} days</p>
+      <div class="record-bar" role="list" aria-label="timeline of writeups">
+        {ticks.map(({ post, pct }) => (
+          <a
+            class={`record-tick record-${post.data.platform}`}
+            role="listitem"
+            style={`left:${pct}%`}
+            href={postUrl(post)}
+            aria-label={`${shortTitle(post)}, ${post.data.date.toISOString().slice(0, 10)}, ${post.data.platform}`}
+          >
+            <span class="record-tip" aria-hidden="true">
+              <span class="record-tip-title">{shortTitle(post)}</span>
+              <span class="record-tip-meta">{post.data.date.toISOString().slice(0, 10)} :: {post.data.difficulty || post.data.platform}</span>
+            </span>
+          </a>
+        ))}
+      </div>
+      <p class="record-legend" aria-hidden="true">
+        <span class="dot record-thm"></span> tryhackme
+        <span class="dot record-htb"></span> htb
+        <span class="dot record-blog"></span> blog
       </p>
     </div>
   </section>

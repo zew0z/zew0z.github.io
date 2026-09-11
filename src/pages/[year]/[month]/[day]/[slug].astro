@@ -94,6 +94,15 @@ const platformLabel = { thm: 'tryhackme', htb: 'hackthebox', blog: 'blog' }[post
       )}
       <Content />
       </div>
+
+      {post.data.tools.length > 0 && (
+        <div class="loot">
+          <p class="loot-head"># loot :: tools that did the work</p>
+          <div class="loot-tags">
+            {post.data.tools.map((t) => <span class="tag">#{t}</span>)}
+          </div>
+        </div>
+      )}
     </div>
 
     {post.data.platform !== 'blog' && (

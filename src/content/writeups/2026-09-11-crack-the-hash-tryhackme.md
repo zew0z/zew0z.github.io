@@ -10,6 +10,10 @@ tags:
   - crack-the-hash
   - hashing
   - hashcat
+tools:
+  - hashcat
+  - john
+  - crackstation
 author: zew0z
 platform: thm
 ---

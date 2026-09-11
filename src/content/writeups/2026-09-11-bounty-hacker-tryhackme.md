@@ -10,6 +10,11 @@ tags:
   - bounty-hacker
   - hydra
   - privesc
+tools:
+  - nmap
+  - ftp
+  - hydra
+  - tar
 author: zew0z
 platform: thm
 ---

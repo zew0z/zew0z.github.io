@@ -10,6 +10,12 @@ tags:
   - mr-robot
   - wordpress
   - privesc
+tools:
+  - nmap
+  - gobuster
+  - john
+  - base64
+  - sudo
 author: zew0z
 platform: thm
 ---

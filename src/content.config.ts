@@ -8,6 +8,7 @@ const writeups = defineCollection({
     date: z.coerce.date(),
     description: z.string(),
     tags: z.array(z.string()).default([]),
+    tools: z.array(z.string()).default([]),
     platform: z.enum(['thm', 'htb', 'blog']),
     difficulty: z.string().optional(),
     room: z.string().optional(),

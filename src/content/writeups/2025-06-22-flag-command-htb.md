@@ -9,6 +9,9 @@ tags:
   - beginner
   - web
   - javascript
+tools:
+  - view-source
+  - dig
 author: zew0z
 platform: htb
 ---

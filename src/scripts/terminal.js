@@ -41,9 +41,31 @@
 
   var PROMPT = 'guest@zew0z.github.io:~$';
 
-  /* the one real flag on this blog. view-source counts as a solve.
-     base64 of: flag{always_check_the_source_code} */
+  /* the flag ladder. view-source counts as a solve.
+     flag 1: .flag.enc -> base64 -> submit        (root of the blog)
+     flag 2: cat shell.js -> hex blob -> decode   (achievement: sourcer)
+     flag 3: nmap -p- -> nc localhost 31337 -> rot13 (achievement: knocker) */
   var FLAG_B64 = 'ZmxhZ3thbHdheXNfY2hlY2tfdGhlX3NvdXJjZV9jb2RlfQ==';
+  var FLAG_ROOT = 'flag{always_check_the_source_code}';
+  var FLAG2_HEX = '66 6c 61 67 7b 74 68 65 5f 73 6f 75 72 63 65 5f 69 73 5f 77 6f 72 74 68 5f 72 65 61 64 69 6e 67 7d';
+  var FLAG2 = 'flag{the_source_is_worth_reading}';
+  var FLAG3_ROT13 = 'synt{xabpx_xabpx_31337}';
+  var FLAG3 = 'flag{knock_knock_31337}';
+
+  function rot13(s) {
+    return s.replace(/[a-z]/gi, function (c) {
+      var base = c <= 'Z' ? 65 : 97;
+      return String.fromCharCode((c.charCodeAt(0) - base + 13) % 26 + base);
+    });
+  }
+
+  function hexToString(hex) {
+    var clean = hex.replace(/\s+/g, '');
+    if (!/^[0-9a-fA-F]+$/.test(clean) || clean.length % 2 !== 0) return null;
+    var out = '';
+    for (var i = 0; i < clean.length; i += 2) out += String.fromCharCode(parseInt(clean.substr(i, 2), 16));
+    return out;
+  }
 
   var isRoot = false;
   try { isRoot = localStorage.getItem('zew0z-root') === '1'; } catch (e) {}
@@ -339,12 +361,14 @@
         '  neofetch          guest system info\n' +
         '  history           your command history\n' +
         '  echo <text>       repeat after you\n' +
+        '  rot13 <text>      the oldest cipher in the drawer\n' +
+        '  nc <host> <port>  knock on a port, see who answers\n' +
         '  leaderboard       flag hunters, hall of fame\n' +
         '  date uname        the usual suspects\n' +
         '  banner            redraw the banner\n' +
         '  clear             wipe the screen\n' +
         '  exit              you can check out any time you like\n' +
-        'hint: some commands are not on this list. cows know things.'
+        'hint: some commands are not on this list. cows know things. the source knows more.'
       );
     },
 
@@ -355,7 +379,7 @@
         row([
           { t: '.  ..  ', c: 't-fg4' },
           { t: '.flag.enc  .zsh_history  ', c: 't-yellow' },
-          { t: 'about_me.txt   contact.txt   flag.txt   motd   ', c: 't-fg1' },
+          { t: 'about_me.txt   contact.txt   flag.txt   motd   shell.js   ', c: 't-fg1' },
           { t: 'writeups/', c: 't-aqua' }
         ]);
         row('that .flag.enc looks suspicious. (cat it)', 't-gray');
@@ -363,10 +387,10 @@
         return;
       }
       row([
-        { t: 'about_me.txt   contact.txt   flag.txt   motd   ', c: 't-fg1' },
+        { t: 'about_me.txt   contact.txt   flag.txt   motd   shell.js   ', c: 't-fg1' },
         { t: 'writeups/', c: 't-aqua' }
       ]);
-      row("hidden things exist here. (try: ls -a)", 't-gray');
+      row("the shell ships with its own source. (cat shell.js)", 't-gray');
     },
 
     cat: function (args) {
@@ -377,6 +401,25 @@
       } else if (name === '.flag.enc') {
         row(FLAG_B64, 't-yellow');
         row('this string smells like base64. (decode it)', 't-gray');
+      } else if (name === 'shell.js' || name === './shell.js') {
+        lines(
+          '/* guest shell v2.0 -- the source, as promised */\n' +
+          ' 1  var POSTS = [];            // real writeups, live from the blog\n' +
+          ' 2  var BANNER = ascii();      // hand-_padding included\n' +
+          ' 3  var FLAG_B64  = atob ? "nope" : "try ls -a";\n' +
+          ' 4\n' +
+          ' 5  // there is more than one flag on this blog.\n' +
+          ' 6  // the second one ships inside this very file.\n' +
+          ' 7  var LOOT_HEX =\n' +
+          ' 8    "' + FLAG2_HEX + '";\n' +
+          ' 9  // TODO: rotate before the blog gets famous\n' +
+          '10\n' +
+          '11  function listen(port) {\n' +
+          '12    // only speaks to visitors who scan every port\n' +
+          '13    return port === 31337 ? "something" : "refused";\n' +
+          '14  }'
+        );
+        row('line 8 is not base64. decode speaks hex too.', 't-gray');
       } else if (name.indexOf('urandom') !== -1) {
         var junk = '';
         for (var i = 0; i < 96; i++) junk += RANDOM_POOL[Math.floor(Math.random() * RANDOM_POOL.length)];
@@ -431,23 +474,57 @@
     nmap: function (args) {
       var joined = args.join(' ');
       if (args.length && (args[0] === '--help' || args[0] === '-h')) {
-        row('usage: nmap [target]. the interesting target is the one you are on.', 't-gray');
+        row('usage: nmap [target] [-p-]. the interesting target is the one you are on.', 't-gray');
         return;
       }
       achieve('netrunner');
-      var target = joined.replace(/(^|\s)-\S+/g, '').trim() || 'zew0z.github.io';
+      var allPorts = /(^|\s)-p-/.test(joined) || /(^|\s)-p\s*1-65535/.test(joined);
+      var target = joined.replace(/(^|\s)-\S+/g, '').replace(/(^|\s)-p\s*\S+/g, '').trim() || 'zew0z.github.io';
       var stamp = new Date().toTimeString().slice(0, 8);
-      sequence([
+      var rowsOut = [
         'Starting nmap 7.99i ( https://zew0z.github.io ) at ' + stamp,
-        'Scanning ' + target + ' (1 host)',
+        'Scanning ' + target + ' (1 host)' + (allPorts ? ' -- all 65535 ports' : ''),
         'PORT       STATE     SERVICE   NOTES',
         ['21/tcp    open      ftp       writeups (anonymous read allowed)', 't-fg1'],
         ['22/tcp    open      ssh       guest shell (root not included)', 't-fg1'],
         ['80/tcp    open      http      gruvbox theme, hardcoded', 't-fg1'],
         ['443/tcp   open      https     same, but with a padlock', 't-fg1'],
-        ['1337/tcp  filtered  flag      nice try', 't-yellow'],
-        ['Nmap done: 1 host up. the filtered port stays filtered.', 't-gray']
-      ], 260);
+        ['1337/tcp  filtered  flag      nice try', 't-yellow']
+      ];
+      if (allPorts) {
+        rowsOut.push(['31337/tcp  open      zecat     ...it is answering.', 't-green']);
+        rowsOut.push(['something is listening where the default scan sees nothing. (nc it)', 't-gray']);
+        rowsOut.push(['Nmap done: 1 host up. 1 hidden thing found.', 't-gray']);
+      } else {
+        rowsOut.push(['Nmap done: 1 host up. the filtered port stays filtered.', 't-gray']);
+        rowsOut.push(['psst: default scans only show the polite ports. (nmap -p-)', 't-gray']);
+      }
+      sequence(rowsOut, 260);
+    },
+
+    nc: function (args) {
+      var joined = args.join(' ');
+      var port = (joined.match(/(\d{1,5})\s*$/) || [])[1];
+      if (!port) { row('usage: nc <host> <port>   (localhost has opinions)', 't-gray'); return; }
+      if (port === '31337') {
+        sequence([
+          ['connect to zew0z.github.io 31337 ...', 't-gray'],
+          ['connection established. this port speaks an old dialect.', 't-fg1'],
+          [FLAG3_ROT13, 't-yellow'],
+          ['(if it reads like nonsense, you already know the trick: rot13)', 't-gray']
+        ], 320);
+      } else if (port === '1337') {
+        row('nc: connection to 1337 refused. the flag port does not talk to strangers.', 't-red');
+      } else {
+        row('nc: connection to ' + port + ' refused. nothing home.', 't-red');
+      }
+    },
+
+    rot13: function (args) {
+      if (!args.length) { row('rot13: missing operand (rot13 <text>)', 't-gray'); return; }
+      var transformed = rot13(args.join(' '));
+      row([{ t: 'rot13: ', c: 't-gray' }, { t: transformed, c: transformed.indexOf('flag{') !== -1 ? 't-green' : 't-fg1' }]);
+      if (transformed.indexOf('flag{') !== -1) row('that looks like a flag. you know the drill: submit it.', 't-gray');
     },
 
     ping: function (args) {
@@ -492,13 +569,15 @@
     },
 
     free: function () {
+      var captured = (isRoot ? 1 : 0) + (window.zew0z && window.zew0z.getAch ?
+        (window.zew0z.getAch().sourcer ? 1 : 0) + (window.zew0z.getAch().knocker ? 1 : 0) : 0);
       lines(
         '               total     used     free\n' +
-        'flags:            1        1        0\n' +
+        'flags:         3         ' + captured + '        ' + (3 - captured) + '\n' +
         'coffee:        infinity  infinity     0\n' +
         'excuses:          0        0        0'
       );
-      row('resources are fully allocated. manage accordingly.', 't-gray');
+      row(captured < 3 ? 'some flags are still free. go take them.' : 'nothing left free. you took everything.', 't-gray');
     },
 
     cowsay: function (args) {
@@ -731,9 +810,14 @@
     decode: function (args) {
       if (!args.length) { row('decode: missing operand (try decode .flag.enc)', 't-red'); return; }
       var target = args.join('');
-      var raw = target === '.flag.enc' ? FLAG_B64 : target.replace(/\s+/g, '');
       var decoded = null;
-      try { decoded = atob(raw); } catch (e) {}
+      if (target === '.flag.enc') {
+        try { decoded = atob(FLAG_B64); } catch (e) {}
+      } else if (/^[0-9a-fA-F][0-9a-fA-F\s]+$/.test(target) && target.replace(/\s+/g, '').length % 2 === 0) {
+        decoded = hexToString(target);
+      } else {
+        try { decoded = atob(target.replace(/\s+/g, '')); } catch (e) {}
+      }
       if (!decoded || decoded.indexOf('flag{') === -1) {
         row('decode: input does not decode to a flag (try decode .flag.enc)', 't-red');
         return;
@@ -751,15 +835,33 @@
       if (isRoot) { row('submit: already captured. stay humble.', 't-aqua'); return; }
       if (!args.length) { row('usage: submit flag{...}', 't-gray'); return; }
       var guess = args.join(' ').trim().toLowerCase();
-      if (guess === atob(FLAG_B64)) {
+      if (guess === FLAG_ROOT) {
         grantRoot();
+      } else if (guess === FLAG2) {
+        achieve('sourcer');
+        row('[ ok ] flag #2 accepted. you actually read the source. respect.', 't-green');
+        row('one flag still hides. it answers on a port that polite scans never see.', 't-gray');
+      } else if (guess === FLAG3) {
+        achieve('knocker');
+        row('[ ok ] flag #3 accepted. port 31337 has no more secrets from you.', 't-green');
+      } else if (guess === rot13(FLAG3_ROT13)) {
+        row('close, but that is still rot13. run it through: rot13 <text>', 't-yellow');
       } else {
         row('submit: not the flag. keep hunting. (stuck? type hint)', 't-red');
       }
     },
 
     hint: function () {
-      if (isRoot) { row('hint: you already won. now help someone else find it.', 't-aqua'); return; }
+      if (isRoot) {
+        var rootHints = [
+          'hint: two more flags hide on this blog. one ships inside cat shell.js.',
+          'hint: flag #2 is hex, not base64. decode speaks both. then: submit flag{...}',
+          'hint: flag #3 lives on a port that polite scans never show. nmap -p-, then nc it.'
+        ];
+        row(rootHints[Math.min(hintLevel, rootHints.length - 1)], 't-yellow');
+        hintLevel += 1;
+        return;
+      }
       var hints = [
         "hint 1: flag.txt is bait. secrets hide from plain ls. hidden files need: ls -a",
         'hint 2: .flag.enc is encoded. your old friend base64 can read it: decode .flag.enc',
@@ -1039,7 +1141,7 @@
   } else {
     lines(BANNER, 't-aqua');
     row('zew0z guest shell v2.0 -- unauthorized access actively encouraged.', 't-gray');
-    row([{ t: "type ", c: 't-gray' }, { t: 'help', c: 't-green' }, { t: " to see what this thing can do. rumor: one real flag hides in here.", c: 't-gray' }]);
+    row([{ t: "type ", c: 't-gray' }, { t: 'help', c: 't-green' }, { t: " to see what this thing can do. rumor: three flags hide in here.", c: 't-gray' }]);
   }
 
   /* ---------- visible flag board strip ---------- */

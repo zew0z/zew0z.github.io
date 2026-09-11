@@ -9,6 +9,12 @@ tags:
   - ctf
   - cybersecurity
   - pickle-rick
+tools:
+  - nmap
+  - dirb
+  - ffuf
+  - sudo
+  - base64
 author: zew0z
 platform: thm
 ---

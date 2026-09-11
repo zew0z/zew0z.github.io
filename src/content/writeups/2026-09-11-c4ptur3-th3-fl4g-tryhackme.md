@@ -10,6 +10,12 @@ tags:
   - c4ptur3-th3-fl4g
   - encoding
   - stego
+tools:
+  - steghide
+  - exiftool
+  - audacity
+  - base64
+  - rot13
 author: zew0z
 platform: thm
 ---

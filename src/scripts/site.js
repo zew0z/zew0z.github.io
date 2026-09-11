@@ -7,6 +7,55 @@
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* ---------- boot sequence (homepage, once per session) ---------- */
+
+  (function boot() {
+    if (reduceMotion) return;
+    if (!document.getElementById('guest-term')) return;
+    try { if (sessionStorage.getItem('zew0z-boot') === '1') return; } catch (e) { return; }
+
+    var LINES = [
+      ['zew0z.github.io :: bios v2.0', 'boot-head'],
+      ['cpu: coffee-powered core ........ ', 'ok'],
+      ['mounting /writeups .............. ', 'ok'],
+      ['raising guest shell ............. ', 'ok'],
+      ['counting hidden flags ........... ', '3'],
+      ['access granted :: welcome, guest', null]
+    ];
+
+    var overlay = document.createElement('div');
+    overlay.className = 'boot';
+    overlay.setAttribute('aria-hidden', 'true');
+    var pre = document.createElement('pre');
+    overlay.appendChild(pre);
+    document.body.appendChild(overlay);
+
+    var done = false;
+    function finish() {
+      if (done) return;
+      done = true;
+      try { sessionStorage.setItem('zew0z-boot', '1'); } catch (e) {}
+      overlay.classList.add('done');
+      setTimeout(function () { overlay.remove(); }, 420);
+      document.removeEventListener('keydown', finish, true);
+      overlay.removeEventListener('pointerdown', finish);
+    }
+
+    LINES.forEach(function (line, i) {
+      setTimeout(function () {
+        if (done) return;
+        var span = document.createElement('span');
+        span.className = line[1] === 'ok' ? 'boot-ok' : (line[1] ? 'boot-' + line[1] : '');
+        span.textContent = line[0] + (line[1] === 'ok' ? '[ ok ]' : line[1] === '3' ? '[ 3 ]' : '') + '\n';
+        pre.appendChild(span);
+        if (i === LINES.length - 1) setTimeout(finish, 650);
+      }, 160 + i * 190);
+    });
+
+    overlay.addEventListener('pointerdown', finish);
+    document.addEventListener('keydown', finish, true);
+  })();
+
   function make(tag, cls, text) {
     var node = document.createElement(tag);
     if (cls) node.className = cls;
@@ -100,6 +149,8 @@
     konami: 'old habits :: the code that never dies',
     sudoer: 'integer underflow enjoyer :: sudo -u#-1',
     vim: 'massive vim energy :: :wq',
+    sourcer: 'read the source :: flag #2 ships in shell.js',
+    knocker: 'port knocker :: 31337 was listening all along',
     completionist: 'everything above :: nothing left to find'
   };
 

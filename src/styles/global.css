@@ -1108,6 +1108,125 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
   line-height: 1.6;
 }
 
+/* ---------- record strip (writeups timeline) ---------- */
+
+.record-strip { padding-top: 2.2rem; }
+
+.record-caption {
+  margin: 0 0 0.9rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--ink3);
+}
+
+.record-bar {
+  position: relative;
+  height: 3.4rem;
+  border-bottom: 1px dashed var(--line2);
+}
+
+.record-tick {
+  position: absolute;
+  bottom: -4px;
+  width: 4px;
+  height: 1.1rem;
+  border-radius: 2px;
+  transform: translateX(-50%);
+  transition: height 0.15s ease, transform 0.15s ease;
+}
+.record-tick:hover,
+.record-tick:focus-visible { height: 1.9rem; }
+
+.record-thm { background: var(--teal); }
+.record-htb { background: var(--green); }
+.record-blog { background: var(--violet); }
+
+.record-tip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(2px);
+  display: none;
+  flex-direction: column;
+  gap: 0.1rem;
+  width: max-content;
+  max-width: 15rem;
+  text-align: center;
+  font-family: var(--font-mono);
+  background: var(--bg2);
+  border: 1px solid var(--line2);
+  border-radius: 6px;
+  padding: 0.35rem 0.6rem;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+  z-index: 6;
+  pointer-events: none;
+}
+.record-tick:hover .record-tip,
+.record-tick:focus-visible .record-tip { display: flex; }
+.record-tip-title { font-size: 0.78rem; color: var(--ink); }
+.record-tip-meta { font-size: 0.68rem; color: var(--ink3); white-space: nowrap; }
+
+.record-legend {
+  margin: 0.7rem 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--ink3);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.record-legend .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-left: 0.7rem; }
+.record-legend .dot:first-child { margin-left: 0; }
+
+/* ---------- loot footer (writeup tools) ---------- */
+
+.loot {
+  margin: 2.6rem 0 0;
+  border: 1px dashed var(--line2);
+  border-radius: var(--radius);
+  padding: 1rem 1.3rem;
+}
+
+.loot-head {
+  margin: 0 0 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--teal);
+}
+
+.loot-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+
+/* ---------- boot sequence (first visit per session) ---------- */
+
+.boot {
+  position: fixed;
+  inset: 0;
+  z-index: 95;
+  background: var(--bg0);
+  display: grid;
+  place-items: center;
+  transition: opacity 0.35s ease;
+}
+.boot.done { opacity: 0; pointer-events: none; }
+
+.boot pre {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.8;
+  color: var(--ink2);
+  white-space: pre;
+}
+.boot .boot-ok { color: var(--green); }
+.boot .boot-head { color: var(--teal); font-weight: 700; }
+.boot .boot-dim { color: var(--ink3); }
+
+@media (prefers-reduced-motion: reduce) {
+  .boot { display: none; }
+}
+
 /* ---------- catalog ---------- */
 
 .catalog-tools {
@@ -1397,7 +1516,7 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
 }
 
 .term-out {
-  height: 17rem;
+  height: 24rem;
   overflow-y: auto;
   overflow-x: auto;
   padding: 1rem 1.1rem;
@@ -2151,7 +2270,7 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
   .hero-stats { gap: 0.95rem 1.1rem; }
   .hero-stat dd { font-size: 1.35rem; }
 
-  .term-out { height: 13rem; font-size: 0.82rem; }
+  .term-out { height: 16rem; font-size: 0.82rem; }
   .term-input { font-size: 16px; }
   .term-prompt { white-space: nowrap; }
 

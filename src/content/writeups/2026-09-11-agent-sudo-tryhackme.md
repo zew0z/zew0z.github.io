@@ -10,6 +10,13 @@ tags:
   - agent-sudo
   - stego
   - privesc
+tools:
+  - nmap
+  - hydra
+  - binwalk
+  - steghide
+  - strings
+  - john
 author: zew0z
 platform: thm
 ---
