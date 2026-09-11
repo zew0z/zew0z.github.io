@@ -1,38 +1,56 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PortfolioGrid from '../components/PortfolioGrid.astro';
+import AsciiArt from '../components/AsciiArt.astro';
+import ShellPrompt from '../components/ShellPrompt.astro';
+import WorkListing from '../components/WorkListing.astro';
+import { ZEW0Z_BANNER, DIVIDER } from '../lib/ascii';
 import { portfolioItems } from '../lib/portfolio';
 import { getWriteups, postUrl, readMinutes, searchItem, shortTitle } from '../lib/writeups';
 
 const posts = await getWriteups();
-const previewWork = portfolioItems.slice(0, 3);
-const previewPosts = posts.slice(0, 4);
+const previewWork = portfolioItems.slice(0, 4);
+const previewPosts = posts.slice(0, 5);
 ---
 
 <BaseLayout>
   <section class="hero">
     <div class="container hero-grid">
       <div class="hero-copy">
-        <h1 class="hero-name">zew0z<span class="grad">.</span></h1>
-        <p class="hero-role">I break boxes, build storefronts, and ship with an AI agent team.</p>
-        <p class="hero-bio">
-          CTF writeups in the top 8% on TryHackMe, live WooCommerce stores, and agent pipelines that finish the boring work.
+        <ShellPrompt path="~" command="cat banner.txt" />
+        <AsciiArt art={ZEW0Z_BANNER} class="ascii-hero" label="zew0z ascii banner" />
+        <p class="hero-motd" aria-hidden="true">
+          <span class="t-dim"># motd</span> break boxes. ship stores. document everything.
         </p>
+        <h1 class="hero-name visually-hidden">zew0z</h1>
+        <p class="hero-role">security writeups, client storefronts, and an AI agent team that ships.</p>
         <div class="hero-links">
-          <a class="btn-primary" href="/portfolio.html">portfolio</a>
-          <a class="btn-ghost" href="/writeups.html">writeups</a>
+          <a class="btn-primary" href="/portfolio.html">./portfolio</a>
+          <a class="btn-ghost" href="/writeups.html">./writeups</a>
         </div>
       </div>
-      <aside class="hero-panel" aria-label="quick facts">
-        <dl class="hero-stats">
+
+      <aside class="hero-panel" aria-label="system status">
+        <div class="panel-chrome">
+          <span class="panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="panel-title">whoami --verbose</span>
+        </div>
+        <pre class="panel-dump" aria-hidden="true">{`user:     zew0z
+shell:    /bin/zsh
+os:       linux x86_64
+uptime:   5+ years
+rank:     thm top 8%
+rooms:    100+
+clients:  8
+status:   actively pwning (labs)`}</pre>
+        <dl class="hero-stats visually-hidden">
           <div class="hero-stat"><dt>thm rooms</dt><dd>100+</dd></div>
           <div class="hero-stat"><dt>platform rank</dt><dd>top 8%</dd></div>
           <div class="hero-stat"><dt>years on linux</dt><dd>5+</dd></div>
           <div class="hero-stat"><dt>projects &amp; clients</dt><dd>8</dd></div>
         </dl>
         <div class="hero-panel-links">
-          <a href="https://github.com/zew0z" target="_blank" rel="noopener">github/zew0z</a>
-          <a href="https://ko-fi.com/zew0z" target="_blank" rel="noopener">ko-fi/zew0z</a>
+          <a href="https://github.com/zew0z" target="_blank" rel="noopener">github</a>
+          <a href="https://ko-fi.com/zew0z" target="_blank" rel="noopener">ko-fi</a>
           <a href="/feed.xml">rss</a>
         </div>
       </aside>
@@ -41,33 +59,38 @@ const previewPosts = posts.slice(0, 4);
 
   <section class="section preview-section" id="work">
     <div class="container">
+      <ShellPrompt path="~/portfolio" command="ls -la | head" />
       <div class="preview-head">
         <h2 class="section-title">selected work</h2>
-        <a class="preview-more" href="/portfolio.html">full portfolio →</a>
+        <a class="preview-more" href="/portfolio.html">cd portfolio →</a>
       </div>
-      <p class="section-sub">three recent ships. tools, client stores, and frameworks in production.</p>
-      <PortfolioGrid items={previewWork} compact />
+      <p class="section-sub">tools, client stores, and frameworks currently in production.</p>
+      <WorkListing items={previewWork} />
     </div>
   </section>
 
   <section class="section preview-section preview-writeups" id="writeups">
     <div class="container">
+      <ShellPrompt path="~/writeups" command={`ls -1 | head -${previewPosts.length}`} />
       <div class="preview-head">
         <h2 class="section-title">latest writeups</h2>
-        <a class="preview-more" href="/writeups.html">all {posts.length} →</a>
+        <a class="preview-more" href="/writeups.html">cd writeups →</a>
       </div>
-      <p class="section-sub">spoiler-gated labs from TryHackMe, HTB, and a few notes in between.</p>
+      <p class="section-sub">spoiler-gated labs. flags stay offline; notes stay here.</p>
 
-      <div class="preview-cases">
-        {previewPosts.map((post) => (
-          <a class={`preview-case case-${post.data.platform}`} href={postUrl(post)}>
-            <span class="preview-case-meta">
-              <span class={`badge badge-${post.data.platform}`}>{post.data.platform}</span>
-              <span class="preview-case-date">{post.data.date.toISOString().slice(0, 10)}</span>
-              <span class="preview-case-read">~{readMinutes(post)} min</span>
+      <div class="preview-log" role="list">
+        {previewPosts.map((post, i) => (
+          <a class={`preview-log-row case-${post.data.platform}`} href={postUrl(post)} role="listitem">
+            <span class="plog-idx" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <span class="plog-body">
+              <span class="plog-title">{shortTitle(post)}</span>
+              <span class="plog-desc">{post.data.description}</span>
             </span>
-            <span class="preview-case-title">{shortTitle(post)}</span>
-            <span class="preview-case-desc">{post.data.description}</span>
+            <span class="plog-meta">
+              <span class={`badge badge-${post.data.platform}`}>{post.data.platform}</span>
+              <span>{post.data.date.toISOString().slice(0, 10)}</span>
+              <span>~{readMinutes(post)}m</span>
+            </span>
           </a>
         ))}
       </div>
@@ -77,13 +100,16 @@ const previewPosts = posts.slice(0, 4);
   <section class="playground section" id="playground">
     <div class="container playground-grid">
       <div class="playground-copy">
-        <h2 class="section-title">the playground</h2>
+        <ShellPrompt path="~/playground" command="./guest-shell" />
+        <h2 class="section-title">guest shell</h2>
         <p>
-          a fake shell with real opinions. it knows the catalog, it hides one actual flag,
-          and it keeps score of what you unlock.
+          a fake shell with real opinions. it indexes the writeups, hides one flag,
+          and keeps score of what you unlock.
         </p>
-        <p class="mono-hint">start with <code>help</code>, or go straight for <code>nmap</code> and <code>wiki</code>.</p>
-        <p class="mono-hint">capture the flag to claim a spot on the flag board.</p>
+        <pre class="ascii-hint" aria-hidden="true">{`${DIVIDER}
+$ help | nmap | wiki | cat flag.txt
+${DIVIDER}`}</pre>
+        <p class="mono-hint">rumor: <code>cat flag.txt</code> is not the way. view-source is.</p>
       </div>
       <div>
         <div class="term" id="guest-term">
@@ -98,9 +124,9 @@ const previewPosts = posts.slice(0, 4);
           </form>
         </div>
         <div class="flagboard">
-          <div class="flagboard-head">flagboard :: hunters who checked the source</div>
+          <div class="flagboard-head"># flagboard :: hunters who checked the source</div>
           <div class="flagboard-rows" id="flagboard-rows"></div>
-          <p class="flagboard-join">join: capture the flag hiding in the shell, then run publish</p>
+          <p class="flagboard-join">join: capture the flag, then run publish</p>
         </div>
       </div>
     </div>

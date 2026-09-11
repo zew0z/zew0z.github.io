@@ -1,0 +1,11 @@
+---
+interface Props {
+  art: string;
+  class?: string;
+  label?: string;
+}
+
+const { art, class: className = '', label = 'ascii art' } = Astro.props;
+---
+
+<pre class={`ascii ${className}`.trim()} aria-label={label} role="img">{art}</pre>
