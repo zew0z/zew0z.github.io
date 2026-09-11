@@ -88,7 +88,19 @@
     document.addEventListener('pointerdown', stop, true);
   }
 
-  window.zew0z = { reduceMotion: reduceMotion, toast: toast, matrixRain: matrixRain };
+  /* ---------- tmux root chip (flag captured) ---------- */
+
+  function setRootChip() {
+    var bar = document.querySelector('.tmuxbar-right');
+    if (!bar || bar.querySelector('.tmux-root')) return;
+    var chip = make('span', 'tmux-root', '\u25cf root');
+    chip.setAttribute('aria-label', 'flag captured');
+    bar.insertBefore(chip, bar.firstChild);
+  }
+
+  try { if (localStorage.getItem('zew0z-root') === '1') setRootChip(); } catch (e) {}
+
+  window.zew0z = { reduceMotion: reduceMotion, toast: toast, matrixRain: matrixRain, setRootChip: setRootChip };
 
   /* ---------- tmux clock ---------- */
 

@@ -153,6 +153,7 @@
     row('(this shell will remember you.)', 't-gray');
     if (!myName) row('claim your spot on the flag board: register <name>', 't-yellow');
     if (window.zew0z) {
+      if (window.zew0z.setRootChip) window.zew0z.setRootChip();
       window.zew0z.matrixRain();
       window.zew0z.toast('[ ok ] flag captured. root shell unlocked.');
     }
@@ -167,6 +168,7 @@
         '  ls [writeups]     list files or writeups\n' +
         '  cat <file>        read a file (try about_me.txt)\n' +
         '  open <n|name>     open writeup n from ls writeups\n' +
+        '  grep <pattern>    search the writeups\n' +
         '  whoami id pwd     the identity crisis trio\n' +
         '  neofetch          guest system info\n' +
         '  history           your command history\n' +
@@ -228,6 +230,25 @@
       if (!post) { row("open: no writeup matches '" + args.join(' ') + "' (try ls writeups)", 't-red'); return; }
       row([{ t: 'opening ', c: 't-gray' }, { t: post.title, c: 't-fg0' }, { t: ' ...', c: 't-gray' }]);
       setTimeout(function () { window.location.href = post.url; }, 300);
+    },
+
+    grep: function (args) {
+      if (!args.length) { row('usage: grep <pattern>   (searches the writeups)', 't-gray'); return; }
+      var q = args.join(' ').toLowerCase();
+      var hits = POSTS.filter(function (p) {
+        return p.title.toLowerCase().indexOf(q) !== -1 ||
+               postSlug(p).indexOf(q) !== -1 ||
+               (p.tags || []).join(' ').toLowerCase().indexOf(q) !== -1;
+      });
+      if (!hits.length) { row("grep: no matches for '" + q + "'", 't-red'); return; }
+      hits.forEach(function (p) {
+        row([
+          { t: '[' + (POSTS.indexOf(p) + 1) + '] ', c: 't-gray' },
+          { t: postSlug(p), c: 't-fg0' },
+          { t: ' :: ' + p.title, c: 't-gray' }
+        ]);
+      });
+      row('open a match with: open <number>', 't-gray');
     },
 
     writeups: function () { listWriteups(); },
@@ -452,6 +473,55 @@
 
   /* ---------- input handling ---------- */
 
+  var FILE_POOL = ['about_me.txt', 'contact.txt', 'flag.txt', 'motd', 'writeups/'];
+  var HIDDEN_FILE_POOL = ['.flag.enc', '.zsh_history'];
+
+  function commonPrefix(arr) {
+    if (!arr.length) return '';
+    var p = arr[0];
+    arr.forEach(function (s) {
+      while (s.indexOf(p) !== 0) p = p.slice(0, -1);
+    });
+    return p;
+  }
+
+  function completionsFor(cmd, token) {
+    if (['cat', 'decode', 'nano', 'rm', 'vim'].indexOf(cmd) !== -1) {
+      var pool = token.indexOf('.') === 0 ? FILE_POOL.concat(HIDDEN_FILE_POOL) : FILE_POOL;
+      return pool.filter(function (f) { return f.indexOf(token) === 0; });
+    }
+    if (['open', 'grep'].indexOf(cmd) !== -1) {
+      return POSTS.map(postSlug).filter(function (s) { return s.indexOf(token) !== -1; });
+    }
+    return [];
+  }
+
+  function complete() {
+    var parts = input.value.split(/\s+/);
+    if (!parts[0]) return;
+    var token = parts[parts.length - 1];
+    var matches;
+    if (parts.length === 1) {
+      matches = Object.keys(COMMANDS).filter(function (c) { return c.indexOf(token) === 0; }).sort();
+    } else {
+      matches = completionsFor(parts[0].toLowerCase(), token);
+    }
+    if (!matches.length) return;
+
+    if (matches.length === 1) {
+      parts[parts.length - 1] = matches[0];
+      input.value = parts.join(' ') + (matches[0].slice(-1) === '/' ? '' : ' ');
+      return;
+    }
+    var prefix = commonPrefix(matches);
+    parts[parts.length - 1] = prefix;
+    input.value = parts.join(' ');
+    if (prefix === token) {
+      /* no progress: show the options like a real shell */
+      row([{ t: matches.join('   '), c: 't-gray' }]);
+    }
+  }
+
   function run(raw) {
     var trimmed = raw.trim();
     row([
@@ -497,6 +567,17 @@
         histIdx += 1;
         input.value = history[histIdx] || '';
       }
+    } else if (e.key === 'Tab') {
+      e.preventDefault();
+      complete();
+    } else if (e.key === 'c' && e.ctrlKey) {
+      e.preventDefault();
+      row([
+        { t: promptText + ' ', c: isRoot ? 't-orange' : 't-green' },
+        { t: input.value, c: 't-fg0' },
+        { t: '^C', c: 't-gray' }
+      ], 'cmd');
+      input.value = '';
     } else if (e.key === 'l' && e.ctrlKey) {
       e.preventDefault();
       COMMANDS.clear();
@@ -517,4 +598,51 @@
     row('zew0z guest shell v1.0 -- unauthorized access actively encouraged.', 't-gray');
     row([{ t: "type ", c: 't-gray' }, { t: 'help', c: 't-green' }, { t: " to see what this thing can do. rumor: one real flag hides in here.", c: 't-gray' }]);
   }
+  /* ---------- visible flag board strip ---------- */
+
+  (function flagboard() {
+    var box = document.getElementById('flagboard-rows');
+    if (!box) return;
+
+    function addRow(segments) {
+      var div = document.createElement('div');
+      div.className = 'flagboard-row';
+      segments.forEach(function (s) {
+        var n = document.createElement('span');
+        n.textContent = s.t;
+        if (s.c) n.className = s.c;
+        div.appendChild(n);
+      });
+      box.appendChild(div);
+    }
+
+    fetch('/leaderboard.json?cb=' + Date.now())
+      .then(function (r) { if (!r.ok) throw new Error('http ' + r.status); return r.json(); })
+      .then(function (data) {
+        var entries = (data && data.entries) || [];
+        if (!entries.length) {
+          addRow([{ t: 'empty. the flag is out there, and so is slot #1.', c: 't-gray' }]);
+          return;
+        }
+        entries.slice(0, 8).forEach(function (e, i) {
+          var mine = myName && (e.name || '').toLowerCase() === myName;
+          var segs = [
+            { t: (i + 1) + '. ', c: 't-gray' },
+            { t: e.name || '???', c: mine ? 't-green' : 't-fg1' }
+          ];
+          if (mine) segs.push({ t: '  <- you', c: 't-green' });
+          segs.push({ t: '    ' + (e.date || ''), c: 't-gray' });
+          addRow(segs);
+        });
+        if (isRoot && !myName) {
+          addRow([{ t: 'you: captured but unnamed (register <name>, then publish)', c: 't-gray' }]);
+        } else if (isRoot && !entries.some(function (e) { return (e.name || '').toLowerCase() === myName; })) {
+          addRow([{ t: 'you: not published yet (run: publish)', c: 't-gray' }]);
+        }
+      })
+      .catch(function () {
+        addRow([{ t: 'board unavailable offline.', c: 't-gray' }]);
+      });
+  })();
+
 })();
