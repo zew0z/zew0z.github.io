@@ -1,112 +1,88 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Achievements from '../components/Achievements.astro';
+import PortfolioGrid from '../components/PortfolioGrid.astro';
+import { portfolioItems } from '../lib/portfolio';
 import { getWriteups, postUrl, readMinutes, searchItem, shortTitle } from '../lib/writeups';
 
 const posts = await getWriteups();
+const previewWork = portfolioItems.slice(0, 3);
+const previewPosts = posts.slice(0, 4);
 ---
 
 <BaseLayout>
-  <!-- ============ synopsis ============ -->
   <section class="hero">
-    <div class="container">
-      <p class="hero-eyebrow"><span class="pulse" aria-hidden="true"></span>actively breaking things (legally, in ctf land)</p>
-      <h1 class="hero-name">zew0z<span class="grad">.</span></h1>
-      <p class="hero-role">I break boxes, build storefronts, and ship with an AI agent team.</p>
-      <p class="hero-bio">
-        three jobs, one habit: document everything. on TryHackMe i've finished 100+ rooms and
-        climbed into the top 8% - every one written up below, spoiler-free. for clients i build
-        and maintain real e-commerce: WooCommerce stores, price-engine feeds, headless storefronts.
-        and behind all of it sits an AI agent team i've trained to handle the boring parts.
-      </p>
-      <hr class="spectrum hero-spectrum" />
-      <dl class="hero-stats">
-        <div class="hero-stat"><dt>thm rooms</dt><dd>100+</dd></div>
-        <div class="hero-stat"><dt>platform rank</dt><dd>top 8%</dd></div>
-        <div class="hero-stat"><dt>years on linux</dt><dd>5+</dd></div>
-        <div class="hero-stat"><dt>projects &amp; clients</dt><dd>8</dd></div>
-      </dl>
-      <div class="hero-links">
-        <a href="https://github.com/zew0z" target="_blank" rel="noopener">github/zew0z</a>
-        <a href="https://ko-fi.com/zew0z" target="_blank" rel="noopener">ko-fi/zew0z</a>
-        <a href="/feed.xml">rss feed</a>
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <h1 class="hero-name">zew0z<span class="grad">.</span></h1>
+        <p class="hero-role">I break boxes, build storefronts, and ship with an AI agent team.</p>
+        <p class="hero-bio">
+          CTF writeups in the top 8% on TryHackMe, live WooCommerce stores, and agent pipelines that finish the boring work.
+        </p>
+        <div class="hero-links">
+          <a class="btn-primary" href="/portfolio.html">portfolio</a>
+          <a class="btn-ghost" href="/writeups.html">writeups</a>
+        </div>
       </div>
+      <aside class="hero-panel" aria-label="quick facts">
+        <dl class="hero-stats">
+          <div class="hero-stat"><dt>thm rooms</dt><dd>100+</dd></div>
+          <div class="hero-stat"><dt>platform rank</dt><dd>top 8%</dd></div>
+          <div class="hero-stat"><dt>years on linux</dt><dd>5+</dd></div>
+          <div class="hero-stat"><dt>projects &amp; clients</dt><dd>8</dd></div>
+        </dl>
+        <div class="hero-panel-links">
+          <a href="https://github.com/zew0z" target="_blank" rel="noopener">github/zew0z</a>
+          <a href="https://ko-fi.com/zew0z" target="_blank" rel="noopener">ko-fi/zew0z</a>
+          <a href="/feed.xml">rss</a>
+        </div>
+      </aside>
     </div>
   </section>
 
-  <Achievements />
-
-  <!-- ============ catalog ============ -->
-  <section class="section" id="catalog">
+  <section class="section preview-section" id="work">
     <div class="container">
-      <div class="section-head">
-        <div>
-          <h2 class="section-title">the catalog <span class="count">:: {posts.length} writeups</span></h2>
-          <p class="section-sub">every room fully documented - flags and passwords never printed, solutions behind a spoiler gate. search it, filter it.</p>
-        </div>
+      <div class="preview-head">
+        <h2 class="section-title">selected work</h2>
+        <a class="preview-more" href="/portfolio.html">full portfolio →</a>
       </div>
+      <p class="section-sub">three recent ships. tools, client stores, and frameworks in production.</p>
+      <PortfolioGrid items={previewWork} compact />
+    </div>
+  </section>
 
-      <div class="catalog-tools">
-        <div class="search-wrap">
-          <span class="search-icon" aria-hidden="true">&gt;_</span>
-          <input class="search-input" id="search-input" type="search" placeholder="search the work: sudo, stego, wordpress..." aria-label="search writeups" autocomplete="off" spellcheck="false" />
-          <span class="search-key" aria-hidden="true">/</span>
-        </div>
-        <div class="chip-row" role="group" aria-label="filter by platform">
-          <button class="chip is-active" type="button" data-platform="all">all</button>
-          <button class="chip" type="button" data-platform="thm"><span class="dot thm" aria-hidden="true"></span>tryhackme</button>
-          <button class="chip" type="button" data-platform="htb"><span class="dot htb" aria-hidden="true"></span>htb</button>
-          <button class="chip" type="button" data-platform="blog"><span class="dot blog" aria-hidden="true"></span>blog</button>
-        </div>
+  <section class="section preview-section preview-writeups" id="writeups">
+    <div class="container">
+      <div class="preview-head">
+        <h2 class="section-title">latest writeups</h2>
+        <a class="preview-more" href="/writeups.html">all {posts.length} →</a>
       </div>
+      <p class="section-sub">spoiler-gated labs from TryHackMe, HTB, and a few notes in between.</p>
 
-      <p class="result-line" id="result-line" role="status">showing all {posts.length}</p>
-
-      <div class="case-list" id="case-list">
-        {posts.map((post) => (
-          <article
-            class={`case case-${post.data.platform}`}
-            data-platform={post.data.platform}
-            data-haystack={`${post.data.title} ${post.data.description} ${post.data.tags.join(' ')} ${post.body || ''}`.toLowerCase()}
-          >
-            <div class="case-spine" aria-hidden="true"></div>
-            <div class="case-main">
-              <div class="case-top">
-                <h3 class="case-title"><a href={postUrl(post)}>{shortTitle(post)}</a></h3>
-                <span class={`badge badge-${post.data.platform}`}>{post.data.platform}</span>
-                {post.data.difficulty && <span class={`diff diff-${post.data.difficulty.replace(' ', '-')}`}>{post.data.difficulty}</span>}
-              </div>
-              <p class="case-desc">{post.data.description}</p>
-              <div class="case-tags">
-                {post.data.tags.map((t) => <button class="tag" type="button" data-q={t}>#{t}</button>)}
-              </div>
-            </div>
-            <div class="case-side">
-              <span>{post.data.date.toISOString().slice(0, 10)}</span>
-              <span>~{readMinutes(post)} min</span>
-              {post.data.room && <a href={`https://tryhackme.com/room/${post.data.room}`} target="_blank" rel="noopener">room ↗</a>}
-            </div>
-          </article>
+      <div class="preview-cases">
+        {previewPosts.map((post) => (
+          <a class={`preview-case case-${post.data.platform}`} href={postUrl(post)}>
+            <span class="preview-case-meta">
+              <span class={`badge badge-${post.data.platform}`}>{post.data.platform}</span>
+              <span class="preview-case-date">{post.data.date.toISOString().slice(0, 10)}</span>
+              <span class="preview-case-read">~{readMinutes(post)} min</span>
+            </span>
+            <span class="preview-case-title">{shortTitle(post)}</span>
+            <span class="preview-case-desc">{post.data.description}</span>
+          </a>
         ))}
       </div>
-
-      <div class="case-empty" id="case-empty" hidden>
-        <p>nothing matches that query. <button class="chip" type="button" id="search-reset">clear search</button></p>
-      </div>
     </div>
   </section>
 
-  <!-- ============ playground ============ -->
   <section class="playground section" id="playground">
     <div class="container playground-grid">
       <div class="playground-copy">
         <h2 class="section-title">the playground</h2>
         <p>
           a fake shell with real opinions. it knows the catalog, it hides one actual flag,
-          and it keeps score of what you unlock. a real shell would be irresponsible;
-          this one just wants you to poke around.
+          and it keeps score of what you unlock.
         </p>
-        <p class="mono-hint">start with <code>help</code>, or go straight for <code>nmap</code> and <code>wiki</code>. rumor: <code>cat flag.txt</code> is not the way.</p>
+        <p class="mono-hint">start with <code>help</code>, or go straight for <code>nmap</code> and <code>wiki</code>.</p>
         <p class="mono-hint">capture the flag to claim a spot on the flag board.</p>
       </div>
       <div>

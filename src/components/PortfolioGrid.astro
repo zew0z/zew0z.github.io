@@ -1,0 +1,49 @@
+---
+import { Icon } from 'astro-icon/components';
+import { portfolioItems, type PortfolioItem } from '../lib/portfolio';
+
+interface Props {
+  items?: PortfolioItem[];
+  compact?: boolean;
+}
+
+const { items = portfolioItems, compact = false } = Astro.props;
+---
+
+<div class={compact ? 'ach-grid ach-grid-compact' : 'ach-grid'}>
+  {items.map((item) => (
+    <article class="ach" style={`--tile: ${item.hue}`}>
+      <div class="ach-icon" aria-hidden="true">
+        <Icon name={item.icon} />
+      </div>
+      <div class="ach-body">
+        <h3 class="ach-title">
+          {item.link ? (
+            <a href={item.link} target="_blank" rel="noopener">{item.title} <span class="ext" aria-hidden="true">↗</span></a>
+          ) : (
+            <span>{item.title}</span>
+          )}
+          {item.chip && <span class="ach-chip">{item.chip}</span>}
+          {item.star && (
+            <span class="star-tip" tabindex="0" role="note" aria-label="with the help of my AI agent team">
+              <Icon name="tabler:star-filled" />
+              <span class="tip" aria-hidden="true">with the help of my AI agent team</span>
+            </span>
+          )}
+        </h3>
+        <p class="ach-desc">
+          {item.desc}
+          {item.links && item.links.map((l, i) => (
+            <>{i > 0 && ', '}<a href={l.href} target="_blank" rel="noopener">{l.label}</a></>
+          ))}
+          {item.descAfter && ` ${item.descAfter}`}
+        </p>
+        {!compact && (
+          <div class="ach-tags">
+            {item.tags.map((t) => <span class="tag">#{t}</span>)}
+          </div>
+        )}
+      </div>
+    </article>
+  ))}
+</div>

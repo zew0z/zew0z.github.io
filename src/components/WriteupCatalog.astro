@@ -1,0 +1,64 @@
+---
+import { postUrl, readMinutes, shortTitle, type Writeup } from '../lib/writeups';
+
+interface Props {
+  posts: Writeup[];
+  searchable?: boolean;
+}
+
+const { posts, searchable = true } = Astro.props;
+---
+
+{searchable && (
+  <div class="catalog-tools">
+    <div class="search-wrap">
+      <span class="search-icon" aria-hidden="true">&gt;_</span>
+      <input class="search-input" id="search-input" type="search" placeholder="search the work: sudo, stego, wordpress..." aria-label="search writeups" autocomplete="off" spellcheck="false" />
+      <span class="search-key" aria-hidden="true">/</span>
+    </div>
+    <div class="chip-row" role="group" aria-label="filter by platform">
+      <button class="chip is-active" type="button" data-platform="all">all</button>
+      <button class="chip" type="button" data-platform="thm"><span class="dot thm" aria-hidden="true"></span>tryhackme</button>
+      <button class="chip" type="button" data-platform="htb"><span class="dot htb" aria-hidden="true"></span>htb</button>
+      <button class="chip" type="button" data-platform="blog"><span class="dot blog" aria-hidden="true"></span>blog</button>
+    </div>
+  </div>
+)}
+
+{searchable && (
+  <p class="result-line" id="result-line" role="status">showing all {posts.length}</p>
+)}
+
+<div class="case-list" id="case-list">
+  {posts.map((post) => (
+    <article
+      class={`case case-${post.data.platform}`}
+      data-platform={post.data.platform}
+      data-haystack={`${post.data.title} ${post.data.description} ${post.data.tags.join(' ')} ${post.body || ''}`.toLowerCase()}
+    >
+      <div class="case-spine" aria-hidden="true"></div>
+      <div class="case-main">
+        <div class="case-top">
+          <h3 class="case-title"><a href={postUrl(post)}>{shortTitle(post)}</a></h3>
+          <span class={`badge badge-${post.data.platform}`}>{post.data.platform}</span>
+          {post.data.difficulty && <span class={`diff diff-${post.data.difficulty.replace(' ', '-')}`}>{post.data.difficulty}</span>}
+        </div>
+        <p class="case-desc">{post.data.description}</p>
+        <div class="case-tags">
+          {post.data.tags.map((t) => <button class="tag" type="button" data-q={t}>#{t}</button>)}
+        </div>
+      </div>
+      <div class="case-side">
+        <span>{post.data.date.toISOString().slice(0, 10)}</span>
+        <span>~{readMinutes(post)} min</span>
+        {post.data.room && <a href={`https://tryhackme.com/room/${post.data.room}`} target="_blank" rel="noopener">room ↗</a>}
+      </div>
+    </article>
+  ))}
+</div>
+
+{searchable && (
+  <div class="case-empty" id="case-empty" hidden>
+    <p>nothing matches that query. <button class="chip" type="button" id="search-reset">clear search</button></p>
+  </div>
+)}

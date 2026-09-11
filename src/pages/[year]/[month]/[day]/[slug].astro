@@ -35,7 +35,7 @@ const platformLabel = { thm: 'tryhackme', htb: 'hackthebox', blog: 'blog' }[post
 <BaseLayout title={`${post.data.title} :: zew0z`} description={post.data.description}>
   <article class="post container">
     <nav class="post-crumb" aria-label="breadcrumb">
-      <a href="/#catalog">~/catalog</a> / {post.data.platform} / {shortTitle(post).toLowerCase().replace(/\s+/g, '-')}.md
+      <a href="/writeups.html">~/writeups</a> / {post.data.platform} / {shortTitle(post).toLowerCase().replace(/\s+/g, '-')}.md
     </nav>
 
     <header>
@@ -67,7 +67,7 @@ const platformLabel = { thm: 'tryhackme', htb: 'hackthebox', blog: 'blog' }[post
       </p>
       <div class="spoiler-actions">
         <button class="spoiler-reveal" type="button">show me the writeup</button>
-        <a class="spoiler-back" href="/#catalog">take me back to the catalog</a>
+        <a class="spoiler-back" href="/writeups.html">take me back to the catalog</a>
       </div>
       <p class="spoiler-note">even after revealing, screenshots stay blurred until you click them - answers usually live in the images.</p>
     </div>
@@ -121,7 +121,7 @@ const platformLabel = { thm: 'tryhackme', htb: 'hackthebox', blog: 'blog' }[post
           <>oldest writeup. everyone starts somewhere.</>
         )}
       </p>
-      <p>back :: <a href="/#catalog">the catalog</a></p>
+      <p>back :: <a href="/writeups.html">writeups</a></p>
       <p class="post-kofi">learned something? <a href="https://ko-fi.com/zew0z" target="_blank" rel="noopener">buy me a coffee</a> :: ko-fi.com/zew0z</p>
     </footer>
   </article>

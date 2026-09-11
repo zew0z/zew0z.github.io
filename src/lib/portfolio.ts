@@ -1,0 +1,94 @@
+export type PortfolioLink = { label: string; href: string };
+
+export type PortfolioItem = {
+  icon: string;
+  hue: string;
+  title: string;
+  chip?: string;
+  star?: boolean;
+  link?: string;
+  desc: string;
+  links?: PortfolioLink[];
+  descAfter?: string;
+  tags: string[];
+};
+
+export const portfolioItems: PortfolioItem[] = [
+  {
+    icon: 'tabler:terminal-2',
+    hue: 'var(--teal)',
+    title: 'Sectape',
+    chip: 'own tool',
+    desc: 'A terminal-session recorder I designed and built. It captures every command and its output so security work stays auditable and reproducible - made for CTF labs, useful anywhere a shell runs.',
+    tags: ['session recording', 'audit trail', 'security tooling'],
+  },
+  {
+    icon: 'tabler:repeat',
+    hue: 'var(--amber)',
+    title: 'Skroutz XML Sync Framework',
+    star: true,
+    desc: "Python feed scripts keeping products, prices and stock in sync with Skroutz, Greece's largest price engine - in production for clients like",
+    links: [
+      { label: 'bathify.gr', href: 'https://bathify.gr' },
+      { label: 'painfix.gr', href: 'https://painfix.gr' },
+    ],
+    descAfter: 'and more. Hardened across client stores, then generalized into a reusable framework built to sell.',
+    tags: ['python', 'production feeds', 'client work'],
+  },
+  {
+    icon: 'tabler:shopping-cart',
+    hue: 'var(--green)',
+    title: 'Headless Shopify Framework',
+    chip: 'open source',
+    star: true,
+    desc: "An open-source headless commerce starter: Shopify's engine behind a fully custom storefront front. Decoupled, fast, and free for anyone to build on.",
+    tags: ['shopify', 'headless', 'open source'],
+  },
+  {
+    icon: 'tabler:rocket',
+    hue: 'var(--sky)',
+    title: 'crewvista.gr',
+    link: 'https://crewvista.gr',
+    chip: 'in progress',
+    star: true,
+    desc: 'Maintaining and extending the platform ahead of its public release: upgrades, fixes and release prep, shipped continuously.',
+    tags: ['maintenance', 'upgrades', 'release prep'],
+  },
+  {
+    icon: 'tabler:brand-wordpress',
+    hue: 'var(--coral)',
+    title: 'alabasterskin.gr',
+    link: 'https://alabasterskin.gr',
+    desc: 'WordPress + WooCommerce work for a skincare brand: catalog, checkout flow, and the daily care a live store needs.',
+    tags: ['wordpress', 'woocommerce'],
+  },
+  {
+    icon: 'tabler:shopping-bag',
+    hue: 'var(--violet)',
+    title: 'totemica.gr',
+    link: 'https://totemica.gr',
+    desc: 'A full WordPress + WooCommerce build, theme to checkout - plus the ongoing maintenance that keeps it selling.',
+    tags: ['wordpress', 'woocommerce', 'full build'],
+  },
+  {
+    icon: 'tabler:robot',
+    hue: 'var(--teal)',
+    title: 'AI Agent Engineering',
+    desc: 'Fluent in nearly every model and harness on the market, and in the glue that makes them useful: skills, MCP servers, Docker-based sandboxes. I know what each tool is good at, where it breaks, and how to chain them into agent pipelines that finish real work with few errors.',
+    tags: ['agents', 'mcp', 'docker', 'prompting'],
+  },
+  {
+    icon: 'tabler:cpu',
+    hue: 'var(--green)',
+    title: 'Linux, daily, 5+ years',
+    desc: 'Daily-driving Linux on my own hardware for over five years. The terminal is home, systemd is a coworker, and every breakage is a lesson I keep.',
+    tags: ['arch btw', 'shell', 'self-hosting'],
+  },
+  {
+    icon: 'tabler:trophy',
+    hue: 'var(--amber)',
+    title: 'TryHackMe: top 8%',
+    desc: '100+ rooms completed, top 8% of the platform. The catalog is the proof of work: every room that mattered, written up spoiler-free.',
+    tags: ['100+ rooms', 'top 8%', 'ctf writeups'],
+  },
+];
