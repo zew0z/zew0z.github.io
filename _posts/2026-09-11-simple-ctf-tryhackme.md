@@ -2,6 +2,8 @@
 layout: post
 title: "Simple CTF - TryHackMe CTF Writeup"
 date: 2026-09-11
+difficulty: easy
+room: simplectf
 description: "A beginner box with a decoy - nmap recon, an OpenEMR rabbit hole, blind SQLi on CMS Made Simple, and sudo vim for root."
 tags: [tryhackme, ctf, simple-ctf, sqli, privesc]
 author: zew0z

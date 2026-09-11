@@ -10,6 +10,8 @@ layout: default
     <h1 class="post-title">{{ page.title }}</h1>
     <p class="post-meta">
       <span class="meta-item">{{ page.date | date: '%Y-%m-%d' }}</span>
+      {% if page.difficulty %}<span class="meta-item">difficulty: <span class="ls-diff diff-{{ page.difficulty | replace: ' ', '-' }}">{{ page.difficulty }}</span></span>{% endif %}
+      {% if page.room %}<span class="meta-item">room: <a class="room-link" href="https://tryhackme.com/room/{{ page.room }}" target="_blank" rel="noopener">tryhackme.com/room/{{ page.room }}</a></span>{% endif %}
       {% if page.tags %}{% for tag in page.tags %}<span class="meta-tag">{{ tag }}</span>{% endfor %}{% endif %}
       {% assign words = content | number_of_words %}
       <span class="meta-item">~{{ words | divided_by: 200 | at_least: 1 }} min read</span>

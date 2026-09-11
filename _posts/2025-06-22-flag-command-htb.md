@@ -2,6 +2,7 @@
 layout: post
 title: "HTB: Flag Command Challenge"
 date: 2025-06-22
+difficulty: very easy
 description: "A short and fun HackTheBox web challenge - reading source code and an internal API to find the secret command."
 tags: [htb, ctf, beginner, web, javascript]
 author: zew0z

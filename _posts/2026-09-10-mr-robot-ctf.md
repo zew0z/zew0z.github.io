@@ -2,6 +2,8 @@
 layout: post
 title: "Mr Robot - TryHackMe CTF Writeup"
 date: 2026-09-10
+difficulty: medium
+room: mrrobot
 description: "Rooting the Mr Robot themed box - WordPress recon, a hidden base64 credential, theme editor reverse shell, and SUID nmap."
 tags: [tryhackme, ctf, mr-robot, wordpress, privesc]
 author: zew0z

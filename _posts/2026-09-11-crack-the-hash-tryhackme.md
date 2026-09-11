@@ -2,6 +2,8 @@
 layout: post
 title: "Crack the Hash - TryHackMe CTF Writeup"
 date: 2026-09-11
+difficulty: easy
+room: crackthehash
 description: "No box, just hashes - identifying hash types by length and format, fighting bcrypt, and cracking with CrackStation, hashcat, and John."
 tags: [tryhackme, ctf, crack-the-hash, hashing, hashcat]
 author: zew0z

@@ -100,7 +100,65 @@
 
   try { if (localStorage.getItem('zew0z-root') === '1') setRootChip(); } catch (e) {}
 
-  window.zew0z = { reduceMotion: reduceMotion, toast: toast, matrixRain: matrixRain, setRootChip: setRootChip };
+  /* ---------- achievements (localStorage-backed, works on every page) ---------- */
+
+  var ACH = {
+    first: 'hello, world :: ran a first command',
+    explorer: 'hidden files hold secrets :: ran ls -a',
+    researcher: 'grep is a lifestyle :: searched the writeups',
+    archivist: 'reading is privesc :: opened a writeup from the shell',
+    cartographer: 'know your rooms :: browsed the wiki',
+    netrunner: 'port scanner in training :: ran nmap',
+    cattle: 'moo :: asked the cow to speak',
+    operator: 'comfortable in the shell :: ran 10 distinct commands',
+    root: 'flag captured :: root of this blog',
+    konami: 'old habits :: the code that never dies',
+    sudoer: 'integer underflow enjoyer :: sudo -u#-1',
+    completionist: 'everything above :: nothing left to find'
+  };
+
+  var ACH_KEY = 'zew0z-ach';
+
+  function getAch() {
+    var store = {};
+    try { store = JSON.parse(localStorage.getItem(ACH_KEY) || '{}') || {}; } catch (e) { store = {}; }
+    return store;
+  }
+
+  function achieve(id) {
+    if (!ACH[id]) return false;
+    var store = getAch();
+    if (store[id]) return false;
+    store[id] = new Date().toISOString().slice(0, 10);
+    try { localStorage.setItem(ACH_KEY, JSON.stringify(store)); } catch (e) {}
+    toast('[ ach ] unlocked: ' + ACH[id].split(' :: ')[0]);
+
+    var ids = Object.keys(ACH);
+    var allDone = ids.every(function (k) { return k === 'completionist' || store[k]; });
+    if (allDone) {
+      store.completionist = store.completionist || new Date().toISOString().slice(0, 10);
+      try { localStorage.setItem(ACH_KEY, JSON.stringify(store)); } catch (e) {}
+      setTimeout(function () { toast('[ ach ] unlocked: completionist'); }, 1400);
+    }
+    return true;
+  }
+
+  window.zew0z = {
+    reduceMotion: reduceMotion,
+    toast: toast,
+    matrixRain: matrixRain,
+    setRootChip: setRootChip,
+    achieve: achieve,
+    getAch: getAch,
+    ACH: ACH
+  };
+
+  /* ---------- tab-blur easter egg ---------- */
+
+  var baseTitle = document.title;
+  document.addEventListener('visibilitychange', function () {
+    document.title = document.hidden ? '[+] psst: the flag is still in here.' : baseTitle;
+  });
 
   /* ---------- tmux clock ---------- */
 
@@ -206,10 +264,13 @@
     var target = document.getElementById('boot-text');
     var count = overlay.getAttribute('data-posts') || '0';
     var lines = [
-      'zew0z.github.io boot v2.6-gru (tty1)',
+      'zew0z.github.io boot v3.0-gru (tty1)',
       '[  OK  ] mounted /dev/blog on /',
       '[  OK  ] loaded writeups (' + count + ')',
       '[  OK  ] started gruvbox-theme.service',
+      '[  OK  ] armed easter-eggs.target (hidden)',
+      '[ WARN ] paranoia.service: already found the flag',
+      '[ FAIL ] humility.service: too humble to start',
       '[  OK  ] reached target guest.session'
     ];
 
@@ -400,6 +461,7 @@
     konamiIdx = key === KONAMI[konamiIdx] ? konamiIdx + 1 : (key === KONAMI[0] ? 1 : 0);
     if (konamiIdx === KONAMI.length) {
       konamiIdx = 0;
+      achieve('konami');
       matrixRain();
       toast('[ ok ] root access granted. welcome, friend.');
     }

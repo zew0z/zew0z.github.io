@@ -2,6 +2,8 @@
 layout: post
 title: "Pickle Rick - TryHackMe CTF Writeup 2025"
 date: 2025-05-28
+difficulty: easy
+room: picklerick
 description: "My first completed TryHackMe CTF - exploring web login, command injection, and privilege escalation."
 tags: [tryhackme, ctf, cybersecurity, pickle-rick]
 author: zew0z

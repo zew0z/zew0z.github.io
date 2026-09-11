@@ -1,4 +1,4 @@
-/* zew0z.github.io - guest shell
+/* zew0z.github.io - guest shell v2
    a fake but honest terminal: real writeups, fake power */
 
 (function () {
@@ -27,6 +27,18 @@
     '███████╗███████╗╚███╔███╔╝╚██████╔╝███████╗\n' +
     '╚══════╝╚══════╝ ╚══╝╚══╝  ╚═════╝ ╚══════╝';
 
+  var TROPHY =
+    '      ___________\n' +
+    "     '._==_==_=_.'\n" +
+    '     .-\\:      /-.\n' +
+    '    | (|:.     |) |\n' +
+    "     '-|:.     |-'\n" +
+    '       \\::.    /\n' +
+    "        '::. .'\n" +
+    '          ) (\n' +
+    "        _.' '._\n" +
+    "       '-------'";
+
   var PROMPT = 'guest@zew0z.github.io:~$';
 
   /* the one real flag on this blog. view-source counts as a solve.
@@ -38,6 +50,10 @@
 
   var myName = '';
   try { myName = localStorage.getItem('zew0z-name') || ''; } catch (e) {}
+
+  function achieve(id) {
+    if (window.zew0z && window.zew0z.achieve) window.zew0z.achieve(id);
+  }
 
   var promptLabel = document.querySelector('.term-prompt');
   var promptText = PROMPT;
@@ -86,6 +102,60 @@
     text.split('\n').forEach(function (l) { row(l, cls); });
   }
 
+  /* a row that can be rewritten in place (progress bars, spinners) */
+  function dynamicRow(cls) {
+    var div = document.createElement('div');
+    div.className = 'term-row' + (cls ? ' ' + cls : '');
+    out.appendChild(div);
+    out.scrollTop = out.scrollHeight;
+    return {
+      set: function (text, c) {
+        div.textContent = text;
+        if (c) div.className = 'term-row ' + c;
+        out.scrollTop = out.scrollHeight;
+      }
+    };
+  }
+
+  /* print a list of rows with a delay between them (animated command output).
+     rows: string | [string, class] | function returning either.
+     collapses to instant under prefers-reduced-motion */
+  function sequence(rows, delay) {
+    var instant = !window.zew0z || window.zew0z.reduceMotion;
+    var i = 0;
+    function emit(r) {
+      if (typeof r === 'function') r = r();
+      if (Array.isArray(r)) row(r[0], r[1]);
+      else row(r);
+    }
+    if (instant) { rows.forEach(emit); return; }
+    (function step() {
+      if (i >= rows.length) return;
+      emit(rows[i]);
+      i += 1;
+      setTimeout(step, delay);
+    })();
+  }
+
+  function pad(str, n) {
+    str = String(str);
+    return str.length >= n ? str : str + new Array(n - str.length + 1).join(' ');
+  }
+
+  function diffClass(d) {
+    if (d === 'easy') return 't-green';
+    if (d === 'medium') return 't-yellow';
+    if (d === 'hard') return 't-red';
+    if (d === 'very easy') return 't-aqua';
+    return 't-gray';
+  }
+
+  function platformName(p) {
+    if (p === 'thm') return 'tryhackme';
+    if (p === 'htb') return 'hackthebox';
+    return 'blog';
+  }
+
   /* ---------- data ---------- */
 
   var FILES = {
@@ -110,6 +180,81 @@
       'curl blog | zsh  # never again',
       'exit  # for real this time'
     ].join('\n')
+  };
+
+  var FORTUNES = [
+    'the flag was in the source code all along. it usually is.',
+    'sudo -l first. heroics later.',
+    'enumeration is 90 percent of the job. the other 90 percent is enumeration.',
+    'rockyou is not a wordlist, it is a lifestyle.',
+    'rm -rf is not a backup strategy.',
+    'if it is base64 the decoder is free. if it is bcrypt, bring snacks.',
+    '7z l sees what binwalk shrugs at. polyglots fear archive listings.',
+    'every easy room teaches one reflex. play enough rooms, become a reflex machine.',
+    'a filtered port is the internet saying "not yet".',
+    'back up your notes. then back up the backup of your notes.',
+    'the machine is always easier than the writeup makes it look. after the writeup.',
+    'ctrl+c is a lifestyle choice.'
+  ];
+
+  var ASCII_ART = {
+    skull:
+      '   .-"""-.\n' +
+      '  / _   _ \\\n' +
+      ' |  o . o  |\n' +
+      ' |    ^    |\n' +
+      "  \\  '-'  /\n" +
+      "   '-----'",
+    alien:
+      '      ___\n' +
+      '     /   \\\n' +
+      '    | o o |\n' +
+      '    |  -  |\n' +
+      '     \\___/\n' +
+      '    /|   |\\\n' +
+      '   / |   | \\\n' +
+      '  *  -----  *',
+    trophy: TROPHY,
+    flag:
+      '   _____\n' +
+      '  |  ~  |\n' +
+      '  |~~~~|\n' +
+      '  |  ~  |\n' +
+      '  |____|\n' +
+      '     |\n' +
+      '     |',
+    ghost:
+      '   .-.\n' +
+      '  (o o)\n' +
+      '  | O |\n' +
+      '  |   |\n' +
+      "  '~~~'",
+    laptop:
+      '   _________\n' +
+      '  | _______ |\n' +
+      '  ||  z@   ||\n' +
+      '  ||_______||\n' +
+      '  |_________|\n' +
+      '  /_________\\'
+  };
+
+  var MANPAGES = {
+    nmap: ['nmap - scan this blog for open ports',
+      'the scanner is fake. the curiosity behind it is not.\nports found: some. secrets found: check the filtered one. or do not.'],
+    wiki: ['wiki - the room roster',
+      'every room pwned so far, with difficulty and platform.\nwiki <name> opens the writeup. knowing your rooms is half the game.'],
+    grep: ['grep - search the writeups',
+      'searches titles, slugs and tags. does not search the flags.\nthe flags are never in the writeups. that is the whole point.'],
+    cat: ['cat - read a file',
+      'prints a file to the terminal. some files print more than\nthey should. those are the fun ones.'],
+    flag: ['flag - status of the one real flag',
+      'one real flag hides in this very shell. hidden files stay\nhidden from plain sight. this is a hint wearing a manpage.'],
+    cowsay: ['cowsay - a cow says your text',
+      'the cow knows things. ask the cow. the cow does not\nknow the flag. probably.'],
+    sudo: ['sudo - execute as root (not really)',
+      'guests are not in the sudoers file. this incident will\nbe reported. try it anyway. everyone does.'],
+    man: ['man - an interface to the reference manuals',
+      'you just used the tool to read about the tool.\nrecursion achieved.']
   };
 
   function postSlug(post) {
@@ -139,6 +284,22 @@
     row("open one with: open <number> or open <name>", 't-gray');
   }
 
+  function listWiki() {
+    row('== wiki :: room roster (' + POSTS.length + ') ==', 't-green');
+    POSTS.forEach(function (p, i) {
+      var diff = p.difficulty || '-';
+      row([
+        { t: '[' + pad(String(i + 1), 2) + '] ', c: 't-gray' },
+        { t: p.date + '  ', c: 't-fg4' },
+        { t: pad(postSlug(p), 27), c: 't-fg0' },
+        { t: pad(diff, 10), c: diffClass(diff) },
+        { t: platformName(p.platform), c: 't-aqua' }
+      ]);
+    });
+    row('difficulty in the second column. platforms on the right.', 't-gray');
+    row('open one: wiki <number> or wiki <name>', 't-gray');
+  }
+
   var RANDOM_POOL = '01TFx#$%&@!~^*akPZ';
 
   /* ---------- command registry ---------- */
@@ -149,7 +310,9 @@
     isRoot = true;
     try { localStorage.setItem('zew0z-root', '1'); } catch (e) {}
     applyPrompt();
+    achieve('root');
     row('[ ok ] flag accepted. permissions elevated: you are root of this blog now.', 't-green');
+    lines(TROPHY, 't-yellow');
     row('(this shell will remember you.)', 't-gray');
     if (!myName) row('claim your spot on the flag board: register <name>', 't-yellow');
     if (window.zew0z) {
@@ -168,7 +331,10 @@
         '  ls [writeups]     list files or writeups\n' +
         '  cat <file>        read a file (try about_me.txt)\n' +
         '  open <n|name>     open writeup n from ls writeups\n' +
+        '  wiki [n|name]     the room roster: difficulty + platform\n' +
         '  grep <pattern>    search the writeups\n' +
+        '  nmap [target]     port scan this blog (it has opinions)\n' +
+        '  achievements      what you have unlocked so far\n' +
         '  whoami id pwd     the identity crisis trio\n' +
         '  neofetch          guest system info\n' +
         '  history           your command history\n' +
@@ -178,7 +344,7 @@
         '  banner            redraw the banner\n' +
         '  clear             wipe the screen\n' +
         '  exit              you can check out any time you like\n' +
-        'hint: some commands are not on this list.'
+        'hint: some commands are not on this list. cows know things.'
       );
     },
 
@@ -193,6 +359,7 @@
           { t: 'writeups/', c: 't-aqua' }
         ]);
         row('that .flag.enc looks suspicious. (cat it)', 't-gray');
+        achieve('explorer');
         return;
       }
       row([
@@ -228,8 +395,15 @@
       if (!args.length) { row('open: missing operand (try ls writeups)', 't-red'); return; }
       var post = findPost(args.join(' '));
       if (!post) { row("open: no writeup matches '" + args.join(' ') + "' (try ls writeups)", 't-red'); return; }
+      achieve('archivist');
       row([{ t: 'opening ', c: 't-gray' }, { t: post.title, c: 't-fg0' }, { t: ' ...', c: 't-gray' }]);
       setTimeout(function () { window.location.href = post.url; }, 300);
+    },
+
+    wiki: function (args) {
+      achieve('cartographer');
+      if (args.length) { COMMANDS.open(args); return; }
+      listWiki();
     },
 
     grep: function (args) {
@@ -241,6 +415,7 @@
                (p.tags || []).join(' ').toLowerCase().indexOf(q) !== -1;
       });
       if (!hits.length) { row("grep: no matches for '" + q + "'", 't-red'); return; }
+      achieve('researcher');
       hits.forEach(function (p) {
         row([
           { t: '[' + (POSTS.indexOf(p) + 1) + '] ', c: 't-gray' },
@@ -252,6 +427,157 @@
     },
 
     writeups: function () { listWriteups(); },
+
+    nmap: function (args) {
+      var joined = args.join(' ');
+      if (args.length && (args[0] === '--help' || args[0] === '-h')) {
+        row('usage: nmap [target]. the interesting target is the one you are on.', 't-gray');
+        return;
+      }
+      achieve('netrunner');
+      var target = joined.replace(/(^|\s)-\S+/g, '').trim() || 'zew0z.github.io';
+      var stamp = new Date().toTimeString().slice(0, 8);
+      sequence([
+        'Starting nmap 7.99i ( https://zew0z.github.io ) at ' + stamp,
+        'Scanning ' + target + ' (1 host)',
+        'PORT       STATE     SERVICE   NOTES',
+        ['21/tcp    open      ftp       writeups (anonymous read allowed)', 't-fg1'],
+        ['22/tcp    open      ssh       guest shell (root not included)', 't-fg1'],
+        ['80/tcp    open      http      gruvbox theme, hardcoded', 't-fg1'],
+        ['443/tcp   open      https     same, but with a padlock', 't-fg1'],
+        ['1337/tcp  filtered  flag      nice try', 't-yellow'],
+        ['Nmap done: 1 host up. the filtered port stays filtered.', 't-gray']
+      ], 260);
+    },
+
+    ping: function (args) {
+      var target = (args[0] || 'zew0z.github.io').replace(/;.*$/, '');
+      var rowsOut = ['PING ' + target + ' 56(84) bytes of data.'];
+      for (var i = 1; i <= 4; i++) {
+        rowsOut.push((function (n) {
+          return function () {
+            var t = (0.02 + Math.random() * 0.07).toFixed(3);
+            return '64 bytes from ' + target + ': icmp_seq=' + n + ' ttl=64 time=' + t + ' ms';
+          };
+        })(i));
+      }
+      rowsOut.push('--- ' + target + ' ping statistics ---');
+      rowsOut.push(['4 packets transmitted, 4 received, 0% packet loss', 't-fg1']);
+      rowsOut.push(['(loopback. of course. you are already here.)', 't-gray']);
+      sequence(rowsOut, 300);
+    },
+
+    traceroute: function () {
+      sequence([
+        'traceroute to zew0z.github.io, 64 byte packets',
+        [' 1  your-router.home        1.204 ms', 't-fg1'],
+        [' 2  isp.edge.net            8.771 ms', 't-fg1'],
+        [' 3  the-cloud               14.882 ms  (it is just someones computer)', 't-fg4'],
+        [' 4  github-edge             21.056 ms', 't-fg1'],
+        [' 5  zew0z.github.io         23.410 ms', 't-green'],
+        ['5 hops, 0 mysteries left. destination reached, guest.', 't-gray']
+      ], 280);
+    },
+
+    ps: function () {
+      lines(
+        '  PID TTY      TIME     CMD\n' +
+        ' 1337 pts/0    13:37    flag_hunter\n' +
+        '  424 pts/0    42:00    coffee_daemon --refill\n' +
+        '  909 pts/0    3d14h    imposter_syndrome --loop\n' +
+        '  502 pts/0    00:07    vim (trapped)\n' +
+        '    1 ?        00:01    systemd (the basics)'
+      );
+      row('one of these processes is you.', 't-gray');
+    },
+
+    free: function () {
+      lines(
+        '               total     used     free\n' +
+        'flags:            1        1        0\n' +
+        'coffee:        infinity  infinity     0\n' +
+        'excuses:          0        0        0'
+      );
+      row('resources are fully allocated. manage accordingly.', 't-gray');
+    },
+
+    cowsay: function (args) {
+      achieve('cattle');
+      var msg = args.join(' ') || 'moo';
+      if (msg.length > 48) msg = msg.slice(0, 45) + '...';
+      var edge = new Array(msg.length + 3).join('-');
+      lines(
+        ' ' + edge + '\n' +
+        '< ' + msg + ' >\n' +
+        ' ' + edge + '\n' +
+        '        \\   ^__^\n' +
+        '         \\  (oo)\\_______\n' +
+        '            (__)\\       )\\/\\\n' +
+        '                ||----w |\n' +
+        '                ||     ||'
+      );
+    },
+
+    fortune: function () {
+      row(FORTUNES[Math.floor(Math.random() * FORTUNES.length)], 't-aqua');
+    },
+
+    man: function (args) {
+      var page = (args[0] || '').toLowerCase();
+      if (!page) { row('what manual page do you want? (try: man nmap)', 't-gray'); return; }
+      if (page === 'man') {
+        lines(
+          'MAN(1)                     zew0z manual                     MAN(1)\n\n' +
+          'NAME\n     man - an interface to the reference manuals\n\n' +
+          'DESCRIPTION\n     you just used the tool to read about the tool.\n     recursion achieved.'
+        );
+        return;
+      }
+      if (MANPAGES[page]) {
+        var m = MANPAGES[page];
+        lines(
+          page.toUpperCase() + '(1)                     zew0z manual\n\n' +
+          'NAME\n     ' + m[0] + '\n\n' +
+          'DESCRIPTION\n     ' + m[1].split('\n').join('\n     ')
+        );
+        return;
+      }
+      row('no manual entry for ' + page + '. some things must be learned the hard way.', 't-gray');
+    },
+
+    ascii: function (args) {
+      var name = (args[0] || '').toLowerCase();
+      var names = Object.keys(ASCII_ART);
+      if (!name) {
+        row('available art: ' + names.join('  '), 't-gray');
+        row('usage: ascii <name>', 't-gray');
+        return;
+      }
+      if (ASCII_ART[name]) { lines(ASCII_ART[name], name === 'trophy' && !isRoot ? 't-yellow' : 't-green'); return; }
+      row("ascii: no art named '" + name + "'. try: " + names.join(' '), 't-red');
+    },
+
+    achievements: function () {
+      if (!window.zew0z || !window.zew0z.getAch) { row('achievements: unavailable in this browser.', 't-gray'); return; }
+      var store = window.zew0z.getAch();
+      var ACHL = window.zew0z.ACH || {};
+      var HIDDEN = ['konami', 'sudoer', 'completionist'];
+      var ids = Object.keys(ACHL);
+      var got = ids.filter(function (k) { return store[k]; }).length;
+      row('== achievements :: ' + got + '/' + ids.length + ' ==', 't-green');
+      ids.forEach(function (id) {
+        var parts = ACHL[id].split(' :: ');
+        var unlocked = !!store[id];
+        var hidden = HIDDEN.indexOf(id) !== -1 && !unlocked;
+        row([
+          { t: unlocked ? '[x] ' : '[ ] ', c: unlocked ? 't-green' : 't-gray' },
+          { t: pad(hidden ? '???' : parts[0], 24), c: unlocked ? 't-fg0' : 't-gray' },
+          { t: hidden ? 'hidden achievement' : parts[1], c: 't-fg4' },
+          { t: unlocked ? '  ' + store[id] : '', c: 't-fg4' }
+        ]);
+      });
+      row(got < ids.length ? 'the flag unlocks one of these. start with: cat flag.txt' : 'a full board. the shell salutes you.', 't-gray');
+    },
 
     whoami: function () {
       if (myName) row(myName + (isRoot ? ' (root of this blog)' : ''));
@@ -271,7 +597,7 @@
         '      /      \\     ',
         '     /   ,,   \\    ',
         '    /   |  |  -\\   ',
-        '   /_-\'\'    \'\'-_\\  '
+        "   /_-''    ''-_\\  "
       ];
       var info = [
         { t: 'guest', c: 't-green' },
@@ -311,12 +637,91 @@
 
     motd: function () { lines(FILES.motd); },
 
+    hack: function () {
+      var bar = dynamicRow('t-yellow');
+      var stages = [
+        'initializing exploit framework v0.4.3 ...',
+        'bypassing mainframe ......... ok',
+        'deploying hollywood visuals . ok',
+        'access granted'
+      ];
+      function finish() {
+        stages.forEach(function (s, idx) { row(s, idx === 3 ? 't-green' : 't-fg1'); });
+        row('(just kidding. nothing here was harmed. but it did look cool.)', 't-gray');
+      }
+      if (!window.zew0z || window.zew0z.reduceMotion) { finish(); return; }
+      var pct = 0;
+      (function tick() {
+        pct = Math.min(100, pct + 10 + Math.floor(Math.random() * 20));
+        var blocks = Math.round(pct / 10);
+        bar.set('[' + new Array(blocks + 1).join('#') + new Array(11 - blocks).join('-') + '] ' + pct + '%');
+        if (pct < 100) setTimeout(tick, 90);
+        else setTimeout(finish, 250);
+      })();
+    },
+
+    sl: function () {
+      lines(
+        '                 (@@) (  ) (@)  ( )  @@    ()    @     O\n' +
+        '            (   )\n' +
+        '        (@@@@)\n' +
+        '     (    )\n' +
+        '   (@@@)\n' +
+        ' ====        ________                ___________\n' +
+        ' _D _|  |_______/        \\__I_I_____===__|_________|\n' +
+        '  |(_)---  |   H\\________/ |   |        =|___ ___|\n' +
+        '  /     |  |   H  |  |     |   |         ||_| |_|\n' +
+        ' |      |  |   H  |__--------------------| [___] |\n' +
+        ' | ________|___H__/__|_____/[][]~\\_______|       |\n' +
+        ' |/ |   |-----------I_____I [][] []  D   |=======|__'
+      );
+      row('you typed sl. you meant ls. everyone does.', 't-gray');
+    },
+
+    tail: function (args) {
+      var joined = args.join(' ');
+      var isFlagLog = /flag/.test(joined);
+      var logName = isFlagLog ? '/var/log/flag.log' : '/var/log/guest.log';
+      function ts() {
+        var d = new Date();
+        var p = function (n) { return String(n).padStart(2, '0'); };
+        return p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds());
+      }
+      var entries = isFlagLog ? [
+        'guest attached to the flag log. bold move',
+        'plain ls executed. nothing found. as designed',
+        'base64 attempted on cat.jpg. the cat is not encoded',
+        'the flag is still hiding. the source code is still readable'
+      ] : [
+        'guest session active',
+        'nothing suspicious to report. slightly disappointing, honestly',
+        'hint: the interesting log is flag.log'
+      ];
+      var rowsOut = ['== tail -f ' + logName + ' =='];
+      entries.forEach(function (e) {
+        rowsOut.push(function () { return '[' + ts() + '] ' + e; });
+      });
+      rowsOut.push(['^C', 't-gray']);
+      sequence(rowsOut, 420);
+    },
+
     sudo: function (args) {
+      var joined = args.join(' ');
+      if (joined.indexOf('-u#-1') !== -1 || joined.indexOf('-u#4294967295') !== -1) {
+        achieve('sudoer');
+        row('integer underflow detected. cute trick.', 't-aqua');
+        row('this blog ships sudo >= 1.8.28 though. patched. (agent sudo fan confirmed)', 't-gray');
+        return;
+      }
+      if (joined.indexOf('make me a sandwich') !== -1) {
+        row(isRoot ? 'okay.' : 'what? make it yourself.', isRoot ? 't-green' : 't-red');
+        return;
+      }
       if (isRoot) {
         row('sudo: granted. you are already root though. stay humble.', 't-aqua');
         return;
       }
-      if (args.join(' ').indexOf('rm') !== -1 && args.join(' ').indexOf('-rf') !== -1) {
+      if (joined.indexOf('rm') !== -1 && joined.indexOf('-rf') !== -1) {
         COMMANDS.rm(args.slice(1));
       } else {
         row('guest is not in the sudoers file. this incident will be reported.', 't-red');
@@ -434,6 +839,19 @@
       }
     },
 
+    chmod: function (args) {
+      row('chmod: ' + (args.join(' ') || 'nothing') + ': operation not permitted. this blog keeps its bits to itself.', 't-red');
+    },
+
+    make: function (args) {
+      var joined = args.join(' ');
+      if (joined.indexOf('me a sandwich') !== -1) {
+        row("make: *** no rule to make target 'me a sandwich'. what? make it yourself.", 't-red');
+        return;
+      }
+      row("make: *** no rule to make target '" + (args[0] || 'all') + "'. stop.", 't-red');
+    },
+
     vim: function () { row('vim: detected. you are now stuck here. hint: esc :q! enter', 't-yellow'); },
     vi: function () { COMMANDS.vim(); },
     nano: function () { row('nano: a respectable choice.', 't-aqua'); },
@@ -464,6 +882,9 @@
     logout: function () { COMMANDS.exit(); }
   };
 
+  COMMANDS.rooms = COMMANDS.wiki;
+  COMMANDS.htop = COMMANDS.ps;
+
   var UNKNOWN = function (cmd) {
     row("zsh: command not found: " + cmd + " (try 'help')", 't-red');
     if (/flag|secret|hint|root|sudo/.test(cmd)) {
@@ -490,8 +911,14 @@
       var pool = token.indexOf('.') === 0 ? FILE_POOL.concat(HIDDEN_FILE_POOL) : FILE_POOL;
       return pool.filter(function (f) { return f.indexOf(token) === 0; });
     }
-    if (['open', 'grep'].indexOf(cmd) !== -1) {
+    if (['open', 'grep', 'wiki'].indexOf(cmd) !== -1) {
       return POSTS.map(postSlug).filter(function (s) { return s.indexOf(token) !== -1; });
+    }
+    if (cmd === 'ascii') {
+      return Object.keys(ASCII_ART).filter(function (a) { return a.indexOf(token) === 0; });
+    }
+    if (cmd === 'man') {
+      return Object.keys(MANPAGES).concat('man').filter(function (a) { return a.indexOf(token) === 0; });
     }
     return [];
   }
@@ -522,6 +949,19 @@
     }
   }
 
+  /* distinct-command tracking for the 'first' and 'operator' achievements */
+  var seenCmds = {};
+  try { seenCmds = JSON.parse(localStorage.getItem('zew0z-cmds') || '{}') || {}; } catch (e) { seenCmds = {}; }
+
+  function trackCommand(cmd) {
+    if (seenCmds[cmd]) return;
+    var known = Object.keys(seenCmds).length;
+    seenCmds[cmd] = 1;
+    try { localStorage.setItem('zew0z-cmds', JSON.stringify(seenCmds)); } catch (e) {}
+    if (known === 0) achieve('first');
+    else if (known + 1 >= 10) achieve('operator');
+  }
+
   function run(raw) {
     var trimmed = raw.trim();
     row([
@@ -537,6 +977,7 @@
     var cmd = parts[0].toLowerCase();
     var args = parts.slice(1);
 
+    trackCommand(cmd);
     if (COMMANDS[cmd]) COMMANDS[cmd](args);
     else UNKNOWN(cmd);
   }
@@ -593,11 +1034,12 @@
   if (isRoot) {
     row('welcome back, root. the shell kept your seat warm.', 't-orange');
     if (!myName) row('claim your spot on the flag board: register <name>', 't-yellow');
-    row([{ t: "type ", c: 't-gray' }, { t: 'help', c: 't-green' }, { t: " for commands, or just show off with ", c: 't-gray' }, { t: 'leaderboard', c: 't-green' }, { t: '.', c: 't-gray' }]);
+    row([{ t: "type ", c: 't-gray' }, { t: 'help', c: 't-green' }, { t: " for commands. show off with ", c: 't-gray' }, { t: 'leaderboard', c: 't-green' }, { t: ' or ', c: 't-gray' }, { t: 'achievements', c: 't-green' }, { t: '.', c: 't-gray' }]);
   } else {
-    row('zew0z guest shell v1.0 -- unauthorized access actively encouraged.', 't-gray');
+    row('zew0z guest shell v2.0 -- unauthorized access actively encouraged.', 't-gray');
     row([{ t: "type ", c: 't-gray' }, { t: 'help', c: 't-green' }, { t: " to see what this thing can do. rumor: one real flag hides in here.", c: 't-gray' }]);
   }
+
   /* ---------- visible flag board strip ---------- */
 
   (function flagboard() {

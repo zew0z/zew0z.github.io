@@ -13,6 +13,7 @@ permalink: /
 ╚══════╝╚══════╝ ╚══╝╚══╝  ╚═════╝ ╚══════╝</pre>
   <p class="hero-line" aria-hidden="true"><span class="prompt-char">z@zew0z.github.io:~$</span> <span data-typewriter="cat about_me.txt">cat about_me.txt</span><span class="caret caret-inline" aria-hidden="true"></span></p>
   <p class="hero-sub">documenting the journey through CTFs, challenges, and digital puzzles. the wins, the fails, and the flags.</p>
+  <p class="hero-stats" aria-label="site stats">{%- assign room_count = site.posts | where_exp: 'p', 'p.room' | size -%}rooms pwned: <span class="hs-num">{{ room_count }}</span> :: latest: <a href="{{ site.posts.first.url | relative_url }}">{{ site.posts.first.title | split: ' - ' | first | downcase }}</a> {% if site.posts.first.difficulty %}({{ site.posts.first.difficulty }}){% endif %} :: platforms: tryhackme + htb</p>
 </section>
 
 <section class="panel panel-term" id="terminal">
@@ -58,6 +59,7 @@ permalink: /
         <span class="ls-meta">
           <span class="ls-size" aria-hidden="true">{{ size_k }}K</span>
           <span class="ls-date">{{ post.date | date: '%Y-%m-%d' }}</span>
+          {% if post.difficulty %}<span class="ls-diff diff-{{ post.difficulty | replace: ' ', '-' }}" title="room difficulty">{{ post.difficulty }}</span>{% endif %}
           {% if post.tags contains 'tryhackme' %}<span class="ls-platform plat-thm" title="TryHackMe">thm</span>
           {% elsif post.tags contains 'htb' %}<span class="ls-platform plat-htb" title="HackTheBox">htb</span>
           {% else %}<span class="ls-platform plat-blog" title="blog post">blog</span>{% endif %}
@@ -111,4 +113,4 @@ permalink: /
   </ul>
 </section>
 
-<script id="site-data" type="application/json">{"posts":[{% for post in site.posts %}{"title":{{ post.title | jsonify }},"url":{{ post.url | relative_url | jsonify }},"date":"{{ post.date | date: '%Y-%m-%d' }}","tags":{{ post.tags | jsonify }},"platform":"{% if post.tags contains 'tryhackme' %}thm{% elsif post.tags contains 'htb' %}htb{% else %}blog{% endif %}"}{% unless forloop.last %},{% endunless %}{% endfor %}]}</script>
+<script id="site-data" type="application/json">{"posts":[{% for post in site.posts %}{"title":{{ post.title | jsonify }},"url":{{ post.url | relative_url | jsonify }},"date":"{{ post.date | date: '%Y-%m-%d' }}","tags":{{ post.tags | jsonify }},"difficulty":{{ post.difficulty | jsonify }},"room":{{ post.room | jsonify }},"platform":"{% if post.tags contains 'tryhackme' %}thm{% elsif post.tags contains 'htb' %}htb{% else %}blog{% endif %}"}{% unless forloop.last %},{% endunless %}{% endfor %}]}</script>
