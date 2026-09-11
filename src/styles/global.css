@@ -958,6 +958,145 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
   overflow: hidden;
 }
 
+/* ---------- spoiler gate (rooms) + per-screenshot blur ---------- */
+
+.spoiler-gate {
+  border: 1px solid color-mix(in srgb, var(--amber) 55%, transparent);
+  background: color-mix(in srgb, var(--amber) 6%, var(--bg1));
+  border-radius: var(--radius);
+  padding: 1.3rem 1.4rem;
+  margin: 2.4rem 0 0;
+}
+
+.spoiler-head {
+  margin: 0 0 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.86rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--amber);
+}
+.spoiler-head svg { width: 18px; height: 18px; }
+
+.spoiler-text {
+  margin: 0 0 1rem;
+  color: var(--ink2);
+  max-width: 62ch;
+  font-size: 0.96rem;
+}
+
+.spoiler-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.spoiler-reveal {
+  font-family: var(--font-mono);
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--bg0);
+  background: var(--amber);
+  border: 1px solid var(--amber);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 1.1rem;
+  cursor: pointer;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+.spoiler-reveal:hover { filter: brightness(1.08); transform: translateY(-1px); }
+
+.spoiler-back {
+  font-family: var(--font-mono);
+  font-size: 0.84rem;
+  color: var(--ink2);
+  border-bottom: 1px dashed var(--line2);
+}
+.spoiler-back:hover { color: var(--ink); }
+
+.spoiler-note {
+  margin: 0.9rem 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  color: var(--ink3);
+}
+
+/* blurred until revealed */
+.spoiler-zone.is-spoilered {
+  filter: blur(10px) saturate(0.75);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* individual screenshots: always blurred until clicked */
+
+.img-spoiler { margin: 1.5rem auto; }
+
+.img-btn {
+  display: block;
+  position: relative;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.prose .img-spoiler img {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--line2);
+  border-radius: var(--radius);
+  background: var(--bg1);
+  transition: filter 0.3s ease;
+}
+
+.img-spoiler.is-blurred img {
+  filter: blur(16px) saturate(0.7);
+  user-select: none;
+}
+
+.img-btn:focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; border-radius: var(--radius); }
+
+.img-veil {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius);
+  background: rgba(10, 14, 28, 0.18);
+}
+
+.veil-chip {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--bg0) 78%, transparent);
+  border: 1px solid var(--line2);
+  border-radius: 99px;
+  padding: 0.3rem 0.9rem;
+  backdrop-filter: blur(3px);
+}
+
+.img-spoiler:not(.is-blurred) .img-veil {
+  position: absolute;
+  inset: auto 0.6rem 0.6rem auto;
+  display: block;
+  place-items: unset;
+  background: none;
+  width: auto;
+}
+.img-spoiler:not(.is-blurred) .img-veil .veil-chip {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.img-spoiler:not(.is-blurred):hover .img-veil .veil-chip { opacity: 1; }
+
 /* ---------- toc ---------- */
 
 .toc {

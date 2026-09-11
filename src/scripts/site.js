@@ -165,6 +165,52 @@
   var prose = document.querySelector('.prose');
 
   if (prose) {
+    /* per-screenshot spoilers: images start blurred, click to toggle.
+       answers live in the images, so this applies even after the gate is revealed */
+    prose.querySelectorAll('img').forEach(function (img) {
+      if (img.closest('.img-spoiler')) return;
+      var wrap = document.createElement('div');
+      wrap.className = 'img-spoiler is-blurred';
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'img-btn';
+      btn.setAttribute('aria-label', 'screenshot blurred to avoid spoilers. activate to reveal');
+      var veil = document.createElement('span');
+      veil.className = 'img-veil';
+      veil.setAttribute('aria-hidden', 'true');
+      veil.appendChild(make('span', 'veil-chip', 'screenshot :: click to reveal'));
+      img.parentNode.insertBefore(wrap, img);
+      btn.appendChild(img);
+      btn.appendChild(veil);
+      wrap.appendChild(btn);
+      btn.addEventListener('click', function () {
+        var blurred = wrap.classList.toggle('is-blurred');
+        veil.querySelector('.veil-chip').textContent = blurred
+          ? 'screenshot :: click to reveal'
+          : 'screenshot :: click to hide';
+        btn.setAttribute('aria-label', blurred
+          ? 'screenshot blurred to avoid spoilers. activate to reveal'
+          : 'spoiler screenshot revealed. activate to hide again');
+      });
+    });
+
+    /* room spoiler gate: blur everything until revealed (rooms only, not blog posts) */
+    var zone = document.getElementById('spoiler-zone');
+    var gate = document.querySelector('.spoiler-gate');
+    if (zone && gate) {
+      var accepted = false;
+      try { accepted = localStorage.getItem('zew0z-spoilers') === '1'; } catch (e) {}
+      if (accepted) {
+        gate.remove();
+      } else {
+        gate.querySelector('.spoiler-reveal').addEventListener('click', function () {
+          zone.classList.remove('is-spoilered');
+          gate.remove();
+          try { localStorage.setItem('zew0z-spoilers', '1'); } catch (e) {}
+        });
+      }
+    }
+
     var progressBar = make('div', 'progress');
     progressBar.setAttribute('aria-hidden', 'true');
     document.body.appendChild(progressBar);

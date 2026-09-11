@@ -1,5 +1,6 @@
 ---
 import { render } from 'astro:content';
+import { Icon } from 'astro-icon/components';
 import BaseLayout from '../../../../layouts/BaseLayout.astro';
 import { getWriteups, postSlug, postUrl, readMinutes, shortTitle } from '../../../../lib/writeups';
 
@@ -57,7 +58,23 @@ const platformLabel = { thm: 'tryhackme', htb: 'hackthebox', blog: 'blog' }[post
       <hr class="spectrum" />
     </header>
 
-    <div class="prose">
+    {post.data.platform !== 'blog' && (
+    <div class="spoiler-gate" hidden>
+      <p class="spoiler-head"><Icon name="tabler:alert-triangle" /> spoiler warning</p>
+      <p class="spoiler-text">
+        this writeup walks the whole room: commands, paths and screenshots that contain answers.
+        want the full experience? go play it first, then come back and compare notes.
+      </p>
+      <div class="spoiler-actions">
+        <button class="spoiler-reveal" type="button">show me the writeup</button>
+        <a class="spoiler-back" href="/#catalog">take me back to the catalog</a>
+      </div>
+      <p class="spoiler-note">even after revealing, screenshots stay blurred until you click them - answers usually live in the images.</p>
+    </div>
+    )}
+
+    <div class="spoiler-zone" id="spoiler-zone">
+      <div class="prose">
       {toc.length >= 3 && (
         <details class="toc">
           <summary>cat index.md</summary>
@@ -71,7 +88,23 @@ const platformLabel = { thm: 'tryhackme', htb: 'hackthebox', blog: 'blog' }[post
         </details>
       )}
       <Content />
+      </div>
     </div>
+
+    {post.data.platform !== 'blog' && (
+      <script is:inline>
+        /* apply the spoiler blur synchronously so content never flashes unblurred */
+        (function () {
+          var accepted = false;
+          try { accepted = localStorage.getItem('zew0z-spoilers') === '1'; } catch (e) {}
+          if (accepted) return;
+          var zone = document.getElementById('spoiler-zone');
+          var gate = document.querySelector('.spoiler-gate');
+          if (zone) zone.classList.add('is-spoilered');
+          if (gate) gate.hidden = false;
+        })();
+      </script>
+    )}
 
     <footer class="post-footer">
       <p>
