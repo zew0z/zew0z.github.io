@@ -7,9 +7,13 @@ import '../styles/global.css';
 interface Props {
   title?: string;
   description?: string;
+  /** path segment appended to the wordmark, e.g. '/writeups/pickle-rick' */
+  crumb?: string;
+  /** absolute URL to a per-page og:image; falls back to the site card */
+  ogImage?: string;
 }
 
-const { title = 'zew0z :: security writeups & portfolio', description = 'CTF writeups, labs, and flags - a living record of breaking boxes to learn how they are built.' } = Astro.props;
+const { title = 'zew0z :: security writeups & portfolio', description = 'CTF writeups, labs, and flags - a living record of breaking boxes to learn how they are built.', crumb = '', ogImage } = Astro.props;
 ---
 
 <!doctype html>
@@ -25,7 +29,7 @@ const { title = 'zew0z :: security writeups & portfolio', description = 'CTF wri
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={new URL(Astro.url.pathname, Astro.site)} />
-    <meta property="og:image" content={new URL('/og.png', Astro.site)} />
+    <meta property="og:image" content={ogImage ?? new URL('/og.png', Astro.site)} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
@@ -36,7 +40,7 @@ const { title = 'zew0z :: security writeups & portfolio', description = 'CTF wri
 
     <header class="site-header">
       <div class="container site-header-inner">
-        <a class="wordmark" href="/"><span class="wm-prompt" aria-hidden="true">~/</span>zew0z<span class="tld">.io</span></a>
+        <a class="wordmark" href="/"><span class="wm-prompt" aria-hidden="true">~/</span>zew0z<span class="tld">.io</span>{crumb && <span class="wm-path" aria-hidden="true">{crumb}</span>}</a>
         <nav class="site-nav" aria-label="primary">
           <a href="/portfolio.html">portfolio</a>
           <a href="/writeups.html">writeups</a>
@@ -67,5 +71,6 @@ const { title = 'zew0z :: security writeups & portfolio', description = 'CTF wri
     </footer>
 
     <script src="../scripts/site.js"></script>
+    <script src="../scripts/palette.js"></script>
   </body>
 </html>

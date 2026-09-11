@@ -39,6 +39,8 @@ src/
                                writeups.ts (collection helpers: getWriteups, postUrl…)
   scripts/site.js              reveals, TOC, code copy buttons, spoiler gates, matrix easter egg
   scripts/terminal.js          the guest shell on the homepage (fake shell, flag hunt, flagboard)
+  scripts/palette.js           vim-ish command palette (':' or Ctrl/Cmd+K; :wq achievement)
+  pages/og/[slug].png.ts       per-writeup og share cards, rendered svg -> png via sharp at build
 public/assets/img/<room>/      writeup screenshots (referenced from markdown)
 public/leaderboard.json        flag board data, written by the flag-board GitHub Action
 docs/superpowers/plans/        historical build plans

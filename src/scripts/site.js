@@ -99,6 +99,7 @@
     root: 'flag captured :: root of this blog',
     konami: 'old habits :: the code that never dies',
     sudoer: 'integer underflow enjoyer :: sudo -u#-1',
+    vim: 'massive vim energy :: :wq',
     completionist: 'everything above :: nothing left to find'
   };
 
@@ -341,6 +342,15 @@
     });
 
     input.addEventListener('input', apply);
+
+    /* palette / shared links can seed the query with ?q= */
+    try {
+      var qParam = new URLSearchParams(window.location.search).get('q');
+      if (qParam) {
+        input.value = qParam.slice(0, 80);
+        apply();
+      }
+    } catch (e) {}
   }
 
   /* ---------- scroll reveal ---------- */

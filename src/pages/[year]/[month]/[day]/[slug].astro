@@ -32,7 +32,12 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 const platformLabel = { thm: 'tryhackme', htb: 'hackthebox', blog: 'blog' }[post.data.platform];
 ---
 
-<BaseLayout title={`${post.data.title} :: zew0z`} description={post.data.description}>
+<BaseLayout
+  title={`${post.data.title} :: zew0z`}
+  description={post.data.description}
+  crumb={`/writeups/${postSlug(post)}`}
+  ogImage={new URL(`/og/${postSlug(post)}.png`, Astro.site).href}
+>
   <article class="post container">
     <nav class="post-crumb" aria-label="breadcrumb">
       <a href="/writeups.html">~/writeups</a> / {post.data.platform} / {shortTitle(post).toLowerCase().replace(/\s+/g, '-')}.md
