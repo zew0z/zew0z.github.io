@@ -391,11 +391,19 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
 @supports ((-webkit-background-clip: text) or (background-clip: text)) {
   .ascii-hero {
     background: var(--spectrum);
+    /* 2x tile + one-tile-per-loop slide = seamless chroma flow */
+    background-size: 200% 100%;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
     text-shadow: none;
+    animation: chroma-flow 9s linear infinite;
   }
+}
+
+@keyframes chroma-flow {
+  from { background-position: 0 0; }
+  to { background-position: 200% 0; }
 }
 
 .shell-prompt {
@@ -842,32 +850,6 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
   overflow: hidden;
 }
 
-.ach-grid-compact {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.ach-grid-compact .ach {
-  grid-template-columns: 1fr;
-  gap: 0.75rem;
-}
-
-.ach-grid-compact .ach-desc {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.ach-grid-pro .ach {
-  border-radius: var(--radius);
-  background: transparent;
-  border-left: 2px solid color-mix(in srgb, var(--tile) 55%, var(--line));
-}
-
-.ach-grid-pro .ach:hover {
-  background: color-mix(in srgb, var(--tile) 6%, var(--bg1));
-}
-
 .ascii-hint {
   margin: 1rem 0;
   font-family: var(--font-mono);
@@ -895,6 +877,234 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
 }
 
 .page-hero-wide { max-width: 48rem; }
+
+/* ---------- portfolio page (bento / file rows / stat strip) ---------- */
+
+.pf-total {
+  margin: 1rem 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--ink3);
+}
+
+.pf-group { padding-top: 2.6rem; }
+.pf-group-last { padding-bottom: 4.5rem; }
+
+/* tools: feature cell + two stacked beside it */
+
+.pf-tools {
+  display: grid;
+  grid-template-columns: 1.45fr 1fr;
+  gap: 0.9rem 1rem;
+  margin-top: 1.3rem;
+}
+
+.pf-feature,
+.pf-tool {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--bg1) 85%, transparent);
+  padding: 1.35rem 1.45rem;
+  transition: border-color 0.18s ease, transform 0.18s ease, background 0.18s ease;
+}
+
+.pf-feature:hover,
+.pf-tool:hover {
+  border-color: color-mix(in srgb, var(--tile) 45%, var(--line));
+  background: color-mix(in srgb, var(--tile) 6%, var(--bg1));
+  transform: translateY(-2px);
+}
+
+.pf-feature { grid-row: span 2; }
+.pf-feature::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--tile);
+  opacity: 0.7;
+}
+
+.pf-feature-head {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.pf-title-lg,
+.pf-title,
+.pf-stat-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  line-height: 1.25;
+}
+
+.pf-title-lg { font-size: 1.45rem; display: flex; align-items: center; flex-wrap: wrap; gap: 0.55rem; }
+.pf-title { font-size: 1.08rem; display: flex; align-items: center; flex-wrap: wrap; gap: 0.45rem 0.55rem; }
+
+.pf-tool-icon { display: inline-flex; color: var(--tile); }
+.pf-tool-icon svg { width: 19px; height: 19px; }
+
+.pf-desc {
+  margin: 0;
+  color: var(--ink2);
+  font-size: 0.94rem;
+  line-height: 1.6;
+}
+
+.pf-run {
+  margin: 0.2rem 0 0;
+  padding: 0.65rem 0.95rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--ink);
+  background: var(--bg0);
+  border: 1px dashed var(--line2);
+  border-radius: var(--radius-sm);
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+.pf-meta {
+  margin: 0.2rem 0 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--bg0) 60%, transparent);
+  padding: 0.55rem 0.9rem;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+}
+
+.pf-meta-row { display: flex; gap: 1rem; padding: 0.14rem 0; }
+.pf-meta-row dt {
+  color: var(--ink3);
+  width: 5.5rem;
+  flex-shrink: 0;
+}
+.pf-meta-row dt::after { content: ' ::'; }
+.pf-meta-row dd { margin: 0; color: var(--ink2); }
+
+.pf-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: auto;
+  padding-top: 0.35rem;
+}
+
+/* clients: hue-spined file rows */
+
+.pf-files {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 1.3rem;
+}
+
+.pf-file {
+  display: grid;
+  grid-template-columns: 4px 1fr auto;
+  gap: 0 1.15rem;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--bg1) 70%, transparent);
+  padding: 0.85rem 1.15rem 0.85rem 0;
+  overflow: hidden;
+  transition: border-color 0.18s ease, transform 0.18s ease, background 0.18s ease;
+}
+
+.pf-file::before {
+  content: '';
+  background: var(--tile);
+  opacity: 0.5;
+  align-self: stretch;
+  transition: opacity 0.18s ease;
+}
+
+.pf-file:hover {
+  border-color: color-mix(in srgb, var(--tile) 45%, var(--line));
+  background: color-mix(in srgb, var(--tile) 6%, var(--bg1));
+  transform: translateY(-2px);
+}
+.pf-file:hover::before { opacity: 1; }
+
+.pf-file-main { min-width: 0; display: flex; flex-direction: column; gap: 0.25rem; }
+
+.pf-file-name {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+.pf-file-name .ext { font-size: 0.8em; color: var(--ink3); transition: color 0.15s ease, transform 0.15s ease; }
+.pf-file:hover .pf-file-name { color: var(--tile); }
+.pf-file:hover .pf-file-name .ext { color: var(--tile); transform: translate(2px, -2px); }
+
+.pf-file-desc {
+  color: var(--ink2);
+  font-size: 0.88rem;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.pf-file-tag {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--ink3);
+  white-space: nowrap;
+}
+
+/* disciplines: editorial stat strip, no boxes */
+
+.pf-stats {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1fr;
+  gap: 1.6rem 2.2rem;
+  margin-top: 1.5rem;
+}
+
+.pf-stat {
+  border-top: 2px solid color-mix(in srgb, var(--tile) 55%, var(--line));
+  padding-top: 1.05rem;
+  transition: border-color 0.18s ease;
+}
+.pf-stat:hover { border-top-color: var(--tile); }
+
+.pf-stat-title {
+  font-size: 1.12rem;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.pf-stat-icon { display: inline-flex; color: var(--tile); }
+.pf-stat-icon svg { width: 18px; height: 18px; }
+
+.pf-stat-desc {
+  margin: 0.6rem 0 0;
+  color: var(--ink2);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
 
 /* ---------- catalog ---------- */
 
@@ -1072,29 +1282,7 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
 .case-empty .mono { color: var(--ink2); }
 
 /* ---------- achievements ---------- */
-
-.ach-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(21rem, 1fr));
-  gap: 1rem;
-}
-
-.ach {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 1rem;
-  background: var(--bg1);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 1.15rem;
-  transition: border-color 0.18s ease, transform 0.18s ease, background 0.18s ease;
-}
-
-.ach:hover {
-  border-color: color-mix(in srgb, var(--tile) 45%, var(--line));
-  background: var(--bg2);
-  transform: translateY(-2px);
-}
+/* card grid pruned; .ach-icon survives (reused by portfolio feature cell) */
 
 .ach-icon {
   width: 44px;
@@ -1105,53 +1293,10 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
   color: var(--tile);
   background: color-mix(in srgb, var(--tile) 12%, transparent);
   border: 1px solid color-mix(in srgb, var(--tile) 35%, transparent);
+  flex-shrink: 0;
 }
 
 .ach-icon svg { width: 24px; height: 24px; }
-
-.ach-body { min-width: 0; }
-
-.ach-title {
-  margin: 0;
-  font-size: 1.02rem;
-  font-weight: 700;
-  font-family: var(--font-display);
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-.ach-title a { color: var(--ink); }
-.ach-title a:hover { color: var(--tile); }
-.ach-title .ext { font-size: 0.8em; color: var(--ink3); }
-
-.ach-chip {
-  font-family: var(--font-mono);
-  font-size: 0.64rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--tile);
-  border: 1px solid color-mix(in srgb, var(--tile) 45%, transparent);
-  border-radius: var(--radius-sm);
-  padding: 0.06rem 0.5rem;
-  white-space: nowrap;
-}
-
-.ach-desc {
-  margin: 0.45rem 0 0;
-  color: var(--ink2);
-  font-size: 0.92rem;
-}
-.ach-desc a { color: var(--sky); border-bottom: 1px dashed var(--line2); }
-.ach-desc a:hover { color: var(--teal); }
-
-.ach-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-  margin-top: 0.7rem;
-}
 
 /* hover star: "with the help of my AI agent team" */
 
@@ -1832,12 +1977,15 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
   html { scroll-behavior: auto; }
   .hero-copy,
   .hero-panel,
+  .ascii-hero,
   .reveal {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
     transition: none !important;
   }
+  /* static fallback: full spectrum spread edge to edge */
+  .ascii-hero { background-size: 100% 100%; }
   .shell-cursor { animation: none !important; opacity: 1; }
   *, *::before, *::after {
     transition-duration: 0.01ms !important;
@@ -1848,8 +1996,10 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
 /* ---------- responsive ---------- */
 
 @media (max-width: 960px) {
-  .ach-grid-compact { grid-template-columns: 1fr; }
   .preview-cases { grid-template-columns: 1fr; }
+  .pf-tools { grid-template-columns: 1fr; }
+  .pf-feature { grid-row: auto; }
+  .pf-stats { grid-template-columns: 1fr; gap: 1.6rem; }
   .work-listing-head,
   .work-row {
     grid-template-columns: 1fr auto;
@@ -1889,6 +2039,8 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
   .site-header-inner { gap: 1rem; }
 
   .case { grid-template-columns: 4px 1fr; }
+  .pf-file { grid-template-columns: 4px 1fr; padding-right: 0.9rem; }
+  .pf-file-tag { grid-column: 2; justify-self: start; }
   .case-side {
     grid-column: 2;
     flex-direction: row;

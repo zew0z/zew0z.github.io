@@ -33,8 +33,7 @@ looked at the changed pages in a browser (dev or preview), at desktop AND mobile
 src/
   layouts/BaseLayout.astro     header/nav/footer shell, meta, font + css imports
   pages/                       index, portfolio, writeups, 404, feed.xml (RSS)
-  components/                  AsciiArt, ShellPrompt, WorkListing, PortfolioGrid,
-                               WriteupCatalog, Achievements
+  components/                  AsciiArt, ShellPrompt, WorkListing, WriteupCatalog
   content/writeups/*.md        the writeups collection (content collections API)
   lib/                         ascii.ts (banners), portfolio.ts (work items, typed),
                                writeups.ts (collection helpers: getWriteups, postUrl…)

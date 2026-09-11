@@ -1,6 +1,9 @@
 export type PortfolioLink = { label: string; href: string };
 
+export type PortfolioGroup = 'tools' | 'clients' | 'disciplines';
+
 export type PortfolioItem = {
+  group: PortfolioGroup;
   icon: string;
   hue: string;
   title: string;
@@ -11,18 +14,30 @@ export type PortfolioItem = {
   links?: PortfolioLink[];
   descAfter?: string;
   tags: string[];
+  /** one-line example invocation, rendered as dim shell chrome */
+  run?: string;
+  /** factual meta rows (key/value), rendered mono inside the feature cell */
+  meta?: [string, string][];
 };
 
 export const portfolioItems: PortfolioItem[] = [
   {
+    group: 'tools',
     icon: 'tabler:terminal-2',
     hue: 'var(--teal)',
     title: 'Sectape',
     chip: 'own tool',
     desc: 'A terminal-session recorder I designed and built. It captures every command and its output so security work stays auditable and reproducible - made for CTF labs, useful anywhere a shell runs.',
+    run: 'sectape record',
+    meta: [
+      ['lang', 'python'],
+      ['license', 'mit'],
+      ['type', 'cli tool'],
+    ],
     tags: ['session recording', 'audit trail', 'security tooling'],
   },
   {
+    group: 'tools',
     icon: 'tabler:repeat',
     hue: 'var(--amber)',
     title: 'Skroutz XML Sync Framework',
@@ -36,6 +51,7 @@ export const portfolioItems: PortfolioItem[] = [
     tags: ['python', 'production feeds', 'client work'],
   },
   {
+    group: 'tools',
     icon: 'tabler:shopping-cart',
     hue: 'var(--green)',
     title: 'Headless Shopify Framework',
@@ -45,6 +61,7 @@ export const portfolioItems: PortfolioItem[] = [
     tags: ['shopify', 'headless', 'open source'],
   },
   {
+    group: 'clients',
     icon: 'tabler:rocket',
     hue: 'var(--sky)',
     title: 'crewvista.gr',
@@ -55,6 +72,7 @@ export const portfolioItems: PortfolioItem[] = [
     tags: ['maintenance', 'upgrades', 'release prep'],
   },
   {
+    group: 'clients',
     icon: 'tabler:brand-wordpress',
     hue: 'var(--coral)',
     title: 'alabasterskin.gr',
@@ -63,6 +81,7 @@ export const portfolioItems: PortfolioItem[] = [
     tags: ['wordpress', 'woocommerce'],
   },
   {
+    group: 'clients',
     icon: 'tabler:shopping-bag',
     hue: 'var(--violet)',
     title: 'totemica.gr',
@@ -71,6 +90,7 @@ export const portfolioItems: PortfolioItem[] = [
     tags: ['wordpress', 'woocommerce', 'full build'],
   },
   {
+    group: 'disciplines',
     icon: 'tabler:robot',
     hue: 'var(--teal)',
     title: 'AI Agent Engineering',
@@ -78,6 +98,7 @@ export const portfolioItems: PortfolioItem[] = [
     tags: ['agents', 'mcp', 'docker', 'prompting'],
   },
   {
+    group: 'disciplines',
     icon: 'tabler:cpu',
     hue: 'var(--green)',
     title: 'Linux, daily, 5+ years',
@@ -85,6 +106,7 @@ export const portfolioItems: PortfolioItem[] = [
     tags: ['arch btw', 'shell', 'self-hosting'],
   },
   {
+    group: 'disciplines',
     icon: 'tabler:trophy',
     hue: 'var(--amber)',
     title: 'TryHackMe: top 8%',
