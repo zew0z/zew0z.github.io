@@ -1,12 +1,17 @@
 ---
-layout: post
 title: "Agent Sudo - TryHackMe CTF Writeup"
 date: 2026-09-11
 difficulty: easy
 room: agentsudoctf
 description: "A deep-sea spy box - a user-agent door, hydra, a stego trail that carries the whole credential chain, and a real firing of CVE-2019-14287 for root."
-tags: [tryhackme, ctf, agent-sudo, stego, privesc]
+tags:
+  - tryhackme
+  - ctf
+  - agent-sudo
+  - stego
+  - privesc
 author: zew0z
+platform: thm
 ---
 
 # Agent Sudo - TryHackMe CTF

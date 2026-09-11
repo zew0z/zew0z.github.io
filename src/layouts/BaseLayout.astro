@@ -1,0 +1,64 @@
+---
+import '@fontsource-variable/space-grotesk';
+import '@fontsource-variable/instrument-sans';
+import '@fontsource-variable/jetbrains-mono';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = 'zew0z :: security writeups & portfolio', description = 'CTF writeups, labs, and flags - a living record of breaking boxes to learn how they are built.' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#0a0e1c" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="icon" href="/favicon.ico" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">skip to content</a>
+
+    <header class="site-header">
+      <div class="container site-header-inner">
+        <a class="wordmark" href="/">zew0z<span class="tld">.io</span></a>
+        <nav class="site-nav" aria-label="primary">
+          <a href="/#catalog">writeups</a>
+          <a href="/#playground">playground</a>
+          <a href="/feed.xml">rss</a>
+          <a class="nav-github" href="https://github.com/zew0z" target="_blank" rel="noopener">github</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <hr class="spectrum" style="margin: 0 0 1.6rem; max-width: 14rem;" />
+        <div class="footer-inner">
+          <p class="footer-note">zew0z :: built from scratch - astro, vanilla css, one fake shell</p>
+          <div class="footer-links">
+            <a href="https://github.com/zew0z" target="_blank" rel="noopener">github</a>
+            <a href="https://ko-fi.com/zew0z" target="_blank" rel="noopener">ko-fi</a>
+            <a href="/feed.xml">rss</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="../scripts/site.js"></script>
+  </body>
+</html>

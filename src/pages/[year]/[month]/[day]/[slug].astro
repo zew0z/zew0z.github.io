@@ -1,0 +1,95 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import { getWriteups, postSlug, postUrl, readMinutes, shortTitle } from '../../../../lib/writeups';
+
+export async function getStaticPaths() {
+  const posts = await getWriteups();
+  const p = (n: number) => String(n).padStart(2, '0');
+  return posts.map((post) => {
+    const d = post.data.date;
+    return {
+      params: {
+        year: String(d.getFullYear()),
+        month: p(d.getMonth() + 1),
+        day: p(d.getDate()),
+        slug: postSlug(post),
+      },
+      props: { post },
+    };
+  });
+}
+
+const { post } = Astro.props;
+const all = await getWriteups();
+const idx = all.findIndex((x) => x.id === post.id);
+const newer = idx > 0 ? all[idx - 1] : null;
+const older = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
+
+const { Content, headings } = await render(post);
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+const platformLabel = { thm: 'tryhackme', htb: 'hackthebox', blog: 'blog' }[post.data.platform];
+---
+
+<BaseLayout title={`${post.data.title} :: zew0z`} description={post.data.description}>
+  <article class="post container">
+    <nav class="post-crumb" aria-label="breadcrumb">
+      <a href="/#catalog">~/catalog</a> / {post.data.platform} / {shortTitle(post).toLowerCase().replace(/\s+/g, '-')}.md
+    </nav>
+
+    <header>
+      <h1 class="post-title">{shortTitle(post)}</h1>
+      <p class="post-meta">
+        <span>{post.data.date.toISOString().slice(0, 10)}</span>
+        <span class="sep">/</span>
+        <span><span class={`badge badge-${post.data.platform}`}>{post.data.platform}</span> {platformLabel}</span>
+        {post.data.difficulty && (
+          <span class="sep">/</span>
+        )}
+        {post.data.difficulty && <span class={`diff diff-${post.data.difficulty.replace(' ', '-')}`}>{post.data.difficulty}</span>}
+        {post.data.room && (
+          <span class="sep">/</span>
+        )}
+        {post.data.room && <a href={`https://tryhackme.com/room/${post.data.room}`} target="_blank" rel="noopener">room ↗</a>}
+        <span class="sep">/</span>
+        <span>~{readMinutes(post)} min read</span>
+      </p>
+      <hr class="spectrum" />
+    </header>
+
+    <div class="prose">
+      {toc.length >= 3 && (
+        <details class="toc">
+          <summary>cat index.md</summary>
+          <ul class="toc-list">
+            {toc.map((h) => (
+              <li class={h.depth === 3 ? 'toc-h3' : ''}>
+                <a href={`#${h.slug}`}>{h.text}</a>
+              </li>
+            ))}
+          </ul>
+        </details>
+      )}
+      <Content />
+    </div>
+
+    <footer class="post-footer">
+      <p>
+        {newer ? (
+          <>newer :: <a href={postUrl(newer)}>{shortTitle(newer)}</a></>
+        ) : (
+          <>newest writeup. you are at the front of the line.</>
+        )}
+      </p>
+      <p>
+        {older ? (
+          <>older :: <a href={postUrl(older)}>{shortTitle(older)}</a></>
+        ) : (
+          <>oldest writeup. everyone starts somewhere.</>
+        )}
+      </p>
+      <p>back :: <a href="/#catalog">the catalog</a></p>
+      <p class="post-kofi">learned something? <a href="https://ko-fi.com/zew0z" target="_blank" rel="noopener">buy me a coffee</a> :: ko-fi.com/zew0z</p>
+    </footer>
+  </article>
+</BaseLayout>

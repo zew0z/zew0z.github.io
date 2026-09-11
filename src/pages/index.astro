@@ -1,0 +1,138 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getWriteups, postUrl, readMinutes, searchItem, shortTitle } from '../lib/writeups';
+
+const posts = await getWriteups();
+const roomCount = posts.filter((p) => p.data.room).length;
+const thmCount = posts.filter((p) => p.data.platform === 'thm').length;
+const htbCount = posts.filter((p) => p.data.platform === 'htb').length;
+const techniques = [...new Set(posts.flatMap((p) => p.data.tags))].sort();
+
+/* TODO-USER-COPY: replace the hero-name role line and hero-bio paragraph
+   with the final portfolio synopsis wording when provided. */
+---
+
+<BaseLayout>
+  <!-- ============ synopsis ============ -->
+  <section class="hero">
+    <div class="container">
+      <p class="hero-eyebrow"><span class="pulse" aria-hidden="true"></span>actively breaking things (legally, in ctf land)</p>
+      <h1 class="hero-name">zew0z<span class="grad">.</span></h1>
+      <p class="hero-role">aspiring security engineer - web exploitation, privesc, and everything that breaks</p>
+      <p class="hero-bio">
+        student by day, box-breaker by night. every room i finish becomes a writeup here:
+        what worked, what failed, and what i would do differently. this site is my portfolio
+        and my lab notebook at once - if it is documented, it actually happened.
+      </p>
+      <hr class="spectrum hero-spectrum" />
+      <dl class="hero-stats">
+        <div class="hero-stat"><dt>rooms pwned</dt><dd>{roomCount}</dd></div>
+        <div class="hero-stat"><dt>tryhackme</dt><dd>{thmCount}</dd></div>
+        <div class="hero-stat"><dt>hackthebox</dt><dd>{htbCount}</dd></div>
+        <div class="hero-stat"><dt>techniques documented</dt><dd>{techniques.length}</dd></div>
+      </dl>
+      <div class="hero-links">
+        <a href="https://github.com/zew0z" target="_blank" rel="noopener">github/zew0z</a>
+        <a href="https://ko-fi.com/zew0z" target="_blank" rel="noopener">ko-fi/zew0z</a>
+        <a href="/feed.xml">rss feed</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ catalog ============ -->
+  <section class="section" id="catalog">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">the catalog <span class="count">:: {posts.length} writeups</span></h2>
+          <p class="section-sub">every room, fully documented and spoiler-free. search it, filter it, steal the technique.</p>
+        </div>
+      </div>
+
+      <div class="catalog-tools">
+        <div class="search-wrap">
+          <span class="search-icon" aria-hidden="true">&gt;_</span>
+          <input class="search-input" id="search-input" type="search" placeholder="search the work: sudo, stego, wordpress..." aria-label="search writeups" autocomplete="off" spellcheck="false" />
+          <span class="search-key" aria-hidden="true">/</span>
+        </div>
+        <div class="chip-row" role="group" aria-label="filter by platform">
+          <button class="chip is-active" type="button" data-platform="all">all</button>
+          <button class="chip" type="button" data-platform="thm"><span class="dot thm" aria-hidden="true"></span>tryhackme</button>
+          <button class="chip" type="button" data-platform="htb"><span class="dot htb" aria-hidden="true"></span>htb</button>
+          <button class="chip" type="button" data-platform="blog"><span class="dot blog" aria-hidden="true"></span>blog</button>
+        </div>
+      </div>
+
+      <p class="result-line" id="result-line" role="status">showing all {posts.length}</p>
+
+      <div class="case-list" id="case-list">
+        {posts.map((post) => (
+          <article
+            class={`case case-${post.data.platform}`}
+            data-platform={post.data.platform}
+            data-haystack={`${post.data.title} ${post.data.description} ${post.data.tags.join(' ')} ${post.body || ''}`.toLowerCase()}
+          >
+            <div class="case-spine" aria-hidden="true"></div>
+            <div class="case-main">
+              <div class="case-top">
+                <h3 class="case-title"><a href={postUrl(post)}>{shortTitle(post)}</a></h3>
+                <span class={`badge badge-${post.data.platform}`}>{post.data.platform}</span>
+                {post.data.difficulty && <span class={`diff diff-${post.data.difficulty.replace(' ', '-')}`}>{post.data.difficulty}</span>}
+              </div>
+              <p class="case-desc">{post.data.description}</p>
+              <div class="case-tags">
+                {post.data.tags.map((t) => <button class="tag" type="button" data-q={t}>#{t}</button>)}
+              </div>
+            </div>
+            <div class="case-side">
+              <span>{post.data.date.toISOString().slice(0, 10)}</span>
+              <span>~{readMinutes(post)} min</span>
+              {post.data.room && <a href={`https://tryhackme.com/room/${post.data.room}`} target="_blank" rel="noopener">room ↗</a>}
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <div class="case-empty" id="case-empty" hidden>
+        <p>nothing matches that query. <button class="chip" type="button" id="search-reset">clear search</button></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ playground ============ -->
+  <section class="playground section" id="playground">
+    <div class="container playground-grid">
+      <div class="playground-copy">
+        <h2 class="section-title">the playground</h2>
+        <p>
+          a fake shell with real opinions. it knows the catalog, it hides one actual flag,
+          and it keeps score of what you unlock. a real shell would be irresponsible;
+          this one just wants you to poke around.
+        </p>
+        <p class="mono-hint">start with <code>help</code>, or go straight for <code>nmap</code> and <code>wiki</code>. rumor: <code>cat flag.txt</code> is not the way.</p>
+        <p class="mono-hint">capture the flag to claim a spot on the flag board.</p>
+      </div>
+      <div>
+        <div class="term" id="guest-term">
+          <div class="term-chrome" aria-hidden="true">
+            <span class="tdot tdot-r"></span><span class="tdot tdot-y"></span><span class="tdot tdot-g"></span>
+            <span class="tname">guest@zew0z: ~</span>
+          </div>
+          <div class="term-out" id="term-out" role="log" aria-label="guest terminal output"></div>
+          <form class="term-line" id="term-form" autocomplete="off">
+            <label class="term-prompt" for="term-input">guest@zew0z:~$</label>
+            <input class="term-input" id="term-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="guest terminal input. type help for commands." />
+          </form>
+        </div>
+        <div class="flagboard">
+          <div class="flagboard-head">flagboard :: hunters who checked the source</div>
+          <div class="flagboard-rows" id="flagboard-rows"></div>
+          <p class="flagboard-join">join: capture the flag hiding in the shell, then run publish</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script id="site-data" type="application/json" set:html={JSON.stringify({ posts: posts.map(searchItem) })} />
+  <script src="../scripts/terminal.js"></script>
+</BaseLayout>

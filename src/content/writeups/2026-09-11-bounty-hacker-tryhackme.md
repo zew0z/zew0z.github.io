@@ -1,12 +1,17 @@
 ---
-layout: post
 title: "Bounty Hacker - TryHackMe CTF Writeup"
 date: 2026-09-11
 difficulty: easy
 room: cowboyhacker
 description: "A Cowboy Bebop themed box - anonymous FTP leaking a custom wordlist, hydra against SSH, and a sudo tar checkpoint shell for root."
-tags: [tryhackme, ctf, bounty-hacker, hydra, privesc]
+tags:
+  - tryhackme
+  - ctf
+  - bounty-hacker
+  - hydra
+  - privesc
 author: zew0z
+platform: thm
 ---
 
 # Bounty Hacker - TryHackMe CTF

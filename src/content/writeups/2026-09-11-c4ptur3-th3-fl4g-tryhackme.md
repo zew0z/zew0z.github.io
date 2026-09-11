@@ -1,12 +1,17 @@
 ---
-layout: post
 title: "c4ptur3-th3-fl4g - TryHackMe CTF Writeup"
 date: 2026-09-11
 difficulty: easy
 room: c4ptur3th3fl4g
 description: "No box, just puzzles - leetspeak, binary, base32, ROT13/ROT47, morse, a five-layer encoding onion, spectrograms, and two stego files."
-tags: [tryhackme, ctf, c4ptur3-th3-fl4g, encoding, stego]
+tags:
+  - tryhackme
+  - ctf
+  - c4ptur3-th3-fl4g
+  - encoding
+  - stego
 author: zew0z
+platform: thm
 ---
 
 # c4ptur3-th3-fl4g - TryHackMe CTF

@@ -1,0 +1,16 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="404 :: zew0z" description="page not found">
+  <section class="err-hero">
+    <h1 class="err-code">404</h1>
+    <p class="err-line">cat: /{Astro.url.pathname}: No such file or directory</p>
+    <p class="err-sub">the path you requested doesn't exist on this host. even nmap found nothing.</p>
+    <div class="hero-links">
+      <a href="/">home</a>
+      <a href="/#catalog">the catalog</a>
+      <a href="/#playground">the playground</a>
+    </div>
+  </section>
+</BaseLayout>

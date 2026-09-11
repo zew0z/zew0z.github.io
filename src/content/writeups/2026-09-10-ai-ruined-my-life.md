@@ -1,10 +1,14 @@
 ---
-layout: post
 title: "AI Ruined My Life"
 date: 2026-09-10 01:00:00
 description: "I spent weeks chasing AI tools, models, and agent setups instead of actually learning cybersecurity. A confession, and how I fixed it."
-tags: [ai, focus, productivity, rant]
+tags:
+  - ai
+  - focus
+  - productivity
+  - rant
 author: zew0z
+platform: blog
 ---
 
 # AI Ruined My Life
