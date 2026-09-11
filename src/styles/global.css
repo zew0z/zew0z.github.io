@@ -519,6 +519,130 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
 }
 .case-empty .mono { color: var(--ink2); }
 
+/* ---------- achievements ---------- */
+
+.ach-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(21rem, 1fr));
+  gap: 1rem;
+}
+
+.ach {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  background: var(--bg1);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.15rem;
+  transition: border-color 0.18s ease, transform 0.18s ease, background 0.18s ease;
+}
+
+.ach:hover {
+  border-color: color-mix(in srgb, var(--tile) 45%, var(--line));
+  background: var(--bg2);
+  transform: translateY(-2px);
+}
+
+.ach-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  color: var(--tile);
+  background: color-mix(in srgb, var(--tile) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--tile) 35%, transparent);
+}
+
+.ach-icon svg { width: 24px; height: 24px; }
+
+.ach-body { min-width: 0; }
+
+.ach-title {
+  margin: 0;
+  font-size: 1.02rem;
+  font-weight: 700;
+  font-family: var(--font-display);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.ach-title a { color: var(--ink); }
+.ach-title a:hover { color: var(--tile); }
+.ach-title .ext { font-size: 0.8em; color: var(--ink3); }
+
+.ach-chip {
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--tile);
+  border: 1px solid color-mix(in srgb, var(--tile) 45%, transparent);
+  border-radius: 99px;
+  padding: 0.06rem 0.5rem;
+  white-space: nowrap;
+}
+
+.ach-desc {
+  margin: 0.45rem 0 0;
+  color: var(--ink2);
+  font-size: 0.92rem;
+}
+.ach-desc a { color: var(--sky); border-bottom: 1px dashed var(--line2); }
+.ach-desc a:hover { color: var(--teal); }
+
+.ach-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.7rem;
+}
+
+/* hover star: "with the help of my AI agent team" */
+
+.star-tip {
+  position: relative;
+  display: inline-flex;
+  color: var(--amber);
+  cursor: help;
+}
+
+.star-tip svg {
+  width: 15px;
+  height: 15px;
+  filter: drop-shadow(0 0 5px rgba(251, 191, 36, 0.4));
+}
+
+.star-tip .tip {
+  position: absolute;
+  bottom: calc(100% + 9px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 14rem;
+  white-space: normal;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: var(--amber);
+  background: var(--bg2);
+  border: 1px solid color-mix(in srgb, var(--amber) 55%, transparent);
+  border-radius: 6px;
+  padding: 0.32rem 0.6rem;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+  z-index: 6;
+}
+
+.star-tip:hover .tip,
+.star-tip:focus-visible .tip { opacity: 1; }
+
 /* ---------- playground ---------- */
 
 .playground {
@@ -1029,6 +1153,8 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
   .section { padding: 3.2rem 0; }
   .hero { padding: 3.6rem 0 3rem; }
   .container { padding: 0 1.1rem; }
+
+  .star-tip .tip { left: auto; right: 0; transform: none; }
 
   .site-nav { gap: 0.9rem; font-size: 0.86rem; }
   .site-nav a.nav-github { display: none; }

@@ -1,15 +1,9 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Achievements from '../components/Achievements.astro';
 import { getWriteups, postUrl, readMinutes, searchItem, shortTitle } from '../lib/writeups';
 
 const posts = await getWriteups();
-const roomCount = posts.filter((p) => p.data.room).length;
-const thmCount = posts.filter((p) => p.data.platform === 'thm').length;
-const htbCount = posts.filter((p) => p.data.platform === 'htb').length;
-const techniques = [...new Set(posts.flatMap((p) => p.data.tags))].sort();
-
-/* TODO-USER-COPY: replace the hero-name role line and hero-bio paragraph
-   with the final portfolio synopsis wording when provided. */
 ---
 
 <BaseLayout>
@@ -18,18 +12,19 @@ const techniques = [...new Set(posts.flatMap((p) => p.data.tags))].sort();
     <div class="container">
       <p class="hero-eyebrow"><span class="pulse" aria-hidden="true"></span>actively breaking things (legally, in ctf land)</p>
       <h1 class="hero-name">zew0z<span class="grad">.</span></h1>
-      <p class="hero-role">aspiring security engineer - web exploitation, privesc, and everything that breaks</p>
+      <p class="hero-role">I break boxes, build storefronts, and ship with an AI agent team.</p>
       <p class="hero-bio">
-        student by day, box-breaker by night. every room i finish becomes a writeup here:
-        what worked, what failed, and what i would do differently. this site is my portfolio
-        and my lab notebook at once - if it is documented, it actually happened.
+        three jobs, one habit: document everything. on TryHackMe i've finished 100+ rooms and
+        climbed into the top 8% - every one written up below, spoiler-free. for clients i build
+        and maintain real e-commerce: WooCommerce stores, price-engine feeds, headless storefronts.
+        and behind all of it sits an AI agent team i've trained to handle the boring parts.
       </p>
       <hr class="spectrum hero-spectrum" />
       <dl class="hero-stats">
-        <div class="hero-stat"><dt>rooms pwned</dt><dd>{roomCount}</dd></div>
-        <div class="hero-stat"><dt>tryhackme</dt><dd>{thmCount}</dd></div>
-        <div class="hero-stat"><dt>hackthebox</dt><dd>{htbCount}</dd></div>
-        <div class="hero-stat"><dt>techniques documented</dt><dd>{techniques.length}</dd></div>
+        <div class="hero-stat"><dt>thm rooms</dt><dd>100+</dd></div>
+        <div class="hero-stat"><dt>platform rank</dt><dd>top 8%</dd></div>
+        <div class="hero-stat"><dt>years on linux</dt><dd>5+</dd></div>
+        <div class="hero-stat"><dt>projects &amp; clients</dt><dd>8</dd></div>
       </dl>
       <div class="hero-links">
         <a href="https://github.com/zew0z" target="_blank" rel="noopener">github/zew0z</a>
@@ -38,6 +33,8 @@ const techniques = [...new Set(posts.flatMap((p) => p.data.tags))].sort();
       </div>
     </div>
   </section>
+
+  <Achievements />
 
   <!-- ============ catalog ============ -->
   <section class="section" id="catalog">
