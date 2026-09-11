@@ -756,7 +756,6 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
 .preview-log-row:hover .plog-title { color: var(--teal); }
 
 .plog-desc {
-  display: block;
   margin-top: 0.25rem;
   color: var(--ink2);
   font-size: 0.9rem;
