@@ -47,6 +47,9 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
+/* author display values (e.g. .case { display: grid }) must not defeat hidden */
+[hidden] { display: none !important; }
+
 html {
   scroll-behavior: smooth;
   color-scheme: dark;
@@ -116,6 +119,9 @@ main { flex: 1 0 auto; }
 img { max-width: 100%; height: auto; }
 
 h1, h2, h3, h4 { font-family: var(--font-display); text-wrap: balance; line-height: 1.2; }
+
+/* anchored headings (toc links) must not hide under the sticky header */
+.prose h2[id], .prose h3[id], .prose h4[id] { scroll-margin-top: 5rem; }
 
 a { color: var(--sky); text-decoration: none; }
 a:hover { color: var(--ink); }
@@ -1262,7 +1268,10 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
   gap: 0.6ch;
   border-top: 1px solid var(--line);
   padding: 0.6rem 1.1rem 0.7rem;
+  transition: border-color 0.15s ease;
 }
+
+.term-line:focus-within { border-top-color: var(--teal); }
 
 .term-prompt {
   color: var(--teal);

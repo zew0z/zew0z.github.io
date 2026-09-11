@@ -17,7 +17,7 @@ const { items = portfolioItems, compact = false } = Astro.props;
         <Icon name={item.icon} />
       </div>
       <div class="ach-body">
-        <h3 class="ach-title">
+        <h2 class="ach-title">
           {item.link ? (
             <a href={item.link} target="_blank" rel="noopener">{item.title} <span class="ext" aria-hidden="true">↗</span></a>
           ) : (
@@ -30,7 +30,7 @@ const { items = portfolioItems, compact = false } = Astro.props;
               <span class="tip" aria-hidden="true">with the help of my AI agent team</span>
             </span>
           )}
-        </h3>
+        </h2>
         <p class="ach-desc">
           {item.desc}
           {item.links && item.links.map((l, i) => (

@@ -17,7 +17,7 @@ const displayTags = (tags: string[]) => tags.filter((t) => !BOILERPLATE_TAGS.has
   <div class="catalog-tools">
     <div class="search-wrap">
       <span class="search-icon" aria-hidden="true">&gt;_</span>
-      <input class="search-input" id="search-input" type="search" placeholder="search the work: sudo, stego, wordpress..." aria-label="search writeups" autocomplete="off" spellcheck="false" />
+      <input class="search-input" id="search-input" type="search" placeholder="search the work: sudo, stego, wordpress…" aria-label="search writeups" autocomplete="off" spellcheck="false" />
       <span class="search-key" aria-hidden="true">/</span>
     </div>
     <div class="chip-row" role="group" aria-label="filter by platform">
@@ -43,7 +43,7 @@ const displayTags = (tags: string[]) => tags.filter((t) => !BOILERPLATE_TAGS.has
       <div class="case-spine" aria-hidden="true"></div>
       <div class="case-main">
         <div class="case-top">
-          <h3 class="case-title"><a href={postUrl(post)}>{shortTitle(post)}</a></h3>
+          <h2 class="case-title"><a href={postUrl(post)}>{shortTitle(post)}</a></h2>
           <span class={`badge badge-${post.data.platform}`}>{post.data.platform}</span>
           {post.data.difficulty && <span class={`diff diff-${post.data.difficulty.replace(' ', '-')}`}>{post.data.difficulty}</span>}
         </div>
