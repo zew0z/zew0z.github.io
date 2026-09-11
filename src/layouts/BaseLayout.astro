@@ -24,6 +24,11 @@ const { title = 'zew0z :: security writeups & portfolio', description = 'CTF wri
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content={new URL(Astro.url.pathname, Astro.site)} />
+    <meta property="og:image" content={new URL('/og.png', Astro.site)} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="/favicon.ico" />
   </head>
   <body>
@@ -36,7 +41,6 @@ const { title = 'zew0z :: security writeups & portfolio', description = 'CTF wri
           <a href="/portfolio.html">portfolio</a>
           <a href="/writeups.html">writeups</a>
           <a href="/#playground">shell</a>
-          <a href="/feed.xml">rss</a>
           <a class="nav-github" href="https://github.com/zew0z" target="_blank" rel="noopener">github</a>
         </nav>
       </div>

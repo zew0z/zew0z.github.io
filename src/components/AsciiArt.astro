@@ -2,10 +2,15 @@
 interface Props {
   art: string;
   class?: string;
+  /** set to expose the art to screen readers as an image; omit for decorative use */
   label?: string;
 }
 
-const { art, class: className = '', label = 'ascii art' } = Astro.props;
+const { art, class: className = '', label } = Astro.props;
+const decorative = !label;
 ---
 
-<pre class={`ascii ${className}`.trim()} aria-label={label} role="img">{art}</pre>
+<pre
+  class={`ascii ${className}`.trim()}
+  {...(decorative ? { 'aria-hidden': 'true' } : { 'aria-label': label, role: 'img' })}
+>{art}</pre>

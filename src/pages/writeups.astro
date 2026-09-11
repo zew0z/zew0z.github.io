@@ -1,19 +1,10 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import AsciiArt from '../components/AsciiArt.astro';
 import ShellPrompt from '../components/ShellPrompt.astro';
 import WriteupCatalog from '../components/WriteupCatalog.astro';
 import { getWriteups, searchItem } from '../lib/writeups';
 
 const posts = await getWriteups();
-const banner = [
-  '            _ _                            ',
-  ' __      __(_) |_ ___ _   _ _ __  ___      ',
-  " \\ \\ /\\ / / | __/ _ \\ | | | '_ \\/ __|  ",
-  '  \\ V  V /| | ||  __/ |_| | |_) \\__ \\   ',
-  '   \\_/\\_/ |_|\\__\\___|\\__,_| .__/|___/ ',
-  '                           |_|             ',
-].join('\n');
 ---
 
 <BaseLayout
@@ -23,7 +14,6 @@ const banner = [
   <section class="page-hero">
     <div class="container page-hero-inner page-hero-wide">
       <ShellPrompt path="~/writeups" command="find . -name '*.md' | wc -l" />
-      <AsciiArt art={banner} class="ascii-page" label="writeups ascii header" />
       <h1 class="page-title">writeups <span class="count">:: {posts.length} files</span></h1>
       <p class="page-lede">
         every room fully documented. flags and passwords never printed; solutions sit behind a spoiler gate.

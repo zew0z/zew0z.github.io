@@ -7,6 +7,10 @@ interface Props {
 }
 
 const { posts, searchable = true } = Astro.props;
+
+// platform badge + difficulty already carry this info; show only distinctive tags
+const BOILERPLATE_TAGS = new Set(['tryhackme', 'htb', 'hackthebox', 'ctf', 'blog', 'writeup', 'writeups', 'cybersecurity']);
+const displayTags = (tags: string[]) => tags.filter((t) => !BOILERPLATE_TAGS.has(t)).slice(0, 3);
 ---
 
 {searchable && (
@@ -45,12 +49,14 @@ const { posts, searchable = true } = Astro.props;
         </div>
         <p class="case-desc">{post.data.description}</p>
         <div class="case-tags">
-          {post.data.tags.map((t) => <button class="tag" type="button" data-q={t}>#{t}</button>)}
+          {displayTags(post.data.tags).map((t) => <button class="tag" type="button" data-q={t}>#{t}</button>)}
         </div>
       </div>
       <div class="case-side">
-        <span>{post.data.date.toISOString().slice(0, 10)}</span>
-        <span>~{readMinutes(post)} min</span>
+        <div class="case-when">
+          <span>{post.data.date.toISOString().slice(0, 10)}</span>
+          <span>~{readMinutes(post)} min</span>
+        </div>
         {post.data.room && <a href={`https://tryhackme.com/room/${post.data.room}`} target="_blank" rel="noopener">room ↗</a>}
       </div>
     </article>

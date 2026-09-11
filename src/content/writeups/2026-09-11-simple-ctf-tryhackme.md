@@ -42,17 +42,17 @@ I also fumbled one of the first questions by not reading it properly. "How many 
 
 Port 80 serves the default Apache page, so next stop is `robots.txt`:
 
-![](/assets/img/simple-ctf/thm-simplectf-robots-txt.png)
+![](../../assets/img/simple-ctf/thm-simplectf-robots-txt.png)
 
 One juicy-looking entry: `Disallow: /openemr-5_0_1_3`. A versioned path for a medical records system with known CVEs? That smells like the room's whole point.
 
 Except:
 
-![](/assets/img/simple-ctf/thm-simplectf-openemr-404.png)
+![](../../assets/img/simple-ctf/thm-simplectf-openemr-404.png)
 
 404. The path doesn't exist. And here's where I lost some time: instead of accepting that, I went and researched OpenEMR 5.0.1.3 exploits anyway, because the robots.txt entry was *so* specific:
 
-![](/assets/img/simple-ctf/thm-simplectf-openemr-exploitdb.png)
+![](../../assets/img/simple-ctf/thm-simplectf-openemr-exploitdb.png)
 
 Found exploits, read CVE writeups, connected exactly nothing. The lesson landed only after I stopped believing robots.txt and let **gobuster** tell me what's actually served:
 
@@ -66,11 +66,11 @@ simple               (Status: 301) [--> http://<machine-ip>/simple/]
 
 ## SQLi on CMS Made Simple
 
-![](/assets/img/simple-ctf/thm-simplectf-cms-homepage.png)
+![](../../assets/img/simple-ctf/thm-simplectf-cms-homepage.png)
 
 `/simple/` is **CMS Made Simple 2.2.8** with the News module installed (the footer helpfully says "Posted by: mitch" - remember that name). Version numbers are for looking up: CMS Made Simple 2.2.8 has **CVE-2019-9053**, an unauthenticated blind time-based SQL injection through the News module's `m1_idlist` parameter. Public exploit as EDB-ID 46635:
 
-![](/assets/img/simple-ctf/thm-simplectf-cms-exploitdb.png)
+![](../../assets/img/simple-ctf/thm-simplectf-cms-exploitdb.png)
 
 Two fails before it worked, both worth documenting:
 
@@ -110,7 +110,7 @@ Salt, username, password hash, and a cracked plaintext, straight out of a time-b
 
 The admin portal at `/simple/admin/` accepted the cracked login:
 
-![](/assets/img/simple-ctf/thm-simplectf-admin.png)
+![](../../assets/img/simple-ctf/thm-simplectf-admin.png)
 
 But CMS admin rights aren't the win here - the room wants a shell, and the credentials also work for that SSH service on port **2222**:
 

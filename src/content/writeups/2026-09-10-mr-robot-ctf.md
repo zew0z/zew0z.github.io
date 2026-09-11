@@ -27,7 +27,7 @@ Note: like always, I'm leaving the actual keys/flags out of this writeup so I do
 Deployed the box and did my usual ping check. Interesting detail: ping showed packets coming back, but nmap reported the host as filtered with all 1000 ports showing `no-response`. I had to use `-Pn` and even then the box needed time — the scan took over 200 seconds while the machine was still booting its services. Lesson learned: don't trust the first scan against a fresh VM.
 
 Opening the website in the browser, I got greeted with a **terminal-like interactive interface**:
-![](/assets/img/mr-robot/thm-mr-robot-webpage.png)
+![](../../assets/img/mr-robot/thm-mr-robot-webpage.png)
 
 ## Source Code Rabbit Holes
 
@@ -36,14 +36,14 @@ My first thought was "deobfuscation" when I saw a `s_code.js` file in the source
 I also found a weird script with `data-protonpass-role` in it... which turned out to be injected by my own **Proton Pass browser extension**. Important lesson: audit what's actually served by the target vs what your own browser injects.
 
 But one thing in the source was real: a link to a login page at `/wp-login.php`:
-![](/assets/img/mr-robot/thm-mr-robot-wp-login.png)
+![](../../assets/img/mr-robot/thm-mr-robot-wp-login.png)
 
 That means **WordPress**. High-value attack surface.
 
 ## robots.txt (Again!)
 
 After being a bit lost, I checked `robots.txt` — and it paid off immediately:
-![](/assets/img/mr-robot/thm-mr-robot-robots-txt.png)
+![](../../assets/img/mr-robot/thm-mr-robot-robots-txt.png)
 
 Two entries:
 
@@ -71,7 +71,7 @@ Two funny moments here:
 `/license` returned a quote from the show... but viewing the raw source revealed more text that the browser hid behind a **Content Encoding Error**. Curling the page directly showed the full output, including a suspicious base64 string at the end.
 
 I threw it into a base64 decoder and out came a WordPress credential pair. (Not printing it here — try the room.) Logged into `/wp-admin/` and I was in as an **Administrator**:
-![](/assets/img/mr-robot/thm-mr-robot-wp-users.png)
+![](../../assets/img/mr-robot/thm-mr-robot-wp-users.png)
 
 There was even a second user account (a Subscriber). I spent some time trying to log in as them with a password I created for fun — nope, nothing. Dead end, moved on.
 

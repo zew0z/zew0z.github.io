@@ -39,9 +39,9 @@ Three ports, and the banner I care about is right there: **anonymous FTP login a
 
 The website itself is a single page with a dramatic anime quote and, as far as I could tell from the source, nothing useful hidden in it:
 
-![](/assets/img/bounty-hacker/thm-bounty-hacker-webpage.png)
+![](../../assets/img/bounty-hacker/thm-bounty-hacker-webpage.png)
 
-![](/assets/img/bounty-hacker/thm-bounty-hacker-source.png)
+![](../../assets/img/bounty-hacker/thm-bounty-hacker-source.png)
 
 ## The FTP Leaks
 

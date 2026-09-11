@@ -21,11 +21,11 @@ platform: htb
 
 When I visited the challenge website, I was greeted with a bunch of text and what looked like a "command prompt" interface.
 
-![](/assets/img/flag-command/website.png)
+![](../../assets/img/flag-command/website.png)
 
 It turned out to be a story-based game, where we can only type specific commands to proceed. If you try anything else, the game responds with some sarcastic remarks:
 
-![](/assets/img/flag-command/error.png)
+![](../../assets/img/flag-command/error.png)
 
 It tells you to type `help`, and gives you only a few commands like:
 
@@ -73,7 +73,7 @@ There's a secret command list??
 Looking further into how options are fetched, I noticed an internal API endpoint at: `/options/api`
 
 Visiting it revealed… a secret command tied to pickle rick. Again with this guy.
-![](/assets/img/flag-command/api.png)
+![](../../assets/img/flag-command/api.png)
 
 ---
 

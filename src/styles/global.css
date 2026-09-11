@@ -16,7 +16,7 @@
   /* ink */
   --ink: #e9edfb;
   --ink2: #a9b2d4;
-  --ink3: #68719a;
+  --ink3: #7f89b5;
 
   /* accent roles */
   --teal: #2dd4bf;   /* tryhackme */
@@ -380,13 +380,16 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
 
 .ascii-hero {
   margin: 0.55rem 0 0;
-  color: #5eead4;
 }
 
-.ascii-page {
-  margin: 0.4rem 0 0.9rem;
-  color: var(--teal);
-  opacity: 0.9;
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .ascii-hero {
+    background: var(--spectrum);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: none;
+  }
 }
 
 .shell-prompt {
@@ -425,7 +428,7 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
 
 .hero {
   padding: 2.8rem 0 3rem;
-  min-height: min(78dvh, 40rem);
+  min-height: min(58dvh, 34rem);
   display: flex;
   align-items: center;
 }
@@ -1030,6 +1033,13 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
   font-size: 0.78rem;
   color: var(--ink3);
   white-space: nowrap;
+}
+
+.case-when {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.2rem;
 }
 
 .case-desc {
@@ -1865,8 +1875,9 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
 
   .star-tip .tip { left: auto; right: 0; transform: none; }
 
-  .site-nav { gap: 0.9rem; font-size: 0.86rem; }
-  .site-nav a.nav-github { display: none; }
+  .site-nav { gap: 0.8rem; font-size: 0.85rem; }
+  .site-nav a.nav-github { padding: 0.28rem 0.65rem; }
+  .site-header-inner { gap: 1rem; }
 
   .case { grid-template-columns: 4px 1fr; }
   .case-side {
@@ -1875,8 +1886,15 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
     align-items: center;
     justify-content: flex-start;
     flex-wrap: wrap;
+    gap: 0.4rem 1rem;
     padding: 0 1.1rem 1.1rem 1.35rem;
     white-space: normal;
+  }
+  .case-when {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem 1rem;
   }
   .case-main { padding-right: 1.1rem; }
 

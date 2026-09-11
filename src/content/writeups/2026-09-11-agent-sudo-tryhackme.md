@@ -47,7 +47,7 @@ ftp: Login failed.
 
 No anonymous FTP this time. The website is one dramatic page titled "Annoucement" (typo included, it's part of the charm):
 
-![](/assets/img/agent-sudo/thm-agent-sudo-webpage.png)
+![](../../assets/img/agent-sudo/thm-agent-sudo-webpage.png)
 
 ## The user-agent door
 
@@ -66,7 +66,7 @@ From, Agent R
 
 Codenames are single letters here. Agent R's note signed with R, so C was a fair first guess - and it paid out a name: **chris**. That's a username, served voluntarily, same rule as task.txt in Bounty Hacker: whoever signs the notes probably has an account.
 
-![](/assets/img/agent-sudo/thm-agent-sudo-user-agent-c.png)
+![](../../assets/img/agent-sudo/thm-agent-sudo-user-agent-c.png)
 
 ## Hydra vs FTP
 
@@ -150,9 +150,9 @@ Alien_autospy.jpg  user_flag.txt
 
 User flag captured - not printed here. Alongside it sits `Alien_autospy.jpg`, and the room asks what incident the photo is from. Reverse image search says... ew. It's a still from the famous **Roswell alien autopsy** hoax footage, the 1995 pseudo-documentary that fooled a lot of television audiences.
 
-![](/assets/img/agent-sudo/thm-agent-sudo-alien-autopsy.png)
+![](../../assets/img/agent-sudo/thm-agent-sudo-alien-autopsy.png)
 
-![](/assets/img/agent-sudo/thm-agent-sudo-incident-search.png)
+![](../../assets/img/agent-sudo/thm-agent-sudo-incident-search.png)
 
 ## Root via CVE-2019-14287
 

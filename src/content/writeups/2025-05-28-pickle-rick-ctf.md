@@ -30,7 +30,7 @@ Basic setup. Used OpenVPN to connect to the THM network — nothing exciting her
 ## [Nmap](https://nmap.org/docs.html) Scan: The Usual Start
 
 I ran a full port scan, and an aggressive scan too. Saved it to `nmap.txt` so I wouldn't forget what I found. SSH was running on port 22, and HTTP was open on port 80 — classic setup.
-![](/assets/img/pickle-rick/nmap.png)
+![](../../assets/img/pickle-rick/nmap.png)
 
 ---
 
@@ -55,7 +55,7 @@ It looked important, maybe a password or a keyphrase. I saved it just in case.
 I used a small wordlist (from dirb) and looked for pages with `.php`, `.html`, and `.txt` extensions. Nothing too aggressive, but enough to catch anything obvious.
 
 Eventually found a **login page**. Nice.
-![](/assets/img/pickle-rick/ffuf-dir.png)
+![](../../assets/img/pickle-rick/ffuf-dir.png)
 
 ---
 
@@ -64,45 +64,45 @@ Eventually found a **login page**. Nice.
 Tried the username from earlier (`R1ckRul3s`) and the phrase from `robots.txt` as the password. And it worked!
 
 After logging in, I landed on an admin page with a **command execution box**.
-![](/assets/img/pickle-rick/command-page.png)
+![](../../assets/img/pickle-rick/command-page.png)
 
 ---
 
 ## [Command Injection](https://owasp.org/www-community/attacks/Command_Injection) Playground
 
 I tried some basic Linux commands like `ls`, and yep — it worked. I saw the file for the first flag... but when I tried to read it with `cat`, it was blocked by some kind of filter.
-![](/assets/img/pickle-rick/filter.png)
+![](../../assets/img/pickle-rick/filter.png)
 I messed around a bit and finally got around it using a **quote-based injection** (like `''; cat file`), and that worked. First flag: done ✅
-![](/assets/img/pickle-rick/bypass.png)
+![](../../assets/img/pickle-rick/bypass.png)
 
 ---
 
 ## Source Code Weirdness
 
 Later, I spotted a weird string in the source code. It looked like Base64 (ended with `==`), but it didn't decode cleanly. There was even a `1` in it, which kinda threw me off. Probably a red herring? Either way, I noted it down and moved on.
-![](/assets/img/pickle-rick/binary.png)
+![](../../assets/img/pickle-rick/binary.png)
 
 ---
 
 ## "Potions" Page and More Clues
 
 There was a Potions tab in the interface, but it was kinda locked.
-![](/assets/img/pickle-rick/not-allowed.png)
+![](../../assets/img/pickle-rick/not-allowed.png)
 
 Eventually found out there were two users on the system, including Rick and Ubuntu.
-![](/assets/img/pickle-rick/users.png)
+![](../../assets/img/pickle-rick/users.png)
 
 Inside Ricks home folder, I spotted the **second ingredients file**. Couldn't read it at first, so I ran `sudo -l` just in case…
-![](/assets/img/pickle-rick/sudo.png)
+![](../../assets/img/pickle-rick/sudo.png)
 
 ---
 
 ## Root Access?!?
 
 Surprisingly, the user had **full sudo rights** with no password required. So I just ran `sudo cat` and read the second ingredient file. Easy win.
-![](/assets/img/pickle-rick/sudo-cat.png)
+![](../../assets/img/pickle-rick/sudo-cat.png)
 From there, I decided to check out some of the other user's files too — especially `.bash_history` — and guess what? That's where the **third and final flag** was hiding.
-![](/assets/img/pickle-rick/history.png)
+![](../../assets/img/pickle-rick/history.png)
 
 ---
 
