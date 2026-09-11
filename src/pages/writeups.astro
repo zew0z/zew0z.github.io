@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import WriteupCatalog from '../components/WriteupCatalog.astro';
+import { getWriteups, searchItem } from '../lib/writeups';
+
+const posts = await getWriteups();
+---
+
+<BaseLayout
+  title="writeups :: zew0z"
+  description="CTF and lab writeups - searchable, spoiler-gated, every room documented."
+>
+  <section class="page-hero">
+    <div class="container page-hero-inner">
+      <p class="page-kicker">catalog</p>
+      <h1 class="page-title">writeups <span class="count">:: {posts.length}</span></h1>
+      <p class="page-lede">
+        every room fully documented. flags and passwords never printed; solutions sit behind a spoiler gate.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section-tight" id="catalog">
+    <div class="container">
+      <WriteupCatalog posts={posts} />
+    </div>
+  </section>
+
+  <script id="site-data" type="application/json" set:html={JSON.stringify({ posts: posts.map(searchItem) })} />
+</BaseLayout>

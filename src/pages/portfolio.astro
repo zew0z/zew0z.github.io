@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PortfolioGrid from '../components/PortfolioGrid.astro';
+import { portfolioItems } from '../lib/portfolio';
+---
+
+<BaseLayout
+  title="portfolio :: zew0z"
+  description="Shipped tools, client stores, AI agent pipelines, and the skills behind them."
+>
+  <section class="page-hero">
+    <div class="container page-hero-inner">
+      <p class="page-kicker">work</p>
+      <h1 class="page-title">portfolio</h1>
+      <p class="page-lede">
+        shipped tools, client sites, and the skills behind them. stars mark work done with my AI agent team.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section-tight">
+    <div class="container">
+      <PortfolioGrid items={portfolioItems} />
+    </div>
+  </section>
+</BaseLayout>

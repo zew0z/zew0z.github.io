@@ -342,4 +342,20 @@
 
     input.addEventListener('input', apply);
   }
+
+  /* ---------- scroll reveal ---------- */
+
+  if (!reduceMotion && 'IntersectionObserver' in window) {
+    var revealTargets = document.querySelectorAll('.preview-section, .playground, .ach-grid > .ach, .page-hero');
+    revealTargets.forEach(function (el) { el.classList.add('reveal'); });
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
+    revealTargets.forEach(function (el) { io.observe(el); });
+  }
 })();
