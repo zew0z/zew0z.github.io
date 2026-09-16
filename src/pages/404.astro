@@ -20,14 +20,18 @@ const routes = [
           <span class="tdot tdot-g"></span>
           <span class="tname">guest@zew0z: ~</span>
         </div>
-        <pre class="err-dump" id="err-dump"><span class="err-prompt">guest@zew0z:~$</span> cat <span id="err-path">/missing</span>
-<span class="err-fail">cat: <span id="err-fail-path">/missing</span>: No such file or directory</span>
-
-<span class="err-prompt">guest@zew0z:~$</span> ls /
-{routes.map((r) => (
-  <><a class="err-ls" href={r.href}>{r.mode}  {r.name}</a>{'\n'}</>
-))}
-</pre>
+        <div class="err-dump">
+          <p><span class="err-prompt">guest@zew0z:~$</span> cat <span id="err-path">/missing</span></p>
+          <p class="err-fail">cat: <span id="err-fail-path">/missing</span>: No such file or directory</p>
+          <p><span class="err-prompt">guest@zew0z:~$</span> ls /</p>
+          <ul class="err-ls-list">
+            {routes.map((r) => (
+              <li>
+                <a class="err-ls" href={r.href}><span class="err-mode">{r.mode}</span> {r.name}</a>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
       <p class="err-sub">even nmap found nothing. pick a directory that exists.</p>
     </div>

@@ -2500,11 +2500,20 @@ a.post-pager-item:active { transform: translateY(1px); }
   font-size: 0.88rem;
   line-height: 1.7;
   color: var(--ink2);
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
 }
+.err-dump p { margin: 0; }
 .err-prompt { color: var(--teal); }
 .err-fail { color: var(--coral); }
+.err-ls-list {
+  list-style: none;
+  margin: 0.15rem 0 0;
+  padding: 0;
+}
+.err-ls-list li { margin: 0; }
+.err-mode {
+  color: var(--ink3);
+  margin-right: 0.7ch;
+}
 .err-ls {
   color: var(--ink);
   border-bottom: 1px dashed var(--line2);
