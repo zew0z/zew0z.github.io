@@ -135,6 +135,49 @@ const siteData = JSON.stringify({ posts: posts.map(searchItem) });
 const shellHint = `${DIVIDER}\n$ help | nmap | wiki | cat flag.txt\n${DIVIDER}`;
 const listingPosts = posts.slice(0, 8);
 const listingWork = portfolioItems.filter((item) => item.group !== 'disciplines').slice(0, 6);
+
+const FALL_GLYPHS = '0123456789abcdef│─┌┐└┘┬┴┼┤├█▓▒░<>/$#*+=.~';
+function fallRng(seed: number) {
+  return function next() {
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function makeFallCol(seed: number, len: number) {
+  const rand = fallRng(seed);
+  const chars: string[] = [];
+  for (let i = 0; i < len; i++) {
+    chars.push(FALL_GLYPHS[Math.floor(rand() * FALL_GLYPHS.length)]);
+  }
+  const body = chars.join('\n');
+  return `${body}\n${body}`;
+}
+
+const fallCols = Array.from({ length: 16 }, (_, i) => {
+  const rand = fallRng(1100 + i * 97);
+  return {
+    x: 32 + i * 4.2 + (rand() * 1.6 - 0.8),
+    dur: 14 + rand() * 16,
+    delay: -(rand() * 18),
+    hue: i % 5 === 0 ? 'teal' : i % 4 === 0 ? 'green' : i % 3 === 0 ? 'ink' : 'dim',
+    text: makeFallCol(200 + i * 13, 42),
+  };
+});
+
+const fallStrings = [
+  { x: 42, dur: 11, delay: -1, text: '$ nmap -sV -T4 10.10.x.x' },
+  { x: 58, dur: 14, delay: -4, text: '0x7ffee21a4c00' },
+  { x: 48, dur: 12, delay: -2.5, text: 'ext4: mounting /writeups' },
+  { x: 66, dur: 16, delay: -7, text: 'guest@zew0z:~$ whoami' },
+  { x: 39, dur: 13, delay: -9, text: 'sectape record --audit' },
+  { x: 72, dur: 10, delay: -3, text: '22/tcp open ssh' },
+  { x: 54, dur: 15, delay: -6, text: 'claude --skills mcp' },
+  { x: 44, dur: 12, delay: -11, text: '# spoiler gates armed' },
+  { x: 80, dur: 13, delay: -5, text: 'thm top 8%' },
+  { x: 61, dur: 17, delay: -8, text: 'docker: agent sandboxes [ ok ]' },
+];
 const whoami = `user:     zew0z
 shell:    /bin/zsh
 os:       linux x86_64
@@ -160,6 +203,21 @@ status:   actively pwning`;
       </div>
 
       <div class="cinema-sticky">
+        <div class="cinema-fall" id="cinema-fall" aria-hidden="true">
+          {fallCols.map((col) => (
+            <pre
+              class={`cinema-fall-col hue-${col.hue}`}
+              style={`--x:${col.x}%;--dur:${col.dur}s;--delay:${col.delay}s`}
+            >{col.text}</pre>
+          ))}
+          {fallStrings.map((str) => (
+            <span
+              class="cinema-fall-str"
+              style={`--x:${str.x}%;--dur:${str.dur}s;--delay:${str.delay}s`}
+            >{str.text}</span>
+          ))}
+        </div>
+
         <div class="cinema-boot-layer">
           <pre class="cinema-boot-log" id="boot-log" aria-hidden="true">{bootLines.map((line, i) => (
               <span class={`cinema-boot-line boot-${line.kind}`} data-boot-line={i}>{line.text}{nl}</span>
@@ -203,6 +261,11 @@ status:   actively pwning`;
           </div>
         </div>
 
+        <div class="cinema-hud" aria-hidden="true">
+          <span>tty1</span>
+          <span id="boot-hud-pct">00%</span>
+          <span>guest@zew0z</span>
+        </div>
         <p class="visually-hidden">Scroll to advance the boot sequence, then continue down the page.</p>
       </div>
     </section>
