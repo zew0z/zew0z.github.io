@@ -2609,15 +2609,18 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
   flex-shrink: 0;
 }
 
-.cinema-type-out {
+.cinema-type-line {
   margin: 0;
+  flex: 1 1 12rem;
+  min-width: 0;
+}
+
+.cinema-type-out {
   font-family: var(--font-display);
   font-size: clamp(1.1rem, 2.3vw, 1.55rem);
   font-weight: 500;
   line-height: 1.35;
   color: var(--ink);
-  flex: 0 1 auto;
-  min-width: 0;
 }
 
 .cinema-type-cursor {
@@ -2674,6 +2677,12 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
 .cinema-card.is-in {
   opacity: 1;
   transform: none;
+}
+
+.card-writeups,
+.card-portfolio {
+  display: grid;
+  grid-template-rows: auto auto auto 1fr auto;
 }
 
 .card-writeups {
