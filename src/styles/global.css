@@ -2519,13 +2519,19 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
   pointer-events: none;
 }
 
+@property --term-shine {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
 .cinema-term {
   position: absolute;
   top: var(--ty, 10%);
   left: var(--tx, 4%);
   width: var(--tw, 21rem);
   z-index: var(--z, 2);
-  border: 1px solid var(--line2);
+  border: 1px solid color-mix(in srgb, var(--term-accent, var(--teal)) 34%, var(--line2));
   border-radius: var(--radius);
   background: color-mix(in srgb, var(--bg0) 94%, transparent);
   overflow: hidden;
@@ -2540,6 +2546,36 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
   will-change: transform, opacity;
 }
 
+.cinema-term::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  border-radius: inherit;
+  padding: 1.5px;
+  pointer-events: none;
+  opacity: 0;
+  background: conic-gradient(
+    from var(--term-shine),
+    transparent 0 62%,
+    color-mix(in srgb, var(--term-accent, var(--teal)) 20%, transparent) 74%,
+    var(--term-accent, var(--teal)) 86%,
+    color-mix(in srgb, var(--term-accent, var(--teal)) 58%, white) 91%,
+    var(--term-accent, var(--teal)) 96%,
+    transparent 100%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--term-accent, var(--teal)) 55%, transparent));
+  transition: opacity 0.4s ease;
+}
+
 .cinema-term.is-in {
   opacity: 1;
   transform: translate3d(0, 0, 0) rotate(var(--rot, 0deg));
@@ -2549,10 +2585,25 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
     0 0 28px color-mix(in srgb, var(--term-accent, var(--teal)) 18%, transparent);
 }
 
+.cinema-term.is-in::before {
+  opacity: 1;
+  animation: cinema-term-shine 3.2s linear infinite;
+  animation-delay: calc(var(--i, 0) * -0.75s);
+}
+
+@keyframes cinema-term-shine {
+  to { --term-shine: 360deg; }
+}
+
 .cinema-stage.is-climax .cinema-term.is-in {
   opacity: 0.04;
   filter: blur(2px);
   transition-duration: 0.7s;
+}
+
+.cinema-stage.is-climax .cinema-term.is-in::before {
+  animation-play-state: paused;
+  opacity: 0;
 }
 
 .cinema-term.hue-teal { --term-accent: var(--teal); }
@@ -3012,6 +3063,12 @@ a.cinema-card:active {
     top: auto;
     left: auto;
     width: min(100%, 20rem);
+  }
+  .cinema-term::before {
+    animation: none !important;
+    background: var(--term-accent, var(--teal));
+    opacity: 0.7 !important;
+    filter: none;
   }
   .cinema-climax {
     position: relative;
