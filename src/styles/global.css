@@ -2739,14 +2739,13 @@ a.cinema-card.card-portfolio {
 
 .whoami-strip .is-live { color: var(--green); }
 
+.cinema-card:not(.card-stats) {
+  border-left-width: 3px;
+  border-left-color: var(--card-spine, var(--teal));
+}
+
 .cinema-card:not(.card-stats)::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: var(--card-spine, var(--teal));
+  content: none;
 }
 
 a.cinema-card:hover {
