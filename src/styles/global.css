@@ -329,9 +329,14 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
   padding: 3px;
   border: 1px solid color-mix(in srgb, var(--term-accent) 34%, var(--line2));
   border-radius: var(--radius);
-  background: color-mix(in srgb, var(--bg1) 86%, var(--bg0));
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--term-accent) 10%, var(--bg1)) 0%,
+    var(--bg0) 100%
+  );
   overflow: hidden;
   justify-self: center;
+  transition: border-color 0.28s ease, box-shadow 0.28s ease;
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--term-accent) 12%, transparent),
     0 0 22px color-mix(in srgb, var(--term-accent) 14%, transparent);
@@ -380,8 +385,10 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
   left: 3px;
   width: calc((100% - 6px) / 3);
   border-radius: var(--radius-sm);
-  background: color-mix(in srgb, var(--term-accent) 18%, var(--bg2));
-  box-shadow: 0 0 18px color-mix(in srgb, var(--term-accent) 24%, transparent);
+  background: color-mix(in srgb, var(--term-accent) 26%, var(--bg3));
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--term-accent) 45%, transparent),
+    0 0 20px color-mix(in srgb, var(--term-accent) 28%, transparent);
   opacity: 0;
   transform: translateX(0);
   pointer-events: none;
@@ -3450,22 +3457,23 @@ a.cinema-card:active {
   .star-tip .tip { left: auto; right: 0; transform: none; }
 
   .site-header-inner {
-    gap: 0.55rem 0.7rem;
-    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.45rem 0.55rem;
+    grid-template-columns: minmax(0, 1fr) auto auto;
   }
   .header-tty { display: none; }
   .nav-dock {
     min-width: 0;
     justify-self: end;
-    width: min(19.5rem, 58vw);
+    width: min(17.2rem, 54vw);
   }
-  .nav-pane { padding: 0.2rem 0.45rem; font-size: 0.68rem; }
+  .nav-pane { padding: 0.2rem 0.4rem; font-size: 0.66rem; }
   .nav-cmd,
   .nav-ext { display: none; }
   .header-dots { margin-right: 0.45rem; }
   .wordmark { font-size: 0.88rem; }
   .wordmark .wm-path { max-width: 5.5rem; }
   .wm-cursor { display: none; }
+  .header-cmd { width: 1.55rem; height: 1.55rem; }
   .footer-hud {
     grid-template-columns: 1fr auto;
     min-height: 0;
@@ -3533,6 +3541,6 @@ a.cinema-card:active {
   .header-dots { display: none; }
   .wordmark .tld,
   .wordmark .wm-path { display: none; }
-  .nav-dock { width: min(15.8rem, 66vw); }
+  .nav-dock { width: min(14.8rem, 58vw); }
 }
 
