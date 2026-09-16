@@ -175,4 +175,12 @@
     else if (e.key === 'ArrowUp') { e.preventDefault(); move(-1); }
     else if (e.key === 'Enter') { e.preventDefault(); runCurrent(); }
   });
+
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-palette-open]');
+    if (!btn) return;
+    e.preventDefault();
+    if (!root) build();
+    isOpen() ? close() : open();
+  });
 })();

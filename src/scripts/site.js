@@ -421,4 +421,41 @@
     }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
     revealTargets.forEach(function (el) { io.observe(el); });
   }
+
+  /* ---------- nav label scramble on hover ---------- */
+
+  if (!reduceMotion) {
+    var glyphs = '#*$<>/\\+=01▓░';
+    document.querySelectorAll('.nav-pane .nav-label').forEach(function (el) {
+      var original = el.textContent;
+      var timer;
+      var link = el.closest('.nav-pane');
+      if (!link) return;
+      link.addEventListener('pointerenter', function () {
+        if (window.matchMedia('(hover: none)').matches) return;
+        var frames = 8;
+        var f = 0;
+        window.clearTimeout(timer);
+        function tick() {
+          var out = '';
+          var p = f / frames;
+          var i;
+          for (i = 0; i < original.length; i += 1) {
+            out += Math.random() < p * p
+              ? original.charAt(i)
+              : glyphs.charAt(Math.floor(Math.random() * glyphs.length));
+          }
+          el.textContent = out;
+          f += 1;
+          if (f <= frames) timer = window.setTimeout(tick, 28);
+          else el.textContent = original;
+        }
+        tick();
+      });
+      link.addEventListener('pointerleave', function () {
+        window.clearTimeout(timer);
+        el.textContent = original;
+      });
+    });
+  }
 })();

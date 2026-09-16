@@ -17,6 +17,7 @@ const { title = 'zew0z :: security writeups & portfolio', description = 'CTF wri
 const path = Astro.url.pathname;
 const onPortfolio = path.includes('portfolio');
 const onWriteups = path.includes('writeups') || /\/\d{4}\/\d{2}\/\d{2}\//.test(path);
+const onHome = !onPortfolio && !onWriteups;
 ---
 
 <!doctype html>
@@ -43,13 +44,21 @@ const onWriteups = path.includes('writeups') || /\/\d{4}\/\d{2}\/\d{2}\//.test(p
 
     <header class="site-header">
       <div class="container site-header-inner">
-        <a class="wordmark" href="/"><span class="wm-prompt" aria-hidden="true">~/</span>zew0z<span class="tld">.io</span>{crumb && <span class="wm-path" aria-hidden="true">{crumb}</span>}</a>
-        <nav class="site-nav" aria-label="primary">
-          <a href="/portfolio.html" class:list={[{ 'is-on': onPortfolio }]}>./portfolio</a>
-          <a href="/writeups.html" class:list={[{ 'is-on': onWriteups }]}>./writeups</a>
-          <a class="nav-github" href="https://github.com/zew0z" target="_blank" rel="noopener">github</a>
+        <a href="/" class:list={['wordmark', { 'is-on': onHome }]} aria-label="zew0z home">
+          <span class="header-dots" aria-hidden="true"><i class="tdot tdot-r"></i><i class="tdot tdot-y"></i><i class="tdot tdot-g"></i></span>
+          <span class="wm-prompt" aria-hidden="true">~/</span><span class="wm-name" translate="no">zew0z</span><span class="tld">.io</span>{crumb && <span class="wm-path" aria-hidden="true">{crumb}</span>}{onHome && <span class="wm-cursor" aria-hidden="true"></span>}
+        </a>
+        <nav class="nav-dock" aria-label="primary">
+          <span class="nav-glider" aria-hidden="true"></span>
+          <span class="nav-ticks" aria-hidden="true"></span>
+          <a href="/portfolio.html" class:list={['nav-pane', 'hue-green', { 'is-on': onPortfolio }]} aria-label="portfolio" aria-current={onPortfolio ? 'page' : undefined}><span class="nav-cmd" aria-hidden="true">./</span><span class="nav-label">portfolio</span></a>
+          <a href="/writeups.html" class:list={['nav-pane', 'hue-teal', { 'is-on': onWriteups }]} aria-label="writeups" aria-current={onWriteups ? 'page' : undefined}><span class="nav-cmd" aria-hidden="true">./</span><span class="nav-label">writeups</span></a>
+          <a class="nav-pane hue-sky nav-github" href="https://github.com/zew0z" target="_blank" rel="noopener" aria-label="github, opens in a new tab"><span class="nav-label">github</span><span class="nav-ext" aria-hidden="true">↗</span></a>
         </nav>
-        <span class="header-tty" aria-hidden="true">guest@zew0z</span>
+        <div class="header-session">
+          <button type="button" class="header-cmd" data-palette-open aria-label="open command palette" title=": or ctrl+k">:</button>
+          <span class="header-tty" aria-hidden="true">guest@zew0z</span>
+        </div>
       </div>
     </header>
 
