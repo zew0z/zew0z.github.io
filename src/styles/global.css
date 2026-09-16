@@ -2323,7 +2323,8 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
 .cinema-stage.is-climax .cinema-hud {
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.4s ease;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
 }
 
 .cinema-boot-layer {
@@ -2615,7 +2616,7 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
   font-weight: 500;
   line-height: 1.35;
   color: var(--ink);
-  flex: 1 1 14rem;
+  flex: 0 1 auto;
   min-width: 0;
 }
 
@@ -2658,6 +2659,7 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
   text-decoration: none;
   color: inherit;
   min-width: 0;
+  height: 100%;
   opacity: 0;
   transform: translateY(1rem);
   transition:
@@ -2794,7 +2796,6 @@ a.cinema-card:active {
   color: var(--ink3);
   white-space: pre;
   overflow: hidden;
-  flex: 1 1 auto;
 }
 
 .cinema-ls-row { display: block; }
