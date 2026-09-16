@@ -86,8 +86,8 @@
           var i = parseInt(el.getAttribute('data-cascade'), 10) || 0;
           setTimeout(function () {
             el.classList.add('is-in');
-            setTimeout(function () { el.classList.add('is-typed'); }, 280);
-          }, i * 140);
+            setTimeout(function () { el.classList.add('is-typed'); }, 420);
+          }, i * 220);
           io.unobserve(el);
         });
       },
@@ -157,10 +157,10 @@
 
     var started = false;
 
-    function typeLine(text, done) {
+    function typeLine(text, prefix, done) {
       var i = 0;
       function tick() {
-        out.textContent = text.slice(0, i);
+        out.textContent = prefix + text.slice(0, i);
         i += 1;
         if (i <= text.length) {
           setTimeout(tick, 18 + Math.random() * 22);
@@ -176,16 +176,17 @@
       started = true;
       box.classList.add('is-in');
       var idx = 0;
+      var built = '';
       function next() {
         if (idx >= lines.length) return;
         var line = lines[idx];
+        var prefix = built;
         idx += 1;
-        typeLine(line, function () {
+        typeLine(line, prefix, function () {
+          built = prefix + line;
           if (idx < lines.length) {
-            setTimeout(function () {
-              out.textContent = '';
-              next();
-            }, 900);
+            built += ' ';
+            setTimeout(next, 420);
           }
         });
       }
