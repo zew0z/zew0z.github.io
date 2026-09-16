@@ -208,14 +208,6 @@ const fallWords = [
   { x: 64, dur: 17, delay: -9, word: 'BOX' },
   { x: 72, dur: 14, delay: -4, word: 'ZSH' },
 ];
-const whoami = `user:     zew0z
-shell:    /bin/zsh
-os:       linux x86_64
-uptime:   5+ years
-rank:     thm top 8%
-rooms:    100+
-clients:  8
-status:   actively pwning`;
 ---
 
 <BaseLayout>
@@ -342,17 +334,20 @@ status:   actively pwning`;
           <span class="cinema-card-meta">{projectCount} entries</span>
         </a>
 
-        <aside class="cinema-card card-stats hero-panel" aria-label="stats">
+        <aside class="cinema-card card-stats" aria-label="stats">
           <div class="panel-chrome">
             <span class="panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
             <span class="panel-title">whoami --verbose</span>
           </div>
-          <pre class="panel-dump" aria-hidden="true">{whoami}</pre>
-          <dl class="hero-stats visually-hidden">
-            <div class="hero-stat"><dt>thm rooms</dt><dd>100+</dd></div>
-            <div class="hero-stat"><dt>platform rank</dt><dd>top 8%</dd></div>
-            <div class="hero-stat"><dt>years on linux</dt><dd>5+</dd></div>
-            <div class="hero-stat"><dt>projects</dt><dd>{projectCount}</dd></div>
+          <dl class="whoami-strip">
+            <div><dt>user</dt><dd>zew0z</dd></div>
+            <div><dt>shell</dt><dd>/bin/zsh</dd></div>
+            <div><dt>os</dt><dd>linux x86_64</dd></div>
+            <div><dt>uptime</dt><dd>5+ years</dd></div>
+            <div><dt>rank</dt><dd>thm top 8%</dd></div>
+            <div><dt>rooms</dt><dd>100+</dd></div>
+            <div><dt>clients</dt><dd>8</dd></div>
+            <div><dt>status</dt><dd class="is-live">actively pwning</dd></div>
           </dl>
         </aside>
       </div>
