@@ -34,24 +34,16 @@ export const DIVIDER_HASH = '# # # # # # # # # # # # # # # # # # # #';
 export const BOX_TOP = '┌──────────────────────────────────────┐';
 export const BOX_BOT = '└──────────────────────────────────────┘';
 
-/** Compact mark for the writeups destination card */
-export const WRITEUPS_MARK = [
-  '┌─ notes ─┐',
-  '│ ▓▓▓░░░░ │',
-  '│ ▓▓▓▓▓░░ │',
-  '│ ▓▓▓▓▓▓▓ │',
-  '│ spoiler │',
-  '└─ gated ─┘',
+export const WRITEUPS_BANNER = [
+  '█     █ █▀▀█ █ ▀▀█▀▀ █▀▀ █  █ █▀▀█ █▀▀',
+  '█  █  █ █▄▄▀ █   █   █▀▀ █  █ █▄▄█ ▀▀█',
+  '▀▀▀▀▀▀▀ ▀  ▀ ▀   ▀   ▀▀▀  ▀▀▀ ▀    ▀▀▀',
 ].join('\n');
 
-/** Compact mark for the portfolio destination card */
-export const PORTFOLIO_MARK = [
-  '┌─ work/ ─┐',
-  '│ sectape │',
-  '│ shopify │',
-  '│ clients │',
-  '│ agents  │',
-  '└─ ship ──┘',
+export const WORK_BANNER = [
+  '█     █ █▀▀█ █▀▀█ █ █',
+  '█  █  █ █  █ █▄▄▀ █▀▄',
+  '▀▀▀▀▀▀▀ ▀▀▀▀ ▀  ▀ ▀ ▀',
 ].join('\n');
 
 export function promptPath(path = '~'): string {

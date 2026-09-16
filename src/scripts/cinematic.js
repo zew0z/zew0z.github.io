@@ -1,115 +1,67 @@
 /* zew0z.github.io - cinematic homepage
-   scroll-driven boot, terminal cascade, ascii reveal, typewriter, marquee
-   uses IntersectionObserver (no scroll listeners) */
+   one pinned stage: boot log → terminal swarm → ascii climax
+   IntersectionObserver only (no scroll listeners) */
 
 (function () {
   'use strict';
 
   var cinema = document.getElementById('cinema');
-  if (!cinema) return;
+  var stage = document.getElementById('cinema-stage');
+  if (!cinema || !stage) return;
 
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var bootLines = Array.prototype.slice.call(stage.querySelectorAll('[data-boot-line]'));
+  var terms = Array.prototype.slice.call(stage.querySelectorAll('[data-cascade]'));
+  var fill = document.getElementById('boot-fill');
+  var pctEl = document.getElementById('boot-pct');
+  var labelEl = document.getElementById('boot-label');
+  var climax = document.getElementById('ascii-reveal');
+  var typeBox = cinema.querySelector('.cinema-type');
+  var typeOut = document.getElementById('type-out');
 
-  /* ---------- scroll-driven boot via sentinel IO ---------- */
+  var bootAt = -1;
+  var swarmAt = -1;
+  var climaxOn = false;
+  var typed = false;
 
-  (function boot() {
-    var section = cinema.querySelector('.cinema-boot');
-    if (!section) return;
+  function pad2(n) {
+    return (n < 10 ? '0' : '') + n;
+  }
 
-    var lines = Array.prototype.slice.call(section.querySelectorAll('[data-boot-line]'));
-    var fill = document.getElementById('boot-fill');
-    var pctEl = document.getElementById('boot-pct');
-    var revealed = -1;
-
-    function setProgress(idx) {
-      var n = lines.length;
-      var p = Math.round(((idx + 1) / n) * 100);
-      if (fill) fill.style.transform = 'scaleX(' + ((idx + 1) / n) + ')';
-      if (pctEl) pctEl.textContent = p + '%';
+  function setBoot(idx) {
+    if (idx <= bootAt) return;
+    for (var i = bootAt + 1; i <= idx && i < bootLines.length; i++) {
+      bootLines[i].classList.add('is-on');
     }
-
-    function revealUpTo(idx) {
-      if (idx <= revealed) return;
-      for (var i = revealed + 1; i <= idx; i++) {
-        if (lines[i]) lines[i].classList.add('is-on');
-      }
-      revealed = idx;
-      setProgress(idx);
-      if (idx >= lines.length - 1) section.classList.add('is-booted');
+    bootAt = Math.max(bootAt, idx);
+    var n = bootLines.length;
+    var p = Math.round(((bootAt + 1) / n) * 100);
+    if (fill) fill.style.transform = 'scaleX(' + ((bootAt + 1) / n) + ')';
+    if (pctEl) pctEl.textContent = pad2(Math.min(100, p));
+    if (bootAt >= n - 1) {
+      stage.classList.add('is-booted');
+      if (labelEl) labelEl.textContent = 'online';
     }
+  }
 
-    if (reduce) {
-      revealUpTo(lines.length - 1);
-      return;
+  function setSwarm(idx) {
+    if (idx < 0) return;
+    setBoot(bootLines.length - 1);
+    stage.classList.add('is-swarm');
+    if (idx <= swarmAt) return;
+    for (var i = swarmAt + 1; i <= idx && i < terms.length; i++) {
+      (function (el) {
+        el.classList.add('is-in');
+        window.setTimeout(function () { el.classList.add('is-typed'); }, 280);
+      })(terms[i]);
     }
+    swarmAt = Math.max(swarmAt, idx);
+  }
 
-    // first two lines appear immediately (loading feel)
-    revealUpTo(Math.min(1, lines.length - 1));
-
-    var sentinels = Array.prototype.slice.call(section.querySelectorAll('.cinema-boot-sentinel'));
-    if (!sentinels.length) {
-      revealUpTo(lines.length - 1);
-      return;
-    }
-
-    var io = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          if (!entry.isIntersecting) return;
-          var idx = parseInt(entry.target.getAttribute('data-boot-idx'), 10);
-          if (!isNaN(idx)) revealUpTo(idx);
-        });
-      },
-      { root: null, threshold: 0.55, rootMargin: '0px 0px -20% 0px' }
-    );
-
-    sentinels.forEach(function (s) { io.observe(s); });
-  })();
-
-  /* ---------- terminal cascade: stagger in from the left ---------- */
-
-  (function cascade() {
-    var rail = document.getElementById('cascade-rail');
-    if (!rail) return;
-    var terms = Array.prototype.slice.call(rail.querySelectorAll('[data-cascade]'));
-
-    if (reduce) {
-      terms.forEach(function (t) { t.classList.add('is-in', 'is-typed'); });
-      return;
-    }
-
-    var io = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          if (!entry.isIntersecting) return;
-          var el = entry.target;
-          var i = parseInt(el.getAttribute('data-cascade'), 10) || 0;
-          setTimeout(function () {
-            el.classList.add('is-in');
-            setTimeout(function () { el.classList.add('is-typed'); }, 420);
-          }, i * 220);
-          io.unobserve(el);
-        });
-      },
-      { threshold: 0.25, rootMargin: '0px 0px -8% 0px' }
-    );
-
-    terms.forEach(function (t) { io.observe(t); });
-  })();
-
-  /* ---------- ascii logo line reveal ---------- */
-
-  (function asciiReveal() {
-    var wrap = document.getElementById('ascii-reveal');
-    if (!wrap) return;
-    var pre = wrap.querySelector('pre');
-    if (!pre) return;
-
-    if (reduce) {
-      wrap.classList.add('is-in');
-      return;
-    }
-
+  function splitAscii() {
+    if (!climax || reduce) return;
+    var pre = climax.querySelector('pre');
+    if (!pre || pre.getAttribute('data-split') === '1') return;
     var raw = pre.textContent || '';
     var rows = raw.replace(/\n$/, '').split('\n');
     pre.textContent = '';
@@ -120,143 +72,108 @@
       span.textContent = row + (i < rows.length - 1 ? '\n' : '');
       pre.appendChild(span);
     });
+    pre.setAttribute('data-split', '1');
+  }
 
+  function typeLine() {
+    if (typed || !typeBox || !typeOut) return;
+    typed = true;
+    var text = typeBox.getAttribute('data-type-line') || '';
+    typeBox.classList.add('is-in');
+    if (reduce) {
+      typeOut.textContent = text;
+      return;
+    }
+    var i = 0;
+    function tick() {
+      typeOut.textContent = text.slice(0, i);
+      i += 1;
+      if (i <= text.length) window.setTimeout(tick, 16 + Math.random() * 28);
+    }
+    window.setTimeout(tick, 420);
+  }
+
+  function setClimax() {
+    if (climaxOn) return;
+    climaxOn = true;
+    setSwarm(terms.length - 1);
+    splitAscii();
+    stage.classList.add('is-climax');
+    if (climax) climax.classList.add('is-in');
+    typeLine();
+  }
+
+  function freezeAll() {
+    setBoot(bootLines.length - 1);
+    terms.forEach(function (t) { t.classList.add('is-in', 'is-typed'); });
+    splitAscii();
+    stage.classList.add('is-booted', 'is-swarm', 'is-climax', 'is-static');
+    if (climax) climax.classList.add('is-in');
+    if (typeBox && typeOut) {
+      typeOut.textContent = typeBox.getAttribute('data-type-line') || '';
+      typeBox.classList.add('is-in');
+    }
+    cinema.querySelectorAll('.cinema-card').forEach(function (c) { c.classList.add('is-in'); });
+  }
+
+  if (reduce) {
+    freezeAll();
+  } else {
+    setBoot(Math.min(1, bootLines.length - 1));
+    splitAscii();
+
+    var beats = Array.prototype.slice.call(stage.querySelectorAll('.cinema-beat'));
     var io = new IntersectionObserver(
       function (entries) {
         entries.forEach(function (entry) {
           if (!entry.isIntersecting) return;
-          wrap.classList.add('is-in');
-          io.unobserve(wrap);
+          var kind = entry.target.getAttribute('data-kind');
+          var i = parseInt(entry.target.getAttribute('data-i'), 10);
+          if (kind === 'boot') setBoot(i);
+          else if (kind === 'swarm') setSwarm(i);
+          else if (kind === 'climax') setClimax();
         });
       },
-      { threshold: 0.35 }
+      { threshold: 0.4, rootMargin: '0px 0px -15% 0px' }
     );
-    io.observe(wrap);
-  })();
+    beats.forEach(function (b) { io.observe(b); });
+  }
 
-  /* ---------- typewriter rising from bottom ---------- */
-
-  (function typewriter() {
-    var box = cinema.querySelector('.cinema-type');
-    var out = document.getElementById('type-out');
-    if (!box || !out) return;
-
-    var lines = [];
-    try {
-      lines = JSON.parse(box.getAttribute('data-type-lines') || '[]');
-    } catch (e) {
-      lines = [];
-    }
-    if (!lines.length) return;
-
-    if (reduce) {
-      out.textContent = lines.join(' ');
-      box.classList.add('is-in');
-      return;
-    }
-
-    var started = false;
-
-    function typeLine(text, prefix, done) {
-      var i = 0;
-      function tick() {
-        out.textContent = prefix + text.slice(0, i);
-        i += 1;
-        if (i <= text.length) {
-          setTimeout(tick, 18 + Math.random() * 22);
-        } else if (done) {
-          done();
-        }
-      }
-      tick();
-    }
-
-    function run() {
-      if (started) return;
-      started = true;
-      box.classList.add('is-in');
-      var idx = 0;
-      var built = '';
-      function next() {
-        if (idx >= lines.length) return;
-        var line = lines[idx];
-        var prefix = built;
-        idx += 1;
-        typeLine(line, prefix, function () {
-          built = prefix + line;
-          if (idx < lines.length) {
-            built += ' ';
-            setTimeout(next, 420);
-          }
-        });
-      }
-      next();
-    }
-
-    var io = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          if (!entry.isIntersecting) return;
-          run();
-          io.unobserve(box);
-        });
-      },
-      { threshold: 0.4 }
-    );
-    io.observe(box);
-  })();
-
-  /* ---------- deck cards reveal ---------- */
-
-  (function deck() {
-    var cards = Array.prototype.slice.call(cinema.querySelectorAll('.cinema-card'));
-    if (!cards.length) return;
-
-    if (reduce) {
-      cards.forEach(function (c) { c.classList.add('is-in'); });
-      return;
-    }
-
-    var io = new IntersectionObserver(
+  var cards = Array.prototype.slice.call(cinema.querySelectorAll('.cinema-card'));
+  if (cards.length && !reduce) {
+    var cardIo = new IntersectionObserver(
       function (entries) {
         entries.forEach(function (entry) {
           if (!entry.isIntersecting) return;
           var el = entry.target;
-          var delay = Array.prototype.indexOf.call(el.parentNode.children, el) * 90;
-          setTimeout(function () { el.classList.add('is-in'); }, delay);
-          io.unobserve(el);
+          var delay = Array.prototype.indexOf.call(el.parentNode.children, el) * 80;
+          window.setTimeout(function () { el.classList.add('is-in'); }, delay);
+          cardIo.unobserve(el);
         });
       },
-      { threshold: 0.2 }
+      { threshold: 0.18 }
     );
-    cards.forEach(function (c) { io.observe(c); });
-  })();
+    cards.forEach(function (c) { cardIo.observe(c); });
+  }
 
-  /* ---------- marquee: pause when offscreen / tab hidden ---------- */
-
-  (function marquee() {
-    var track = cinema.querySelector('.cinema-marquee-track');
-    if (!track) return;
+  var root = cinema.querySelector('.cinema-marquee');
+  var track = cinema.querySelector('.cinema-marquee-track');
+  if (root && track) {
     if (reduce) {
       track.style.animation = 'none';
-      return;
+    } else {
+      var mIo = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            root.classList.toggle('is-paused', !entry.isIntersecting);
+          });
+        },
+        { threshold: 0.05 }
+      );
+      mIo.observe(root);
+      document.addEventListener('visibilitychange', function () {
+        root.classList.toggle('is-paused', document.hidden);
+      });
     }
-
-    var root = cinema.querySelector('.cinema-marquee');
-    if (!root) return;
-
-    var io = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          root.classList.toggle('is-paused', !entry.isIntersecting);
-        });
-      },
-      { threshold: 0.05 }
-    );
-    io.observe(root);
-
-    document.addEventListener('visibilitychange', function () {
-      root.classList.toggle('is-paused', document.hidden);
-    });
-  })();
+  }
 })();

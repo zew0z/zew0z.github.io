@@ -2,9 +2,9 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AsciiArt from '../components/AsciiArt.astro';
 import ShellPrompt from '../components/ShellPrompt.astro';
-import { ZEW0Z_BANNER, DIVIDER, WRITEUPS_MARK, PORTFOLIO_MARK } from '../lib/ascii';
+import { ZEW0Z_BANNER, DIVIDER, WRITEUPS_BANNER, WORK_BANNER } from '../lib/ascii';
 import { portfolioItems } from '../lib/portfolio';
-import { getWriteups, searchItem } from '../lib/writeups';
+import { getWriteups, searchItem, postSlug } from '../lib/writeups';
 
 const posts = await getWriteups();
 const writeupCount = posts.length;
@@ -12,22 +12,33 @@ const projectCount = portfolioItems.length;
 const nl = '\n';
 
 const bootLines = [
-  { text: 'zew0z.github.io :: bios rev 2026.09', kind: 'head' },
-  { text: 'cpu .............. coffee-powered core', kind: 'ok' },
-  { text: 'mem .............. enough for one more room', kind: 'ok' },
-  { text: 'mount /writeups .. spoiler gates armed', kind: 'ok' },
-  { text: 'mount /portfolio . client stores online', kind: 'ok' },
-  { text: 'net .............. thm · htb · shopify', kind: 'ok' },
-  { text: 'shell ............ guest@zew0z ready', kind: 'ok' },
-  { text: 'access granted :: continue', kind: 'go' },
+  { kind: 'dim', text: '[    0.000000] linux 6.12.0-zew0z #1 SMP PREEMPT' },
+  { kind: 'head', text: '[    0.000184] bios :: guest@zew0z  rev 2026.09' },
+  { kind: 'ok', text: '[    0.041102] cpu0     coffee-powered core          [ ok ]' },
+  { kind: 'ok', text: '[    0.082441] mem      64G claimed, 1 room leftover [ ok ]' },
+  { kind: 'ok', text: '[    0.120903] acpi     irq routing, no surprises    [ ok ]' },
+  { kind: 'ok', text: '[    0.188210] net      thm · htb · shopify          [ ok ]' },
+  { kind: 'ok', text: '[    0.241008] ext4     mounting /writeups           [ ok ]' },
+  { kind: 'ok', text: '[    0.301552] ext4     spoiler gates armed          [ ok ]' },
+  { kind: 'ok', text: '[    0.366104] ext4     mounting /portfolio          [ ok ]' },
+  { kind: 'ok', text: '[    0.421773] docker   agent sandboxes              [ ok ]' },
+  { kind: 'ok', text: '[    0.498201] tty1     guest shell on :4321         [ ok ]' },
+  { kind: 'ok', text: '[    0.551044] flags    3 hidden, 0 in plaintext     [ ok ]' },
+  { kind: 'go', text: '[    0.610000] access granted. continue.' },
 ];
 
 const cascadeTerms = [
   {
     title: 'recon@lab:~',
     hue: 'teal',
+    x: '2%',
+    y: '7%',
+    w: '22.5rem',
+    rot: '-1.4deg',
+    z: 3,
     lines: [
-      { t: 'cmd', v: '$ nmap -sV 10.10.x.x' },
+      { t: 'cmd', v: '$ nmap -sV -T4 10.10.x.x' },
+      { t: 'out', v: 'PORT    STATE SERVICE' },
       { t: 'out', v: '22/tcp  open  ssh' },
       { t: 'out', v: '80/tcp  open  http' },
       { t: 'out', v: '443/tcp open  https' },
@@ -36,33 +47,69 @@ const cascadeTerms = [
   {
     title: 'build@store:~',
     hue: 'green',
+    x: '28%',
+    y: '26%',
+    w: '21.5rem',
+    rot: '1.1deg',
+    z: 4,
     lines: [
       { t: 'cmd', v: '$ shopify theme push' },
-      { t: 'out', v: 'synced 42 files' },
-      { t: 'out', v: 'preview → live' },
+      { t: 'out', v: '↑  42 files' },
+      { t: 'out', v: 'preview → production' },
       { t: 'ok', v: '[ ok ] storefront shipped' },
     ],
   },
   {
     title: 'agent@rig:~',
     hue: 'violet',
+    x: '54%',
+    y: '5%',
+    w: '20.5rem',
+    rot: '-0.7deg',
+    z: 5,
     lines: [
       { t: 'cmd', v: '$ claude --skills mcp' },
-      { t: 'out', v: 'sandbox: docker' },
-      { t: 'out', v: 'pipeline: chained' },
+      { t: 'out', v: 'sandbox  docker' },
+      { t: 'out', v: 'harness  chained' },
       { t: 'ok', v: '[ ok ] agent team online' },
     ],
   },
   {
     title: 'record@lab:~',
     hue: 'amber',
+    x: '6%',
+    y: '54%',
+    w: '22rem',
+    rot: '1.5deg',
+    z: 2,
     lines: [
       { t: 'cmd', v: '$ sectape record' },
       { t: 'out', v: 'capturing session…' },
-      { t: 'out', v: 'audit trail written' },
-      { t: 'ok', v: '[ ok ] reproducible' },
+      { t: 'out', v: 'every cmd + stdout' },
+      { t: 'ok', v: '[ ok ] audit trail written' },
     ],
   },
+  {
+    title: 'zew0z@box:~',
+    hue: 'sky',
+    x: '46%',
+    y: '52%',
+    w: '21rem',
+    rot: '-1.2deg',
+    z: 3,
+    lines: [
+      { t: 'cmd', v: '$ whoami && id' },
+      { t: 'out', v: 'zew0z' },
+      { t: 'out', v: 'uid=1000(zew0z) gid=1000(pwn)' },
+      { t: 'ok', v: 'status: actively pwning' },
+    ],
+  },
+];
+
+const beats = [
+  ...bootLines.map((_, i) => ({ kind: 'boot', i })),
+  ...cascadeTerms.map((_, i) => ({ kind: 'swarm', i })),
+  { kind: 'climax', i: 0 },
 ];
 
 const logos = [
@@ -83,116 +130,120 @@ const logos = [
 ];
 
 const logoLoop = [...logos, ...logos];
-
-const typeLinesJson = JSON.stringify([
-  'break boxes. ship stores. document everything.',
-  'security writeups, client storefronts, and an agent team that finishes the job.',
-]);
-
+const typeLine = 'break boxes. ship stores. document everything.';
 const siteData = JSON.stringify({ posts: posts.map(searchItem) });
 const shellHint = `${DIVIDER}\n$ help | nmap | wiki | cat flag.txt\n${DIVIDER}`;
+const listingPosts = posts.slice(0, 6);
+const listingWork = portfolioItems.filter((item) => item.group !== 'disciplines').slice(0, 6);
+const whoami = `user:     zew0z
+shell:    /bin/zsh
+os:       linux x86_64
+uptime:   5+ years
+rank:     thm top 8%
+rooms:    100+
+clients:  8
+status:   actively pwning`;
 ---
 
 <BaseLayout>
   <div id="cinema" class="cinema">
-    <section class="cinema-boot" aria-label="system boot">
-      <div class="cinema-boot-track" aria-hidden="true">
-        {bootLines.map((_, i) => (
+    <section class="cinema-stage" id="cinema-stage" aria-label="system boot">
+      <div class="cinema-beats" aria-hidden="true">
+        {beats.map((beat, n) => (
           <div
-            class="cinema-boot-sentinel"
-            data-boot-idx={i}
-            style={`top: ${((i + 0.35) / bootLines.length) * 100}%`}
+            class="cinema-beat"
+            data-kind={beat.kind}
+            data-i={beat.i}
+            style={`top: ${((n + 0.2) / beats.length) * 100}%`}
           />
         ))}
       </div>
-      <div class="cinema-boot-sticky">
-        <div class="cinema-boot-frame">
-          <div class="cinema-boot-chrome">
-            <span class="panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-            <span class="panel-title">bios · loading</span>
-            <span class="cinema-boot-pct" id="boot-pct" aria-live="polite">0%</span>
-          </div>
+
+      <div class="cinema-sticky">
+        <div class="cinema-boot-layer">
           <pre class="cinema-boot-log" id="boot-log" aria-hidden="true">{bootLines.map((line, i) => (
-              <span class={`cinema-boot-line boot-${line.kind}`} data-boot-line={i}>
-                {line.kind === 'ok' ? `${line.text}  [ ok ]` : line.text}{nl}
-              </span>
+              <span class={`cinema-boot-line boot-${line.kind}`} data-boot-line={i}>{line.text}{nl}</span>
             ))}</pre>
-          <div class="cinema-boot-bar" aria-hidden="true">
-            <div class="cinema-boot-fill" id="boot-fill"></div>
-          </div>
-          <p class="visually-hidden">Scroll to advance the boot sequence, then continue down the page.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="cinema-cascade section" aria-label="live sessions">
-      <div class="container">
-        <ShellPrompt path="~/sessions" command="tmux ls" />
-        <h2 class="cinema-kicker">sessions firing</h2>
-      </div>
-      <div class="cinema-cascade-rail" id="cascade-rail">
-        {cascadeTerms.map((term, i) => (
-          <article class={`cinema-term hue-${term.hue}`} data-cascade={i} style={`--i: ${i}`}>
-            <div class="cinema-term-chrome" aria-hidden="true">
-              <span class="tdot tdot-r"></span>
-              <span class="tdot tdot-y"></span>
-              <span class="tdot tdot-g"></span>
-              <span class="tname">{term.title}</span>
+          <div class="cinema-pct-wrap">
+            <p class="cinema-pct-label" id="boot-label">loading</p>
+            <p class="cinema-pct" id="boot-pct">00</p>
+            <div class="cinema-pct-bar" aria-hidden="true">
+              <div class="cinema-boot-fill" id="boot-fill"></div>
             </div>
-            <pre class="cinema-term-body">{term.lines.map((line) => (
-                <span class={`cinema-term-line is-${line.t}`}>{line.v}{nl}</span>
-              ))}</pre>
-          </article>
-        ))}
-      </div>
-    </section>
-
-    <section class="cinema-identity section" id="identity" aria-label="identity">
-      <div class="container cinema-identity-inner">
-        <div class="cinema-ascii-wrap" id="ascii-reveal">
-          <AsciiArt art={ZEW0Z_BANNER} class="ascii-hero cinema-ascii" label="zew0z ascii logo" />
-        </div>
-        <h1 class="hero-name visually-hidden">zew0z</h1>
-        <div class="cinema-type" aria-live="polite" data-type-lines={typeLinesJson}>
-          <span class="cinema-type-prompt" aria-hidden="true">guest@zew0z:~$</span>
-          <p class="cinema-type-out" id="type-out"></p>
-          <span class="cinema-type-cursor" aria-hidden="true"></span>
-        </div>
-      </div>
-    </section>
-
-    <section class="cinema-deck section" aria-label="destinations">
-      <div class="container">
-        <ShellPrompt path="~" command="ls -F" />
-        <div class="cinema-deck-grid">
-          <a class="cinema-card card-writeups" href="/writeups.html">
-            <span class="cinema-card-path">./writeups</span>
-            <AsciiArt art={WRITEUPS_MARK} class="cinema-card-ascii" />
-            <span class="cinema-card-title">writeups</span>
-            <span class="cinema-card-desc">spoiler-gated labs. flags stay offline; notes stay here.</span>
-            <span class="cinema-card-meta">{writeupCount} rooms catalogued</span>
-          </a>
-
-          <a class="cinema-card card-portfolio" href="/portfolio.html">
-            <span class="cinema-card-path">./portfolio</span>
-            <AsciiArt art={PORTFOLIO_MARK} class="cinema-card-ascii" />
-            <span class="cinema-card-title">portfolio</span>
-            <span class="cinema-card-desc">tools, client stores, and frameworks currently in production.</span>
-            <span class="cinema-card-meta">{projectCount} entries</span>
-          </a>
-
-          <div class="cinema-card card-stats" aria-label="stats">
-            <span class="cinema-card-path">./stats</span>
-            <dl class="cinema-stats">
-              <div><dt>thm rooms</dt><dd>100+</dd></div>
-              <div><dt>platform rank</dt><dd>top 8%</dd></div>
-              <div><dt>years on linux</dt><dd>5+</dd></div>
-              <div><dt>projects</dt><dd>{projectCount}</dd></div>
-              <div><dt>writeups</dt><dd>{writeupCount}</dd></div>
-              <div><dt>status</dt><dd>pwning</dd></div>
-            </dl>
           </div>
         </div>
+
+        <div class="cinema-swarm" id="cascade-rail">
+          {cascadeTerms.map((term, i) => (
+            <article
+              class={`cinema-term hue-${term.hue}`}
+              data-cascade={i}
+              style={`--tx:${term.x};--ty:${term.y};--tw:${term.w};--rot:${term.rot};--z:${term.z};--i:${i}`}
+            >
+              <div class="cinema-term-chrome" aria-hidden="true">
+                <span class="tdot tdot-r"></span>
+                <span class="tdot tdot-y"></span>
+                <span class="tdot tdot-g"></span>
+                <span class="tname">{term.title}</span>
+              </div>
+              <pre class="cinema-term-body">{term.lines.map((line) => (
+                  <span class={`cinema-term-line is-${line.t}`}>{line.v}{nl}</span>
+                ))}</pre>
+            </article>
+          ))}
+        </div>
+
+        <div class="cinema-climax" id="ascii-reveal">
+          <h1 class="hero-name visually-hidden">zew0z</h1>
+          <AsciiArt art={ZEW0Z_BANNER} class="ascii-hero cinema-ascii" label="zew0z ascii logo" />
+          <div class="cinema-type" aria-live="polite" data-type-line={typeLine}>
+            <span class="cinema-type-prompt" aria-hidden="true">guest@zew0z:~$</span>
+            <p class="cinema-type-out" id="type-out"></p>
+            <span class="cinema-type-cursor" aria-hidden="true"></span>
+          </div>
+        </div>
+
+        <p class="visually-hidden">Scroll to advance the boot sequence, then continue down the page.</p>
+      </div>
+    </section>
+
+    <section class="cinema-land" aria-label="destinations">
+      <div class="container cinema-land-grid">
+        <a class="cinema-card card-writeups" href="/writeups.html">
+          <span class="cinema-card-path">./writeups</span>
+          <AsciiArt art={WRITEUPS_BANNER} class="cinema-card-ascii" />
+          <span class="cinema-card-title">writeups</span>
+          <span class="cinema-card-desc">spoiler-gated labs. flags stay offline.</span>
+          <pre class="cinema-ls" aria-hidden="true">{listingPosts.map((post) => (
+              <span class={`cinema-ls-row case-${post.data.platform}`}>-rw-  {postSlug(post)}{nl}</span>
+            ))}</pre>
+          <span class="cinema-card-meta">{writeupCount} rooms catalogued</span>
+        </a>
+
+        <a class="cinema-card card-portfolio" href="/portfolio.html">
+          <span class="cinema-card-path">./portfolio</span>
+          <AsciiArt art={WORK_BANNER} class="cinema-card-ascii" />
+          <span class="cinema-card-title">portfolio</span>
+          <span class="cinema-card-desc">tools, client stores, frameworks in production.</span>
+          <pre class="cinema-ls" aria-hidden="true">{listingWork.map((item) => (
+              <span class="cinema-ls-row">{item.group === 'clients' ? 'lrwx' : '-rwx'}  {item.title}{nl}</span>
+            ))}</pre>
+          <span class="cinema-card-meta">{projectCount} entries</span>
+        </a>
+
+        <aside class="cinema-card card-stats hero-panel" aria-label="stats">
+          <div class="panel-chrome">
+            <span class="panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="panel-title">whoami --verbose</span>
+          </div>
+          <pre class="panel-dump" aria-hidden="true">{whoami}</pre>
+          <dl class="hero-stats visually-hidden">
+            <div class="hero-stat"><dt>thm rooms</dt><dd>100+</dd></div>
+            <div class="hero-stat"><dt>platform rank</dt><dd>top 8%</dd></div>
+            <div class="hero-stat"><dt>years on linux</dt><dd>5+</dd></div>
+            <div class="hero-stat"><dt>projects</dt><dd>{projectCount}</dd></div>
+          </dl>
+        </aside>
       </div>
     </section>
 
@@ -205,8 +256,8 @@ const shellHint = `${DIVIDER}\n$ help | nmap | wiki | cat flag.txt\n${DIVIDER}`;
               <img
                 src={`/assets/logos/${logo.slug}.svg`}
                 alt=""
-                width="28"
-                height="28"
+                width="40"
+                height="40"
                 loading="lazy"
                 decoding="async"
               />
