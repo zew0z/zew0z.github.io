@@ -2,100 +2,221 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AsciiArt from '../components/AsciiArt.astro';
 import ShellPrompt from '../components/ShellPrompt.astro';
-import WorkListing from '../components/WorkListing.astro';
-import { ZEW0Z_BANNER, DIVIDER } from '../lib/ascii';
+import { ZEW0Z_BANNER, DIVIDER, WRITEUPS_MARK, PORTFOLIO_MARK } from '../lib/ascii';
 import { portfolioItems } from '../lib/portfolio';
-import { getWriteups, postUrl, readMinutes, searchItem, shortTitle } from '../lib/writeups';
+import { getWriteups, searchItem } from '../lib/writeups';
 
 const posts = await getWriteups();
-const previewWork = portfolioItems.slice(0, 4);
-const previewPosts = posts.slice(0, 5);
+const writeupCount = posts.length;
+const projectCount = portfolioItems.length;
+const nl = '\n';
+
+const bootLines = [
+  { text: 'zew0z.github.io :: bios rev 2026.09', kind: 'head' },
+  { text: 'cpu .............. coffee-powered core', kind: 'ok' },
+  { text: 'mem .............. enough for one more room', kind: 'ok' },
+  { text: 'mount /writeups .. spoiler gates armed', kind: 'ok' },
+  { text: 'mount /portfolio . client stores online', kind: 'ok' },
+  { text: 'net .............. thm · htb · shopify', kind: 'ok' },
+  { text: 'shell ............ guest@zew0z ready', kind: 'ok' },
+  { text: 'access granted :: continue', kind: 'go' },
+];
+
+const cascadeTerms = [
+  {
+    title: 'recon@lab:~',
+    hue: 'teal',
+    lines: [
+      { t: 'cmd', v: '$ nmap -sV 10.10.x.x' },
+      { t: 'out', v: '22/tcp  open  ssh' },
+      { t: 'out', v: '80/tcp  open  http' },
+      { t: 'out', v: '443/tcp open  https' },
+    ],
+  },
+  {
+    title: 'build@store:~',
+    hue: 'green',
+    lines: [
+      { t: 'cmd', v: '$ shopify theme push' },
+      { t: 'out', v: 'synced 42 files' },
+      { t: 'out', v: 'preview → live' },
+      { t: 'ok', v: '[ ok ] storefront shipped' },
+    ],
+  },
+  {
+    title: 'agent@rig:~',
+    hue: 'violet',
+    lines: [
+      { t: 'cmd', v: '$ claude --skills mcp' },
+      { t: 'out', v: 'sandbox: docker' },
+      { t: 'out', v: 'pipeline: chained' },
+      { t: 'ok', v: '[ ok ] agent team online' },
+    ],
+  },
+  {
+    title: 'record@lab:~',
+    hue: 'amber',
+    lines: [
+      { t: 'cmd', v: '$ sectape record' },
+      { t: 'out', v: 'capturing session…' },
+      { t: 'out', v: 'audit trail written' },
+      { t: 'ok', v: '[ ok ] reproducible' },
+    ],
+  },
+];
+
+const logos = [
+  { slug: 'tryhackme', name: 'TryHackMe' },
+  { slug: 'hackthebox', name: 'Hack The Box' },
+  { slug: 'anthropic', name: 'Claude / Anthropic' },
+  { slug: 'shopify', name: 'Shopify' },
+  { slug: 'wordpress', name: 'WordPress' },
+  { slug: 'linux', name: 'Linux' },
+  { slug: 'python', name: 'Python' },
+  { slug: 'docker', name: 'Docker' },
+  { slug: 'github', name: 'GitHub' },
+  { slug: 'archlinux', name: 'Arch Linux' },
+  { slug: 'neovim', name: 'Neovim' },
+  { slug: 'astro', name: 'Astro' },
+  { slug: 'nodedotjs', name: 'Node.js' },
+  { slug: 'gnubash', name: 'Bash' },
+];
+
+const logoLoop = [...logos, ...logos];
+
+const typeLinesJson = JSON.stringify([
+  'break boxes. ship stores. document everything.',
+  'security writeups, client storefronts, and an agent team that finishes the job.',
+]);
+
+const siteData = JSON.stringify({ posts: posts.map(searchItem) });
+const shellHint = `${DIVIDER}\n$ help | nmap | wiki | cat flag.txt\n${DIVIDER}`;
 ---
 
 <BaseLayout>
-  <section class="hero">
-    <div class="container hero-grid">
-      <div class="hero-copy">
-        <ShellPrompt path="~" command="cat banner.txt" />
-        <AsciiArt art={ZEW0Z_BANNER} class="ascii-hero" />
-        <p class="hero-motd" aria-hidden="true">
-          <span class="t-dim"># motd</span> break boxes. ship stores. document everything.
-        </p>
-        <h1 class="hero-name visually-hidden">zew0z</h1>
-        <p class="hero-role">security writeups, client storefronts, and an AI agent team that ships.</p>
-        <div class="hero-links">
-          <a class="btn-primary" href="/portfolio.html">./portfolio</a>
-          <a class="btn-ghost" href="/writeups.html">./writeups</a>
-        </div>
-      </div>
-
-      <aside class="hero-panel" aria-label="system status">
-        <div class="panel-chrome">
-          <span class="panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-          <span class="panel-title">whoami --verbose</span>
-        </div>
-        <pre class="panel-dump" aria-hidden="true">{`user:     zew0z
-shell:    /bin/zsh
-os:       linux x86_64
-uptime:   5+ years
-rank:     thm top 8%
-rooms:    100+
-clients:  8
-status:   actively pwning (labs)`}</pre>
-        <dl class="hero-stats visually-hidden">
-          <div class="hero-stat"><dt>thm rooms</dt><dd>100+</dd></div>
-          <div class="hero-stat"><dt>platform rank</dt><dd>top 8%</dd></div>
-          <div class="hero-stat"><dt>years on linux</dt><dd>5+</dd></div>
-          <div class="hero-stat"><dt>projects &amp; clients</dt><dd>8</dd></div>
-        </dl>
-        <div class="hero-panel-links">
-          <a href="https://github.com/zew0z" target="_blank" rel="noopener">github</a>
-          <a href="https://ko-fi.com/zew0z" target="_blank" rel="noopener">ko-fi</a>
-          <a href="/feed.xml">rss</a>
-        </div>
-      </aside>
-    </div>
-  </section>
-
-  <section class="section preview-section" id="work">
-    <div class="container">
-      <ShellPrompt path="~/portfolio" command="ls -la | head" />
-      <div class="preview-head">
-        <h2 class="section-title">selected work</h2>
-        <a class="preview-more" href="/portfolio.html">cd portfolio →</a>
-      </div>
-      <p class="section-sub">tools, client stores, and frameworks currently in production.</p>
-      <WorkListing items={previewWork} />
-    </div>
-  </section>
-
-  <section class="section preview-section preview-writeups" id="writeups">
-    <div class="container">
-      <ShellPrompt path="~/writeups" command={`ls -1 | head -${previewPosts.length}`} />
-      <div class="preview-head">
-        <h2 class="section-title">latest writeups</h2>
-        <a class="preview-more" href="/writeups.html">cd writeups →</a>
-      </div>
-      <p class="section-sub">spoiler-gated labs. flags stay offline; notes stay here.</p>
-
-      <div class="preview-log" role="list">
-        {previewPosts.map((post, i) => (
-          <a class={`preview-log-row case-${post.data.platform}`} href={postUrl(post)} role="listitem">
-            <span class="plog-idx" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-            <span class="plog-body">
-              <span class="plog-title">{shortTitle(post)}</span>
-              <span class="plog-desc">{post.data.description}</span>
-            </span>
-            <span class="plog-meta">
-              <span class={`badge badge-${post.data.platform}`}>{post.data.platform}</span>
-              <span>{post.data.date.toISOString().slice(0, 10)}</span>
-              <span>~{readMinutes(post)}m</span>
-            </span>
-          </a>
+  <div id="cinema" class="cinema">
+    <section class="cinema-boot" aria-label="system boot">
+      <div class="cinema-boot-track" aria-hidden="true">
+        {bootLines.map((_, i) => (
+          <div
+            class="cinema-boot-sentinel"
+            data-boot-idx={i}
+            style={`top: ${((i + 0.35) / bootLines.length) * 100}%`}
+          />
         ))}
       </div>
-    </div>
-  </section>
+      <div class="cinema-boot-sticky">
+        <div class="cinema-boot-frame">
+          <div class="cinema-boot-chrome">
+            <span class="panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="panel-title">bios · loading</span>
+            <span class="cinema-boot-pct" id="boot-pct" aria-live="polite">0%</span>
+          </div>
+          <pre class="cinema-boot-log" id="boot-log" aria-hidden="true">{bootLines.map((line, i) => (
+              <span class={`cinema-boot-line boot-${line.kind}`} data-boot-line={i}>
+                {line.kind === 'ok' ? `${line.text}  [ ok ]` : line.text}{nl}
+              </span>
+            ))}</pre>
+          <div class="cinema-boot-bar" aria-hidden="true">
+            <div class="cinema-boot-fill" id="boot-fill"></div>
+          </div>
+          <p class="visually-hidden">Scroll to advance the boot sequence, then continue down the page.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="cinema-cascade section" aria-label="live sessions">
+      <div class="container">
+        <ShellPrompt path="~/sessions" command="tmux ls" />
+        <h2 class="cinema-kicker">sessions firing</h2>
+      </div>
+      <div class="cinema-cascade-rail" id="cascade-rail">
+        {cascadeTerms.map((term, i) => (
+          <article class={`cinema-term hue-${term.hue}`} data-cascade={i} style={`--i: ${i}`}>
+            <div class="cinema-term-chrome" aria-hidden="true">
+              <span class="tdot tdot-r"></span>
+              <span class="tdot tdot-y"></span>
+              <span class="tdot tdot-g"></span>
+              <span class="tname">{term.title}</span>
+            </div>
+            <pre class="cinema-term-body">{term.lines.map((line) => (
+                <span class={`cinema-term-line is-${line.t}`}>{line.v}{nl}</span>
+              ))}</pre>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="cinema-identity section" id="identity" aria-label="identity">
+      <div class="container cinema-identity-inner">
+        <div class="cinema-ascii-wrap" id="ascii-reveal">
+          <AsciiArt art={ZEW0Z_BANNER} class="ascii-hero cinema-ascii" label="zew0z ascii logo" />
+        </div>
+        <h1 class="hero-name visually-hidden">zew0z</h1>
+        <div class="cinema-type" aria-live="polite" data-type-lines={typeLinesJson}>
+          <span class="cinema-type-prompt" aria-hidden="true">guest@zew0z:~$</span>
+          <p class="cinema-type-out" id="type-out"></p>
+          <span class="cinema-type-cursor" aria-hidden="true"></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="cinema-deck section" aria-label="destinations">
+      <div class="container">
+        <ShellPrompt path="~" command="ls -F" />
+        <div class="cinema-deck-grid">
+          <a class="cinema-card card-writeups" href="/writeups.html">
+            <span class="cinema-card-path">./writeups</span>
+            <AsciiArt art={WRITEUPS_MARK} class="cinema-card-ascii" />
+            <span class="cinema-card-title">writeups</span>
+            <span class="cinema-card-desc">spoiler-gated labs. flags stay offline; notes stay here.</span>
+            <span class="cinema-card-meta">{writeupCount} rooms catalogued</span>
+          </a>
+
+          <a class="cinema-card card-portfolio" href="/portfolio.html">
+            <span class="cinema-card-path">./portfolio</span>
+            <AsciiArt art={PORTFOLIO_MARK} class="cinema-card-ascii" />
+            <span class="cinema-card-title">portfolio</span>
+            <span class="cinema-card-desc">tools, client stores, and frameworks currently in production.</span>
+            <span class="cinema-card-meta">{projectCount} entries</span>
+          </a>
+
+          <div class="cinema-card card-stats" aria-label="stats">
+            <span class="cinema-card-path">./stats</span>
+            <dl class="cinema-stats">
+              <div><dt>thm rooms</dt><dd>100+</dd></div>
+              <div><dt>platform rank</dt><dd>top 8%</dd></div>
+              <div><dt>years on linux</dt><dd>5+</dd></div>
+              <div><dt>projects</dt><dd>{projectCount}</dd></div>
+              <div><dt>writeups</dt><dd>{writeupCount}</dd></div>
+              <div><dt>status</dt><dd>pwning</dd></div>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cinema-logos" aria-label="tools and platforms">
+      <div class="cinema-logos-fade" aria-hidden="true"></div>
+      <div class="cinema-marquee" data-marquee>
+        <div class="cinema-marquee-track">
+          {logoLoop.map((logo, i) => (
+            <span class="cinema-logo" aria-hidden={i >= logos.length ? 'true' : 'false'}>
+              <img
+                src={`/assets/logos/${logo.slug}.svg`}
+                alt=""
+                width="28"
+                height="28"
+                loading="lazy"
+                decoding="async"
+              />
+              {i < logos.length ? <span class="visually-hidden">{logo.name}</span> : null}
+            </span>
+          ))}
+        </div>
+      </div>
+    </section>
+  </div>
 
   <section class="playground section" id="playground">
     <div class="container playground-grid">
@@ -106,9 +227,7 @@ status:   actively pwning (labs)`}</pre>
           a fake shell with real opinions. it indexes the writeups, hides three flags,
           and keeps score of what you unlock.
         </p>
-        <pre class="ascii-hint" aria-hidden="true">{`${DIVIDER}
-$ help | nmap | wiki | cat flag.txt
-${DIVIDER}`}</pre>
+        <pre class="ascii-hint" aria-hidden="true">{shellHint}</pre>
         <p class="mono-hint">rumor: <code>cat flag.txt</code> is not the way. view-source is.</p>
       </div>
       <div>
@@ -120,7 +239,15 @@ ${DIVIDER}`}</pre>
           <div class="term-out" id="term-out" role="log" aria-label="guest terminal output"></div>
           <form class="term-line" id="term-form" autocomplete="off">
             <label class="term-prompt" for="term-input">guest@zew0z:~$</label>
-            <input class="term-input" id="term-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="guest terminal input. type help for commands." />
+            <input
+              class="term-input"
+              id="term-input"
+              type="text"
+              autocomplete="off"
+              autocapitalize="off"
+              spellcheck="false"
+              aria-label="guest terminal input. type help for commands."
+            />
           </form>
         </div>
         <div class="flagboard">
@@ -132,6 +259,7 @@ ${DIVIDER}`}</pre>
     </div>
   </section>
 
-  <script id="site-data" type="application/json" set:html={JSON.stringify({ posts: posts.map(searchItem) })} />
+  <script id="site-data" type="application/json" set:html={siteData} />
+  <script src="../scripts/cinematic.js"></script>
   <script src="../scripts/terminal.js"></script>
 </BaseLayout>
