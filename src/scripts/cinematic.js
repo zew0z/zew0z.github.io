@@ -158,6 +158,8 @@
       typeOut.textContent = text;
       if (typeOut2) typeOut2.textContent = text2;
       if (typeRow2) typeRow2.classList.add('is-on');
+      var typeGoR = document.getElementById('type-go');
+      if (typeGoR) typeGoR.classList.add('is-on');
       return;
     }
     window.setTimeout(function () {
@@ -165,7 +167,10 @@
         if (typeCur1) typeCur1.classList.add('is-off');
         if (typeRow2) typeRow2.classList.add('is-on');
         window.setTimeout(function () {
-          typeInto(typeOut2, text2);
+          typeInto(typeOut2, text2, function () {
+            var typeGo = document.getElementById('type-go');
+            if (typeGo) typeGo.classList.add('is-on');
+          });
         }, 220);
       });
     }, 420);
@@ -199,10 +204,14 @@
       if (typeCur1) typeCur1.classList.add('is-off');
       typeBox.classList.add('is-in');
     }
+    var typeGo = document.getElementById('type-go');
+    if (typeGo) typeGo.classList.add('is-on');
     cinema.querySelectorAll('.cinema-card').forEach(function (c) { c.classList.add('is-in'); });
   }
 
-  if (reduce) {
+  var skipCinema = location.hash === '#playground' || location.hash === '#guest-term';
+
+  if (reduce || skipCinema) {
     freezeAll();
   } else {
     setBoot(Math.min(1, bootLines.length - 1));

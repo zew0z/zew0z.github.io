@@ -6,6 +6,7 @@
 
   var TARGETS = [
     { name: 'cd ~', hint: 'home', url: '/' },
+    { name: './guest-shell', hint: 'fake shell, real flags', url: '/#playground' },
     { name: 'cd portfolio', hint: 'tools, clients, disciplines', url: '/portfolio.html' },
     { name: 'cd writeups', hint: 'the catalog', url: '/writeups.html' },
     { name: 'cat feed.xml', hint: 'rss feed', url: '/feed.xml' },

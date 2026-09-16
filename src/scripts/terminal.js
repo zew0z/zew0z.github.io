@@ -1191,4 +1191,16 @@
       });
   })();
 
+  function focusIfHash() {
+    if (location.hash !== '#playground' && location.hash !== '#guest-term') return;
+    var play = document.getElementById('playground');
+    if (play && play.scrollIntoView) play.scrollIntoView();
+    window.setTimeout(function () {
+      input.focus();
+    }, 60);
+  }
+  focusIfHash();
+  window.addEventListener('hashchange', focusIfHash);
+  window.addEventListener('load', focusIfHash);
+
 })();
