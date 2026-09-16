@@ -173,7 +173,7 @@ function makeFallCol(seed: number, len: number) {
 const fallCols = Array.from({ length: 16 }, (_, i) => {
   const rand = fallRng(1100 + i * 97);
   return {
-    x: 32 + i * 4.2 + (rand() * 1.6 - 0.8),
+    x: 48 + i * 3.2 + (rand() * 1.4 - 0.7),
     dur: 14 + rand() * 16,
     delay: -(rand() * 18),
     hue: i % 5 === 0 ? 'teal' : i % 4 === 0 ? 'green' : i % 3 === 0 ? 'ink' : 'dim',
@@ -182,34 +182,34 @@ const fallCols = Array.from({ length: 16 }, (_, i) => {
 });
 
 const fallStrings = [
-  { x: 42, dur: 11, delay: -1, text: '$ nmap -sV -T4 10.10.x.x' },
-  { x: 58, dur: 14, delay: -4, text: '0x7ffee21a4c00' },
-  { x: 48, dur: 12, delay: -2.5, text: 'ext4: mounting /writeups' },
-  { x: 66, dur: 16, delay: -7, text: 'guest@zew0z:~$ whoami' },
-  { x: 39, dur: 13, delay: -9, text: 'sectape record --audit' },
-  { x: 72, dur: 10, delay: -3, text: '22/tcp open ssh' },
-  { x: 54, dur: 15, delay: -6, text: 'claude --skills mcp' },
-  { x: 44, dur: 12, delay: -11, text: '# spoiler gates armed' },
-  { x: 80, dur: 13, delay: -5, text: 'thm top 8%' },
-  { x: 61, dur: 17, delay: -8, text: 'docker: agent sandboxes [ ok ]' },
-  { x: 50, dur: 11, delay: -13, text: 'shopify theme push' },
-  { x: 75, dur: 14, delay: -10, text: '443/tcp open https' },
-  { x: 41, dur: 16, delay: -15, text: 'cat /proc/self/status' },
-  { x: 69, dur: 12, delay: -12, text: 'uid=1000(zew0z) gid=1000(pwn)' },
-  { x: 46, dur: 13, delay: -14, text: '0xffffffff810a4c00' },
-  { x: 77, dur: 11, delay: -16, text: 'CAP_SYS_PTRACE' },
-  { x: 52, dur: 15, delay: -1.5, text: 'pts/0  guest session' },
+  { x: 53, dur: 11, delay: -1, text: '$ nmap -sV -T4 10.10.x.x' },
+  { x: 62, dur: 14, delay: -4, text: '0x7ffee21a4c00' },
+  { x: 58, dur: 12, delay: -2.5, text: 'ext4: mounting /writeups' },
+  { x: 70, dur: 16, delay: -7, text: 'guest@zew0z:~$ whoami' },
+  { x: 55, dur: 13, delay: -9, text: 'sectape record --audit' },
+  { x: 76, dur: 10, delay: -3, text: '22/tcp open ssh' },
+  { x: 64, dur: 15, delay: -6, text: 'claude --skills mcp' },
+  { x: 59, dur: 12, delay: -11, text: '# spoiler gates armed' },
+  { x: 82, dur: 13, delay: -5, text: 'thm top 8%' },
+  { x: 67, dur: 17, delay: -8, text: 'docker: agent sandboxes [ ok ]' },
+  { x: 72, dur: 11, delay: -13, text: 'shopify theme push' },
+  { x: 78, dur: 14, delay: -10, text: '443/tcp open https' },
+  { x: 54, dur: 16, delay: -15, text: 'cat /proc/self/status' },
+  { x: 73, dur: 12, delay: -12, text: 'uid=1000(zew0z) gid=1000(pwn)' },
+  { x: 61, dur: 13, delay: -14, text: '0xffffffff810a4c00' },
+  { x: 80, dur: 11, delay: -16, text: 'CAP_SYS_PTRACE' },
+  { x: 66, dur: 15, delay: -1.5, text: 'pts/0  guest session' },
 ];
 
 const fallWords = [
-  { x: 37, dur: 16, delay: -2, word: 'ZEW0Z' },
-  { x: 49, dur: 13, delay: -6, word: 'PWN' },
-  { x: 63, dur: 15, delay: -3, word: 'SSH' },
-  { x: 73, dur: 12, delay: -8, word: 'THM' },
-  { x: 55, dur: 18, delay: -11, word: 'HTB' },
+  { x: 52, dur: 16, delay: -2, word: 'ZEW0Z' },
+  { x: 60, dur: 13, delay: -6, word: 'PWN' },
+  { x: 68, dur: 15, delay: -3, word: 'SSH' },
+  { x: 76, dur: 12, delay: -8, word: 'THM' },
+  { x: 57, dur: 18, delay: -11, word: 'HTB' },
   { x: 84, dur: 14, delay: -5, word: 'ROOT' },
-  { x: 43, dur: 17, delay: -9, word: 'BOX' },
-  { x: 67, dur: 14, delay: -4, word: 'ZSH' },
+  { x: 64, dur: 17, delay: -9, word: 'BOX' },
+  { x: 72, dur: 14, delay: -4, word: 'ZSH' },
 ];
 const whoami = `user:     zew0z
 shell:    /bin/zsh
