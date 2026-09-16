@@ -1,10 +1,9 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AsciiArt from '../components/AsciiArt.astro';
-import ShellPrompt from '../components/ShellPrompt.astro';
-import { ZEW0Z_BANNER, DIVIDER, WRITEUPS_BANNER, WORK_BANNER } from '../lib/ascii';
+import { ZEW0Z_BANNER, WRITEUPS_BANNER, WORK_BANNER } from '../lib/ascii';
 import { portfolioItems } from '../lib/portfolio';
-import { getWriteups, searchItem, postSlug } from '../lib/writeups';
+import { getWriteups, postSlug } from '../lib/writeups';
 
 const posts = await getWriteups();
 const writeupCount = posts.length;
@@ -146,8 +145,6 @@ function bootParts(text: string) {
     ok,
   };
 }
-const siteData = JSON.stringify({ posts: posts.map(searchItem) });
-const shellHint = `${DIVIDER}\n$ help | nmap | wiki | cat flag.txt\n${DIVIDER}`;
 const listingPosts = posts;
 const listingWork = portfolioItems.filter((item) => item.group !== 'disciplines');
 
@@ -383,48 +380,5 @@ status:   actively pwning`;
     </section>
   </div>
 
-  <section class="playground section" id="playground">
-    <div class="container playground-grid">
-      <div class="playground-copy">
-        <ShellPrompt path="~/playground" command="./guest-shell" />
-        <h2 class="section-title">guest shell</h2>
-        <p>
-          a fake shell with real opinions. it indexes the writeups, hides three flags,
-          and keeps score of what you unlock.
-        </p>
-        <pre class="ascii-hint" aria-hidden="true">{shellHint}</pre>
-        <p class="mono-hint">rumor: <code>cat flag.txt</code> is not the way. view-source is.</p>
-      </div>
-      <div>
-        <div class="term" id="guest-term">
-          <div class="term-chrome" aria-hidden="true">
-            <span class="tdot tdot-r"></span><span class="tdot tdot-y"></span><span class="tdot tdot-g"></span>
-            <span class="tname">guest@zew0z: ~</span>
-          </div>
-          <div class="term-out" id="term-out" role="log" aria-label="guest terminal output"></div>
-          <form class="term-line" id="term-form" autocomplete="off">
-            <label class="term-prompt" for="term-input">guest@zew0z:~$</label>
-            <input
-              class="term-input"
-              id="term-input"
-              type="text"
-              autocomplete="off"
-              autocapitalize="off"
-              spellcheck="false"
-              aria-label="guest terminal input. type help for commands."
-            />
-          </form>
-        </div>
-        <div class="flagboard">
-          <div class="flagboard-head"># flagboard :: hunters who checked the source</div>
-          <div class="flagboard-rows" id="flagboard-rows"></div>
-          <p class="flagboard-join">join: capture the flag, then run publish</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <script id="site-data" type="application/json" set:html={siteData} />
   <script src="../scripts/cinematic.js"></script>
-  <script src="../scripts/terminal.js"></script>
 </BaseLayout>
