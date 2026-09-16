@@ -34,6 +34,18 @@ export const DIVIDER_HASH = '# # # # # # # # # # # # # # # # # # # #';
 export const BOX_TOP = '┌──────────────────────────────────────┐';
 export const BOX_BOT = '└──────────────────────────────────────┘';
 
+export const WRITEUPS_BANNER = [
+  '█     █ █▀▀█ █ ▀▀█▀▀ █▀▀ █  █ █▀▀█ █▀▀',
+  '█  █  █ █▄▄▀ █   █   █▀▀ █  █ █▄▄█ ▀▀█',
+  '▀▀▀▀▀▀▀ ▀  ▀ ▀   ▀   ▀▀▀  ▀▀▀ ▀    ▀▀▀',
+].join('\n');
+
+export const WORK_BANNER = [
+  '█     █ █▀▀█ █▀▀█ █ █',
+  '█  █  █ █  █ █▄▄▀ █▀▄',
+  '▀▀▀▀▀▀▀ ▀▀▀▀ ▀  ▀ ▀ ▀',
+].join('\n');
+
 export function promptPath(path = '~'): string {
   return `guest@zew0z:${path}$`;
 }

@@ -11,6 +11,8 @@
 
   (function boot() {
     if (reduceMotion) return;
+    // cinematic homepage owns its own scroll-driven boot
+    if (document.getElementById('cinema')) return;
     if (!document.getElementById('guest-term')) return;
     try { if (sessionStorage.getItem('zew0z-boot') === '1') return; } catch (e) { return; }
 

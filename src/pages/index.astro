@@ -2,100 +2,333 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AsciiArt from '../components/AsciiArt.astro';
 import ShellPrompt from '../components/ShellPrompt.astro';
-import WorkListing from '../components/WorkListing.astro';
-import { ZEW0Z_BANNER, DIVIDER } from '../lib/ascii';
+import { ZEW0Z_BANNER, DIVIDER, WRITEUPS_BANNER, WORK_BANNER } from '../lib/ascii';
 import { portfolioItems } from '../lib/portfolio';
-import { getWriteups, postUrl, readMinutes, searchItem, shortTitle } from '../lib/writeups';
+import { getWriteups, searchItem, postSlug } from '../lib/writeups';
 
 const posts = await getWriteups();
-const previewWork = portfolioItems.slice(0, 4);
-const previewPosts = posts.slice(0, 5);
----
+const writeupCount = posts.length;
+const projectCount = portfolioItems.length;
+const nl = '\n';
 
-<BaseLayout>
-  <section class="hero">
-    <div class="container hero-grid">
-      <div class="hero-copy">
-        <ShellPrompt path="~" command="cat banner.txt" />
-        <AsciiArt art={ZEW0Z_BANNER} class="ascii-hero" />
-        <p class="hero-motd" aria-hidden="true">
-          <span class="t-dim"># motd</span> break boxes. ship stores. document everything.
-        </p>
-        <h1 class="hero-name visually-hidden">zew0z</h1>
-        <p class="hero-role">security writeups, client storefronts, and an AI agent team that ships.</p>
-        <div class="hero-links">
-          <a class="btn-primary" href="/portfolio.html">./portfolio</a>
-          <a class="btn-ghost" href="/writeups.html">./writeups</a>
-        </div>
-      </div>
+const bootLines = [
+  { kind: 'dim', text: '[    0.000000] linux 6.12.0-zew0z #1 SMP PREEMPT' },
+  { kind: 'head', text: '[    0.000184] bios :: guest@zew0z  rev 2026.09' },
+  { kind: 'ok', text: '[    0.041102] cpu0     coffee-powered core          [ ok ]' },
+  { kind: 'ok', text: '[    0.082441] mem      64G claimed, 1 room leftover [ ok ]' },
+  { kind: 'ok', text: '[    0.120903] acpi     irq routing, no surprises    [ ok ]' },
+  { kind: 'ok', text: '[    0.188210] net      thm · htb · shopify          [ ok ]' },
+  { kind: 'ok', text: '[    0.241008] ext4     mounting /writeups           [ ok ]' },
+  { kind: 'ok', text: '[    0.301552] ext4     spoiler gates armed          [ ok ]' },
+  { kind: 'ok', text: '[    0.366104] ext4     mounting /portfolio          [ ok ]' },
+  { kind: 'ok', text: '[    0.421773] docker   agent sandboxes              [ ok ]' },
+  { kind: 'ok', text: '[    0.498201] tty1     guest shell on :4321         [ ok ]' },
+  { kind: 'ok', text: '[    0.551044] flags    3 hidden, 0 in plaintext     [ ok ]' },
+  { kind: 'go', text: '[    0.610000] access granted. continue.' },
+];
 
-      <aside class="hero-panel" aria-label="system status">
-        <div class="panel-chrome">
-          <span class="panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-          <span class="panel-title">whoami --verbose</span>
-        </div>
-        <pre class="panel-dump" aria-hidden="true">{`user:     zew0z
+const cascadeTerms = [
+  {
+    title: 'recon@lab:~',
+    hue: 'teal',
+    x: '2%',
+    y: '7%',
+    w: '22.5rem',
+    rot: '-1.4deg',
+    z: 3,
+    lines: [
+      { t: 'cmd', v: '$ nmap -sV -T4 10.10.x.x' },
+      { t: 'out', v: 'PORT    STATE SERVICE' },
+      { t: 'out', v: '22/tcp  open  ssh' },
+      { t: 'out', v: '80/tcp  open  http' },
+      { t: 'out', v: '443/tcp open  https' },
+    ],
+  },
+  {
+    title: 'build@store:~',
+    hue: 'green',
+    x: '28%',
+    y: '26%',
+    w: '21.5rem',
+    rot: '1.1deg',
+    z: 4,
+    lines: [
+      { t: 'cmd', v: '$ shopify theme push' },
+      { t: 'out', v: '↑  42 files' },
+      { t: 'out', v: 'preview → production' },
+      { t: 'ok', v: '[ ok ] storefront shipped' },
+    ],
+  },
+  {
+    title: 'agent@rig:~',
+    hue: 'violet',
+    x: '54%',
+    y: '5%',
+    w: '20.5rem',
+    rot: '-0.7deg',
+    z: 5,
+    lines: [
+      { t: 'cmd', v: '$ claude --skills mcp' },
+      { t: 'out', v: 'sandbox  docker' },
+      { t: 'out', v: 'harness  chained' },
+      { t: 'ok', v: '[ ok ] agent team online' },
+    ],
+  },
+  {
+    title: 'record@lab:~',
+    hue: 'amber',
+    x: '6%',
+    y: '54%',
+    w: '22rem',
+    rot: '1.5deg',
+    z: 2,
+    lines: [
+      { t: 'cmd', v: '$ sectape record' },
+      { t: 'out', v: 'capturing session…' },
+      { t: 'out', v: 'every cmd + stdout' },
+      { t: 'ok', v: '[ ok ] audit trail written' },
+    ],
+  },
+  {
+    title: 'zew0z@box:~',
+    hue: 'sky',
+    x: '46%',
+    y: '52%',
+    w: '21rem',
+    rot: '-1.2deg',
+    z: 3,
+    lines: [
+      { t: 'cmd', v: '$ whoami && id' },
+      { t: 'out', v: 'zew0z' },
+      { t: 'out', v: 'uid=1000(zew0z) gid=1000(pwn)' },
+      { t: 'ok', v: 'status: actively pwning' },
+    ],
+  },
+];
+
+const beats = [
+  ...bootLines.map((_, i) => ({ kind: 'boot', i })),
+  ...cascadeTerms.map((_, i) => ({ kind: 'swarm', i })),
+  { kind: 'climax', i: 0 },
+];
+
+const logos = [
+  { slug: 'tryhackme', name: 'TryHackMe' },
+  { slug: 'hackthebox', name: 'Hack The Box' },
+  { slug: 'anthropic', name: 'Claude / Anthropic' },
+  { slug: 'shopify', name: 'Shopify' },
+  { slug: 'wordpress', name: 'WordPress' },
+  { slug: 'linux', name: 'Linux' },
+  { slug: 'python', name: 'Python' },
+  { slug: 'docker', name: 'Docker' },
+  { slug: 'github', name: 'GitHub' },
+  { slug: 'archlinux', name: 'Arch Linux' },
+  { slug: 'neovim', name: 'Neovim' },
+  { slug: 'astro', name: 'Astro' },
+  { slug: 'nodedotjs', name: 'Node.js' },
+  { slug: 'gnubash', name: 'Bash' },
+];
+
+const logoLoop = [...logos, ...logos];
+const typeLine = 'break boxes. ship stores. document everything.';
+const siteData = JSON.stringify({ posts: posts.map(searchItem) });
+const shellHint = `${DIVIDER}\n$ help | nmap | wiki | cat flag.txt\n${DIVIDER}`;
+const listingPosts = posts.slice(0, 8);
+const listingWork = portfolioItems.filter((item) => item.group !== 'disciplines').slice(0, 6);
+
+const FALL_GLYPHS = '0123456789abcdef│─┌┐└┘┬┴┼┤├█▓▒░<>/$#*+=.~';
+function fallRng(seed: number) {
+  return function next() {
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function makeFallCol(seed: number, len: number) {
+  const rand = fallRng(seed);
+  const chars: string[] = [];
+  for (let i = 0; i < len; i++) {
+    chars.push(FALL_GLYPHS[Math.floor(rand() * FALL_GLYPHS.length)]);
+  }
+  const body = chars.join('\n');
+  return `${body}\n${body}`;
+}
+
+const fallCols = Array.from({ length: 16 }, (_, i) => {
+  const rand = fallRng(1100 + i * 97);
+  return {
+    x: 32 + i * 4.2 + (rand() * 1.6 - 0.8),
+    dur: 14 + rand() * 16,
+    delay: -(rand() * 18),
+    hue: i % 5 === 0 ? 'teal' : i % 4 === 0 ? 'green' : i % 3 === 0 ? 'ink' : 'dim',
+    text: makeFallCol(200 + i * 13, 42),
+  };
+});
+
+const fallStrings = [
+  { x: 42, dur: 11, delay: -1, text: '$ nmap -sV -T4 10.10.x.x' },
+  { x: 58, dur: 14, delay: -4, text: '0x7ffee21a4c00' },
+  { x: 48, dur: 12, delay: -2.5, text: 'ext4: mounting /writeups' },
+  { x: 66, dur: 16, delay: -7, text: 'guest@zew0z:~$ whoami' },
+  { x: 39, dur: 13, delay: -9, text: 'sectape record --audit' },
+  { x: 72, dur: 10, delay: -3, text: '22/tcp open ssh' },
+  { x: 54, dur: 15, delay: -6, text: 'claude --skills mcp' },
+  { x: 44, dur: 12, delay: -11, text: '# spoiler gates armed' },
+  { x: 80, dur: 13, delay: -5, text: 'thm top 8%' },
+  { x: 61, dur: 17, delay: -8, text: 'docker: agent sandboxes [ ok ]' },
+];
+const whoami = `user:     zew0z
 shell:    /bin/zsh
 os:       linux x86_64
 uptime:   5+ years
 rank:     thm top 8%
 rooms:    100+
 clients:  8
-status:   actively pwning (labs)`}</pre>
-        <dl class="hero-stats visually-hidden">
-          <div class="hero-stat"><dt>thm rooms</dt><dd>100+</dd></div>
-          <div class="hero-stat"><dt>platform rank</dt><dd>top 8%</dd></div>
-          <div class="hero-stat"><dt>years on linux</dt><dd>5+</dd></div>
-          <div class="hero-stat"><dt>projects &amp; clients</dt><dd>8</dd></div>
-        </dl>
-        <div class="hero-panel-links">
-          <a href="https://github.com/zew0z" target="_blank" rel="noopener">github</a>
-          <a href="https://ko-fi.com/zew0z" target="_blank" rel="noopener">ko-fi</a>
-          <a href="/feed.xml">rss</a>
-        </div>
-      </aside>
-    </div>
-  </section>
+status:   actively pwning`;
+---
 
-  <section class="section preview-section" id="work">
-    <div class="container">
-      <ShellPrompt path="~/portfolio" command="ls -la | head" />
-      <div class="preview-head">
-        <h2 class="section-title">selected work</h2>
-        <a class="preview-more" href="/portfolio.html">cd portfolio →</a>
-      </div>
-      <p class="section-sub">tools, client stores, and frameworks currently in production.</p>
-      <WorkListing items={previewWork} />
-    </div>
-  </section>
-
-  <section class="section preview-section preview-writeups" id="writeups">
-    <div class="container">
-      <ShellPrompt path="~/writeups" command={`ls -1 | head -${previewPosts.length}`} />
-      <div class="preview-head">
-        <h2 class="section-title">latest writeups</h2>
-        <a class="preview-more" href="/writeups.html">cd writeups →</a>
-      </div>
-      <p class="section-sub">spoiler-gated labs. flags stay offline; notes stay here.</p>
-
-      <div class="preview-log" role="list">
-        {previewPosts.map((post, i) => (
-          <a class={`preview-log-row case-${post.data.platform}`} href={postUrl(post)} role="listitem">
-            <span class="plog-idx" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-            <span class="plog-body">
-              <span class="plog-title">{shortTitle(post)}</span>
-              <span class="plog-desc">{post.data.description}</span>
-            </span>
-            <span class="plog-meta">
-              <span class={`badge badge-${post.data.platform}`}>{post.data.platform}</span>
-              <span>{post.data.date.toISOString().slice(0, 10)}</span>
-              <span>~{readMinutes(post)}m</span>
-            </span>
-          </a>
+<BaseLayout>
+  <div id="cinema" class="cinema">
+    <section class="cinema-stage" id="cinema-stage" aria-label="system boot">
+      <div class="cinema-beats" aria-hidden="true">
+        {beats.map((beat, n) => (
+          <div
+            class="cinema-beat"
+            data-kind={beat.kind}
+            data-i={beat.i}
+            style={`top: ${((n + 0.15) / (beats.length + 4)) * 100}%`}
+          />
         ))}
       </div>
-    </div>
-  </section>
+
+      <div class="cinema-sticky">
+        <div class="cinema-fall" id="cinema-fall" aria-hidden="true">
+          {fallCols.map((col) => (
+            <pre
+              class={`cinema-fall-col hue-${col.hue}`}
+              style={`--x:${col.x}%;--dur:${col.dur}s;--delay:${col.delay}s`}
+            >{col.text}</pre>
+          ))}
+          {fallStrings.map((str) => (
+            <span
+              class="cinema-fall-str"
+              style={`--x:${str.x}%;--dur:${str.dur}s;--delay:${str.delay}s`}
+            >{str.text}</span>
+          ))}
+        </div>
+
+        <div class="cinema-boot-layer">
+          <pre class="cinema-boot-log" id="boot-log" aria-hidden="true">{bootLines.map((line, i) => (
+              <span class={`cinema-boot-line boot-${line.kind}`} data-boot-line={i}>{line.text}{nl}</span>
+            ))}</pre>
+          <div class="cinema-pct-wrap">
+            <p class="cinema-pct-label" id="boot-label">loading</p>
+            <p class="cinema-pct" id="boot-pct">00</p>
+            <div class="cinema-pct-bar" aria-hidden="true">
+              <div class="cinema-boot-fill" id="boot-fill"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cinema-swarm" id="cascade-rail">
+          {cascadeTerms.map((term, i) => (
+            <article
+              class={`cinema-term hue-${term.hue}`}
+              data-cascade={i}
+              style={`--tx:${term.x};--ty:${term.y};--tw:${term.w};--rot:${term.rot};--z:${term.z};--i:${i}`}
+            >
+              <div class="cinema-term-chrome" aria-hidden="true">
+                <span class="tdot tdot-r"></span>
+                <span class="tdot tdot-y"></span>
+                <span class="tdot tdot-g"></span>
+                <span class="tname">{term.title}</span>
+              </div>
+              <pre class="cinema-term-body">{term.lines.map((line) => (
+                  <span class={`cinema-term-line is-${line.t}`}>{line.v}{nl}</span>
+                ))}</pre>
+            </article>
+          ))}
+        </div>
+
+        <div class="cinema-climax" id="ascii-reveal">
+          <h1 class="hero-name visually-hidden">zew0z</h1>
+          <AsciiArt art={ZEW0Z_BANNER} class="ascii-hero cinema-ascii" label="zew0z ascii logo" />
+          <div class="cinema-type" aria-live="polite" data-type-line={typeLine}>
+            <span class="cinema-type-prompt" aria-hidden="true">guest@zew0z:~$</span>
+            <p class="cinema-type-out" id="type-out"></p>
+            <span class="cinema-type-cursor" aria-hidden="true"></span>
+          </div>
+        </div>
+
+        <div class="cinema-hud" aria-hidden="true">
+          <span>tty1</span>
+          <span id="boot-hud-pct">00%</span>
+          <span>guest@zew0z</span>
+        </div>
+        <p class="visually-hidden">Scroll to advance the boot sequence, then continue down the page.</p>
+      </div>
+    </section>
+
+    <section class="cinema-land" aria-label="destinations">
+      <div class="container cinema-land-grid">
+          <a class="cinema-card card-writeups" href="/writeups.html" aria-label="writeups">
+          <span class="cinema-card-path">./writeups</span>
+          <AsciiArt art={WRITEUPS_BANNER} class="cinema-card-ascii" />
+          <span class="cinema-card-desc">spoiler-gated labs. flags stay offline.</span>
+          <pre class="cinema-ls" aria-hidden="true">{listingPosts.map((post) => (
+              <span class={`cinema-ls-row case-${post.data.platform}`}>-rw-  {postSlug(post)}{nl}</span>
+            ))}</pre>
+          <span class="cinema-card-meta">{writeupCount} rooms catalogued</span>
+        </a>
+
+          <a class="cinema-card card-portfolio" href="/portfolio.html" aria-label="portfolio">
+          <span class="cinema-card-path">./portfolio</span>
+          <AsciiArt art={WORK_BANNER} class="cinema-card-ascii" />
+          <span class="cinema-card-desc">tools, client stores, frameworks in production.</span>
+          <pre class="cinema-ls" aria-hidden="true">{listingWork.map((item) => (
+              <span class="cinema-ls-row">{item.group === 'clients' ? 'lrwx' : '-rwx'}  {item.title}{nl}</span>
+            ))}</pre>
+          <span class="cinema-card-meta">{projectCount} entries</span>
+        </a>
+
+        <aside class="cinema-card card-stats hero-panel" aria-label="stats">
+          <div class="panel-chrome">
+            <span class="panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="panel-title">whoami --verbose</span>
+          </div>
+          <pre class="panel-dump" aria-hidden="true">{whoami}</pre>
+          <dl class="hero-stats visually-hidden">
+            <div class="hero-stat"><dt>thm rooms</dt><dd>100+</dd></div>
+            <div class="hero-stat"><dt>platform rank</dt><dd>top 8%</dd></div>
+            <div class="hero-stat"><dt>years on linux</dt><dd>5+</dd></div>
+            <div class="hero-stat"><dt>projects</dt><dd>{projectCount}</dd></div>
+          </dl>
+        </aside>
+      </div>
+    </section>
+
+    <section class="cinema-logos" aria-label="tools and platforms">
+      <div class="cinema-logos-fade" aria-hidden="true"></div>
+      <div class="cinema-marquee" data-marquee>
+        <div class="cinema-marquee-track">
+          {logoLoop.map((logo, i) => (
+            <span class="cinema-logo" aria-hidden={i >= logos.length ? 'true' : 'false'}>
+              <img
+                src={`/assets/logos/${logo.slug}.svg`}
+                alt=""
+                width="40"
+                height="40"
+                loading="lazy"
+                decoding="async"
+              />
+              {i < logos.length ? <span class="visually-hidden">{logo.name}</span> : null}
+            </span>
+          ))}
+        </div>
+      </div>
+    </section>
+  </div>
 
   <section class="playground section" id="playground">
     <div class="container playground-grid">
@@ -106,9 +339,7 @@ status:   actively pwning (labs)`}</pre>
           a fake shell with real opinions. it indexes the writeups, hides three flags,
           and keeps score of what you unlock.
         </p>
-        <pre class="ascii-hint" aria-hidden="true">{`${DIVIDER}
-$ help | nmap | wiki | cat flag.txt
-${DIVIDER}`}</pre>
+        <pre class="ascii-hint" aria-hidden="true">{shellHint}</pre>
         <p class="mono-hint">rumor: <code>cat flag.txt</code> is not the way. view-source is.</p>
       </div>
       <div>
@@ -120,7 +351,15 @@ ${DIVIDER}`}</pre>
           <div class="term-out" id="term-out" role="log" aria-label="guest terminal output"></div>
           <form class="term-line" id="term-form" autocomplete="off">
             <label class="term-prompt" for="term-input">guest@zew0z:~$</label>
-            <input class="term-input" id="term-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="guest terminal input. type help for commands." />
+            <input
+              class="term-input"
+              id="term-input"
+              type="text"
+              autocomplete="off"
+              autocapitalize="off"
+              spellcheck="false"
+              aria-label="guest terminal input. type help for commands."
+            />
           </form>
         </div>
         <div class="flagboard">
@@ -132,6 +371,7 @@ ${DIVIDER}`}</pre>
     </div>
   </section>
 
-  <script id="site-data" type="application/json" set:html={JSON.stringify({ posts: posts.map(searchItem) })} />
+  <script id="site-data" type="application/json" set:html={siteData} />
+  <script src="../scripts/cinematic.js"></script>
   <script src="../scripts/terminal.js"></script>
 </BaseLayout>
