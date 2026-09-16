@@ -17,10 +17,13 @@ const bootLines = [
   { kind: 'ok', text: '[    0.041102] cpu0     coffee-powered core          [ ok ]' },
   { kind: 'ok', text: '[    0.082441] mem      64G claimed, 1 room leftover [ ok ]' },
   { kind: 'ok', text: '[    0.120903] acpi     irq routing, no surprises    [ ok ]' },
+  { kind: 'ok', text: '[    0.151004] pci      walking the bus              [ ok ]' },
   { kind: 'ok', text: '[    0.188210] net      thm · htb · shopify          [ ok ]' },
+  { kind: 'ok', text: '[    0.210440] rng      rdrand online                [ ok ]' },
   { kind: 'ok', text: '[    0.241008] ext4     mounting /writeups           [ ok ]' },
   { kind: 'ok', text: '[    0.301552] ext4     spoiler gates armed          [ ok ]' },
   { kind: 'ok', text: '[    0.366104] ext4     mounting /portfolio          [ ok ]' },
+  { kind: 'ok', text: '[    0.401882] audit    sectape hooks                [ ok ]' },
   { kind: 'ok', text: '[    0.421773] docker   agent sandboxes              [ ok ]' },
   { kind: 'ok', text: '[    0.498201] tty1     guest shell on :4321         [ ok ]' },
   { kind: 'ok', text: '[    0.551044] flags    3 hidden, 0 in plaintext     [ ok ]' },
@@ -131,10 +134,22 @@ const logos = [
 
 const logoLoop = [...logos, ...logos];
 const typeLine = 'break boxes. ship stores. document everything.';
+const typeLine2 = 'security writeups, client stores, an agent team.';
+
+function bootParts(text: string) {
+  const m = text.match(/^(\[[^\]]+\])\s(.*)$/);
+  if (!m) return { ts: '', body: text, ok: false };
+  const ok = /\s\[ ok \]\s*$/.test(m[2]);
+  return {
+    ts: m[1],
+    body: ok ? m[2].replace(/\s\[ ok \]\s*$/, '') : m[2],
+    ok,
+  };
+}
 const siteData = JSON.stringify({ posts: posts.map(searchItem) });
 const shellHint = `${DIVIDER}\n$ help | nmap | wiki | cat flag.txt\n${DIVIDER}`;
-const listingPosts = posts.slice(0, 8);
-const listingWork = portfolioItems.filter((item) => item.group !== 'disciplines').slice(0, 6);
+const listingPosts = posts;
+const listingWork = portfolioItems.filter((item) => item.group !== 'disciplines');
 
 const FALL_GLYPHS = '0123456789abcdef│─┌┐└┘┬┴┼┤├█▓▒░<>/$#*+=.~';
 function fallRng(seed: number) {
@@ -158,7 +173,7 @@ function makeFallCol(seed: number, len: number) {
 const fallCols = Array.from({ length: 16 }, (_, i) => {
   const rand = fallRng(1100 + i * 97);
   return {
-    x: 32 + i * 4.2 + (rand() * 1.6 - 0.8),
+    x: 48 + i * 3.2 + (rand() * 1.4 - 0.7),
     dur: 14 + rand() * 16,
     delay: -(rand() * 18),
     hue: i % 5 === 0 ? 'teal' : i % 4 === 0 ? 'green' : i % 3 === 0 ? 'ink' : 'dim',
@@ -167,16 +182,34 @@ const fallCols = Array.from({ length: 16 }, (_, i) => {
 });
 
 const fallStrings = [
-  { x: 42, dur: 11, delay: -1, text: '$ nmap -sV -T4 10.10.x.x' },
-  { x: 58, dur: 14, delay: -4, text: '0x7ffee21a4c00' },
-  { x: 48, dur: 12, delay: -2.5, text: 'ext4: mounting /writeups' },
-  { x: 66, dur: 16, delay: -7, text: 'guest@zew0z:~$ whoami' },
-  { x: 39, dur: 13, delay: -9, text: 'sectape record --audit' },
-  { x: 72, dur: 10, delay: -3, text: '22/tcp open ssh' },
-  { x: 54, dur: 15, delay: -6, text: 'claude --skills mcp' },
-  { x: 44, dur: 12, delay: -11, text: '# spoiler gates armed' },
-  { x: 80, dur: 13, delay: -5, text: 'thm top 8%' },
-  { x: 61, dur: 17, delay: -8, text: 'docker: agent sandboxes [ ok ]' },
+  { x: 53, dur: 11, delay: -1, text: '$ nmap -sV -T4 10.10.x.x' },
+  { x: 62, dur: 14, delay: -4, text: '0x7ffee21a4c00' },
+  { x: 58, dur: 12, delay: -2.5, text: 'ext4: mounting /writeups' },
+  { x: 70, dur: 16, delay: -7, text: 'guest@zew0z:~$ whoami' },
+  { x: 55, dur: 13, delay: -9, text: 'sectape record --audit' },
+  { x: 76, dur: 10, delay: -3, text: '22/tcp open ssh' },
+  { x: 64, dur: 15, delay: -6, text: 'claude --skills mcp' },
+  { x: 59, dur: 12, delay: -11, text: '# spoiler gates armed' },
+  { x: 82, dur: 13, delay: -5, text: 'thm top 8%' },
+  { x: 67, dur: 17, delay: -8, text: 'docker: agent sandboxes [ ok ]' },
+  { x: 72, dur: 11, delay: -13, text: 'shopify theme push' },
+  { x: 78, dur: 14, delay: -10, text: '443/tcp open https' },
+  { x: 54, dur: 16, delay: -15, text: 'cat /proc/self/status' },
+  { x: 73, dur: 12, delay: -12, text: 'uid=1000(zew0z) gid=1000(pwn)' },
+  { x: 61, dur: 13, delay: -14, text: '0xffffffff810a4c00' },
+  { x: 80, dur: 11, delay: -16, text: 'CAP_SYS_PTRACE' },
+  { x: 66, dur: 15, delay: -1.5, text: 'pts/0  guest session' },
+];
+
+const fallWords = [
+  { x: 52, dur: 16, delay: -2, word: 'ZEW0Z' },
+  { x: 60, dur: 13, delay: -6, word: 'PWN' },
+  { x: 68, dur: 15, delay: -3, word: 'SSH' },
+  { x: 76, dur: 12, delay: -8, word: 'THM' },
+  { x: 57, dur: 18, delay: -11, word: 'HTB' },
+  { x: 84, dur: 14, delay: -5, word: 'ROOT' },
+  { x: 64, dur: 17, delay: -9, word: 'BOX' },
+  { x: 72, dur: 14, delay: -4, word: 'ZSH' },
 ];
 const whoami = `user:     zew0z
 shell:    /bin/zsh
@@ -216,12 +249,24 @@ status:   actively pwning`;
               style={`--x:${str.x}%;--dur:${str.dur}s;--delay:${str.delay}s`}
             >{str.text}</span>
           ))}
+          {fallWords.map((w) => (
+            <pre
+              class="cinema-fall-word"
+              style={`--x:${w.x}%;--dur:${w.dur}s;--delay:${w.delay}s`}
+            >{Array.from({ length: 8 }, () => w.word.split('').join('\n')).join('\n\n')}</pre>
+          ))}
         </div>
+        <div class="cinema-scan" aria-hidden="true"></div>
 
         <div class="cinema-boot-layer">
-          <pre class="cinema-boot-log" id="boot-log" aria-hidden="true">{bootLines.map((line, i) => (
-              <span class={`cinema-boot-line boot-${line.kind}`} data-boot-line={i}>{line.text}{nl}</span>
-            ))}</pre>
+          <pre class="cinema-boot-log" id="boot-log" aria-hidden="true">{bootLines.map((line, i) => {
+              const p = bootParts(line.text);
+              return (
+                <span class={`cinema-boot-line boot-${line.kind}`} data-boot-line={i}>
+                  {p.ts ? <span class="boot-ts">{p.ts} </span> : null}{p.body}{p.ok ? <span class="boot-st"> [ ok ]</span> : null}{nl}
+                </span>
+              );
+            })}</pre>
           <div class="cinema-pct-wrap">
             <p class="cinema-pct-label" id="boot-label">loading</p>
             <p class="cinema-pct" id="boot-pct">00</p>
@@ -254,16 +299,24 @@ status:   actively pwning`;
         <div class="cinema-climax" id="ascii-reveal">
           <h1 class="hero-name visually-hidden">zew0z</h1>
           <AsciiArt art={ZEW0Z_BANNER} class="ascii-hero cinema-ascii" label="zew0z ascii logo" />
-          <div class="cinema-type" aria-live="polite" data-type-line={typeLine}>
-            <span class="cinema-type-prompt" aria-hidden="true">guest@zew0z:~$</span>
-            <p class="cinema-type-out" id="type-out"></p>
-            <span class="cinema-type-cursor" aria-hidden="true"></span>
+          <div class="cinema-type" aria-live="polite" data-type-line={typeLine} data-type-line-2={typeLine2}>
+            <div class="cinema-type-row">
+              <span class="cinema-type-prompt" aria-hidden="true">guest@zew0z:~$</span>
+              <p class="cinema-type-out" id="type-out"></p>
+              <span class="cinema-type-cursor" id="type-cursor-1" aria-hidden="true"></span>
+            </div>
+            <div class="cinema-type-row" id="type-row-2">
+              <span class="cinema-type-prompt is-hash" aria-hidden="true">#</span>
+              <p class="cinema-type-out cinema-type-out-2" id="type-out-2"></p>
+              <span class="cinema-type-cursor is-dim" id="type-cursor-2" aria-hidden="true"></span>
+            </div>
           </div>
         </div>
 
         <div class="cinema-hud" aria-hidden="true">
-          <span>tty1</span>
+          <span id="boot-hud-tty">tty1</span>
           <span id="boot-hud-pct">00%</span>
+          <span>flags 3 hidden</span>
           <span>guest@zew0z</span>
         </div>
         <p class="visually-hidden">Scroll to advance the boot sequence, then continue down the page.</p>
@@ -276,7 +329,7 @@ status:   actively pwning`;
           <span class="cinema-card-path">./writeups</span>
           <AsciiArt art={WRITEUPS_BANNER} class="cinema-card-ascii" />
           <span class="cinema-card-desc">spoiler-gated labs. flags stay offline.</span>
-          <pre class="cinema-ls" aria-hidden="true">{listingPosts.map((post) => (
+          <pre class="cinema-ls" aria-hidden="true"><span class="cinema-ls-head"># ls -1{nl}</span>{listingPosts.map((post) => (
               <span class={`cinema-ls-row case-${post.data.platform}`}>-rw-  {postSlug(post)}{nl}</span>
             ))}</pre>
           <span class="cinema-card-meta">{writeupCount} rooms catalogued</span>
@@ -286,7 +339,7 @@ status:   actively pwning`;
           <span class="cinema-card-path">./portfolio</span>
           <AsciiArt art={WORK_BANNER} class="cinema-card-ascii" />
           <span class="cinema-card-desc">tools, client stores, frameworks in production.</span>
-          <pre class="cinema-ls" aria-hidden="true">{listingWork.map((item) => (
+          <pre class="cinema-ls" aria-hidden="true"><span class="cinema-ls-head"># ls -1{nl}</span>{listingWork.map((item) => (
               <span class="cinema-ls-row">{item.group === 'clients' ? 'lrwx' : '-rwx'}  {item.title}{nl}</span>
             ))}</pre>
           <span class="cinema-card-meta">{projectCount} entries</span>
