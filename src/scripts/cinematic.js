@@ -19,12 +19,18 @@
   var climax = document.getElementById('ascii-reveal');
   var typeBox = cinema.querySelector('.cinema-type');
   var typeOut = document.getElementById('type-out');
+  var typeOut2 = document.getElementById('type-out-2');
+  var typeRow2 = document.getElementById('type-row-2');
+  var typeCur1 = document.getElementById('type-cursor-1');
+  var hudTty = document.getElementById('boot-hud-tty');
   var fall = document.getElementById('cinema-fall');
+  var asciiPre = climax ? climax.querySelector('.ascii-hero') : null;
 
   var bootAt = -1;
   var swarmAt = -1;
   var climaxOn = false;
   var typed = false;
+  var scrambled = false;
 
   function pad2(n) {
     return (n < 10 ? '0' : '') + n;
@@ -48,12 +54,14 @@
       stage.classList.add('is-booted');
       if (labelEl) labelEl.textContent = 'online';
     }
+    if (hudTty && !stage.classList.contains('is-swarm')) hudTty.textContent = 'tty1';
   }
 
   function setSwarm(idx) {
     if (idx < 0) return;
     setBoot(bootLines.length - 1);
     stage.classList.add('is-swarm');
+    if (hudTty) hudTty.textContent = 'pts/0';
     if (idx <= swarmAt) return;
     for (var i = swarmAt + 1; i <= idx && i < terms.length; i++) {
       (function (el) {
@@ -94,33 +102,81 @@
     nextLine();
   }
 
-  function splitAscii() {
-    /* banner stays a single pre so box-drawing never wraps mid-glyph */
+  function scrambleAscii() {
+    if (!asciiPre || scrambled) return;
+    scrambled = true;
+    var original = asciiPre.textContent;
+    asciiPre.setAttribute('data-ascii', original);
+    if (reduce) return;
+    var glyphs = '01█▓▒░╔╗╚╝║═#*$<>/\\+=';
+    var frames = 14;
+    var f = 0;
+    function tick() {
+      var out = '';
+      var progress = f / frames;
+      for (var i = 0; i < original.length; i++) {
+        var ch = original.charAt(i);
+        if (ch === '\n' || ch === ' ') out += ch;
+        else if (Math.random() < progress * progress) out += ch;
+        else out += glyphs.charAt(Math.floor(Math.random() * glyphs.length));
+      }
+      asciiPre.textContent = out;
+      f += 1;
+      if (f <= frames) window.setTimeout(tick, 38);
+      else asciiPre.textContent = original;
+    }
+    tick();
+  }
+
+  function typeInto(el, text, done) {
+    if (!el) {
+      if (done) done();
+      return;
+    }
+    if (reduce) {
+      el.textContent = text;
+      if (done) done();
+      return;
+    }
+    var i = 0;
+    function tick() {
+      el.textContent = text.slice(0, i);
+      i += 1;
+      if (i <= text.length) window.setTimeout(tick, 16 + Math.random() * 28);
+      else if (done) done();
+    }
+    tick();
   }
 
   function typeLine() {
     if (typed || !typeBox || !typeOut) return;
     typed = true;
     var text = typeBox.getAttribute('data-type-line') || '';
+    var text2 = typeBox.getAttribute('data-type-line-2') || '';
     typeBox.classList.add('is-in');
     if (reduce) {
       typeOut.textContent = text;
+      if (typeOut2) typeOut2.textContent = text2;
+      if (typeRow2) typeRow2.classList.add('is-on');
       return;
     }
-    var i = 0;
-    function tick() {
-      typeOut.textContent = text.slice(0, i);
-      i += 1;
-      if (i <= text.length) window.setTimeout(tick, 16 + Math.random() * 28);
-    }
-    window.setTimeout(tick, 420);
+    window.setTimeout(function () {
+      typeInto(typeOut, text, function () {
+        if (typeCur1) typeCur1.classList.add('is-off');
+        if (typeRow2) typeRow2.classList.add('is-on');
+        window.setTimeout(function () {
+          typeInto(typeOut2, text2);
+        }, 220);
+      });
+    }, 420);
   }
 
   function setClimax() {
     if (climaxOn) return;
     climaxOn = true;
     setSwarm(terms.length - 1);
-    splitAscii();
+    if (hudTty) hudTty.textContent = 'console';
+    scrambleAscii();
     stage.classList.add('is-climax');
     if (climax) climax.classList.add('is-in');
     typeLine();
@@ -132,11 +188,15 @@
       t.classList.add('is-in');
       typeTerm(t);
     });
-    splitAscii();
+    scrambled = true;
     stage.classList.add('is-booted', 'is-swarm', 'is-climax', 'is-static');
     if (climax) climax.classList.add('is-in');
+    if (hudTty) hudTty.textContent = 'console';
     if (typeBox && typeOut) {
       typeOut.textContent = typeBox.getAttribute('data-type-line') || '';
+      if (typeOut2) typeOut2.textContent = typeBox.getAttribute('data-type-line-2') || '';
+      if (typeRow2) typeRow2.classList.add('is-on');
+      if (typeCur1) typeCur1.classList.add('is-off');
       typeBox.classList.add('is-in');
     }
     cinema.querySelectorAll('.cinema-card').forEach(function (c) { c.classList.add('is-in'); });
@@ -146,7 +206,6 @@
     freezeAll();
   } else {
     setBoot(Math.min(1, bootLines.length - 1));
-    splitAscii();
 
     var beats = Array.prototype.slice.call(stage.querySelectorAll('.cinema-beat'));
     var io = new IntersectionObserver(
