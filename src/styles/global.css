@@ -2679,10 +2679,11 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
   transform: none;
 }
 
-.card-writeups,
-.card-portfolio {
+a.cinema-card.card-writeups,
+a.cinema-card.card-portfolio {
   display: grid;
-  grid-template-rows: auto auto auto 1fr auto;
+  grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+  align-content: stretch;
 }
 
 .card-writeups {
@@ -2789,12 +2790,13 @@ a.cinema-card:active {
   line-height: 1.45;
 }
 
-.cinema-card-meta {
+a.cinema-card .cinema-card-meta {
   font-family: var(--font-mono);
   font-size: 0.72rem;
   color: var(--card-spine, var(--teal));
   margin-top: auto;
   padding-top: 0.55rem;
+  align-self: end;
 }
 
 .cinema-ls {
