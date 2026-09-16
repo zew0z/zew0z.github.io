@@ -14,6 +14,9 @@ interface Props {
 }
 
 const { title = 'zew0z :: security writeups & portfolio', description = 'CTF writeups, labs, and flags - a living record of breaking boxes to learn how they are built.', crumb = '', ogImage } = Astro.props;
+const path = Astro.url.pathname;
+const onPortfolio = path.includes('portfolio');
+const onWriteups = path.includes('writeups') || /\/\d{4}\/\d{2}\/\d{2}\//.test(path);
 ---
 
 <!doctype html>
@@ -42,11 +45,11 @@ const { title = 'zew0z :: security writeups & portfolio', description = 'CTF wri
       <div class="container site-header-inner">
         <a class="wordmark" href="/"><span class="wm-prompt" aria-hidden="true">~/</span>zew0z<span class="tld">.io</span>{crumb && <span class="wm-path" aria-hidden="true">{crumb}</span>}</a>
         <nav class="site-nav" aria-label="primary">
-          <a href="/portfolio.html">portfolio</a>
-          <a href="/writeups.html">writeups</a>
-          <a href="/#playground">shell</a>
+          <a href="/portfolio.html" class:list={[{ 'is-on': onPortfolio }]}>./portfolio</a>
+          <a href="/writeups.html" class:list={[{ 'is-on': onWriteups }]}>./writeups</a>
           <a class="nav-github" href="https://github.com/zew0z" target="_blank" rel="noopener">github</a>
         </nav>
+        <span class="header-tty" aria-hidden="true">guest@zew0z</span>
       </div>
     </header>
 
@@ -55,18 +58,14 @@ const { title = 'zew0z :: security writeups & portfolio', description = 'CTF wri
     </main>
 
     <footer class="site-footer">
-      <div class="container">
-        <pre class="footer-ascii" aria-hidden="true">{`# eof :: zew0z
-# built with astro + vanilla css + one guest shell
-# tip: view-source never hurt anyone`}</pre>
-        <div class="footer-inner">
-          <p class="footer-note">zew0z :: exit 0</p>
-          <div class="footer-links">
-            <a href="https://github.com/zew0z" target="_blank" rel="noopener">github</a>
-            <a href="https://ko-fi.com/zew0z" target="_blank" rel="noopener">ko-fi</a>
-            <a href="/feed.xml">rss</a>
-          </div>
-        </div>
+      <div class="container footer-hud">
+        <span class="footer-host">guest@zew0z</span>
+        <p class="footer-msg"># eof :: astro + vanilla css. view-source never hurt anyone</p>
+        <nav class="footer-links" aria-label="elsewhere">
+          <a href="https://github.com/zew0z" target="_blank" rel="noopener">github</a>
+          <a href="https://ko-fi.com/zew0z" target="_blank" rel="noopener">ko-fi</a>
+          <a href="/feed.xml">rss</a>
+        </nav>
       </div>
     </footer>
 
