@@ -133,7 +133,7 @@ const logoLoop = [...logos, ...logos];
 const typeLine = 'break boxes. ship stores. document everything.';
 const siteData = JSON.stringify({ posts: posts.map(searchItem) });
 const shellHint = `${DIVIDER}\n$ help | nmap | wiki | cat flag.txt\n${DIVIDER}`;
-const listingPosts = posts.slice(0, 6);
+const listingPosts = posts.slice(0, 8);
 const listingWork = portfolioItems.filter((item) => item.group !== 'disciplines').slice(0, 6);
 const whoami = `user:     zew0z
 shell:    /bin/zsh
@@ -154,7 +154,7 @@ status:   actively pwning`;
             class="cinema-beat"
             data-kind={beat.kind}
             data-i={beat.i}
-            style={`top: ${((n + 0.2) / beats.length) * 100}%`}
+            style={`top: ${((n + 0.15) / (beats.length + 4)) * 100}%`}
           />
         ))}
       </div>
@@ -209,10 +209,9 @@ status:   actively pwning`;
 
     <section class="cinema-land" aria-label="destinations">
       <div class="container cinema-land-grid">
-        <a class="cinema-card card-writeups" href="/writeups.html">
+          <a class="cinema-card card-writeups" href="/writeups.html" aria-label="writeups">
           <span class="cinema-card-path">./writeups</span>
           <AsciiArt art={WRITEUPS_BANNER} class="cinema-card-ascii" />
-          <span class="cinema-card-title">writeups</span>
           <span class="cinema-card-desc">spoiler-gated labs. flags stay offline.</span>
           <pre class="cinema-ls" aria-hidden="true">{listingPosts.map((post) => (
               <span class={`cinema-ls-row case-${post.data.platform}`}>-rw-  {postSlug(post)}{nl}</span>
@@ -220,10 +219,9 @@ status:   actively pwning`;
           <span class="cinema-card-meta">{writeupCount} rooms catalogued</span>
         </a>
 
-        <a class="cinema-card card-portfolio" href="/portfolio.html">
+          <a class="cinema-card card-portfolio" href="/portfolio.html" aria-label="portfolio">
           <span class="cinema-card-path">./portfolio</span>
           <AsciiArt art={WORK_BANNER} class="cinema-card-ascii" />
-          <span class="cinema-card-title">portfolio</span>
           <span class="cinema-card-desc">tools, client stores, frameworks in production.</span>
           <pre class="cinema-ls" aria-hidden="true">{listingWork.map((item) => (
               <span class="cinema-ls-row">{item.group === 'clients' ? 'lrwx' : '-rwx'}  {item.title}{nl}</span>

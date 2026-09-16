@@ -59,20 +59,7 @@
   }
 
   function splitAscii() {
-    if (!climax || reduce) return;
-    var pre = climax.querySelector('pre');
-    if (!pre || pre.getAttribute('data-split') === '1') return;
-    var raw = pre.textContent || '';
-    var rows = raw.replace(/\n$/, '').split('\n');
-    pre.textContent = '';
-    rows.forEach(function (row, i) {
-      var span = document.createElement('span');
-      span.className = 'cinema-ascii-row';
-      span.style.setProperty('--r', String(i));
-      span.textContent = row + (i < rows.length - 1 ? '\n' : '');
-      pre.appendChild(span);
-    });
-    pre.setAttribute('data-split', '1');
+    /* banner stays a single pre so box-drawing never wraps mid-glyph */
   }
 
   function typeLine() {

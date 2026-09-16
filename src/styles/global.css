@@ -2183,7 +2183,7 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
 
 .cinema-stage {
   position: relative;
-  height: 340vh;
+  height: 420vh;
 }
 
 .cinema-beats {
@@ -2226,14 +2226,18 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(12rem, 0.85fr);
   gap: 1.5rem;
-  align-items: center;
-  padding: 1.6rem clamp(1.1rem, 4vw, 3.2rem) 2rem;
+  align-items: start;
+  padding: 2.2rem clamp(1.1rem, 4vw, 3.2rem) 2rem;
   transition: opacity 0.55s ease, filter 0.55s ease;
 }
 
 .cinema-stage.is-swarm .cinema-boot-layer {
-  opacity: 0.22;
-  filter: blur(1px);
+  opacity: 0.14;
+  filter: blur(1.5px);
+}
+
+.cinema-stage.is-swarm .cinema-pct-wrap {
+  opacity: 0;
 }
 
 .cinema-stage.is-climax .cinema-boot-layer {
@@ -2244,11 +2248,11 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
 .cinema-boot-log {
   margin: 0;
   font-family: var(--font-mono);
-  font-size: clamp(0.7rem, 1.35vw, 0.88rem);
+  font-size: clamp(0.68rem, 1.35vw, 0.88rem);
   line-height: 1.72;
   color: var(--ink3);
   white-space: pre;
-  overflow: hidden;
+  overflow-x: auto;
 }
 
 .cinema-boot-line {
@@ -2272,8 +2276,10 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
 
 .cinema-pct-wrap {
   justify-self: end;
+  align-self: center;
   text-align: right;
   min-width: 0;
+  transition: opacity 0.45s ease;
 }
 
 .cinema-pct-label {
@@ -2325,16 +2331,16 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
 
 .cinema-term {
   position: absolute;
-  top: 0;
-  left: 0;
+  top: var(--ty, 10%);
+  left: var(--tx, 4%);
   width: var(--tw, 21rem);
   z-index: var(--z, 2);
   border: 1px solid var(--line2);
   border-radius: var(--radius);
-  background: color-mix(in srgb, var(--bg0) 92%, transparent);
+  background: color-mix(in srgb, var(--bg0) 94%, transparent);
   overflow: hidden;
   opacity: 0;
-  transform: translate3d(-110vw, var(--ty), 0) rotate(var(--rot, 0deg));
+  transform: translate3d(-120vw, 0, 0) rotate(var(--rot, 0deg));
   transition:
     opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
     transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
@@ -2346,12 +2352,12 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
 
 .cinema-term.is-in {
   opacity: 1;
-  transform: translate3d(var(--tx), var(--ty), 0) rotate(var(--rot, 0deg));
+  transform: translate3d(0, 0, 0) rotate(var(--rot, 0deg));
 }
 
 .cinema-stage.is-climax .cinema-term.is-in {
-  opacity: 0.07;
-  filter: blur(1px);
+  opacity: 0.04;
+  filter: blur(2px);
   transition-duration: 0.7s;
 }
 
@@ -2445,28 +2451,21 @@ a.tag:hover, button.tag:hover { color: var(--sky); border-color: var(--sky); }
 
 .cinema-ascii.ascii,
 .cinema-climax .ascii-hero {
-  font-size: clamp(0.55rem, 2.15vw, 1.35rem);
+  font-size: clamp(0.52rem, 1.8vw, 1.12rem);
   line-height: 1.12;
   margin: 0;
   max-width: 100%;
+  white-space: pre;
+  overflow: visible;
 }
 
-.cinema-ascii-row {
-  display: block;
-  opacity: 0;
-  transform: translateY(0.7rem);
-  filter: blur(4px);
+.cinema-climax.is-in .ascii-hero {
+  animation: chroma-flow 9s linear infinite, cinema-ascii-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.cinema-climax.is-in .cinema-ascii-row {
-  opacity: 1;
-  transform: none;
-  filter: none;
-  transition:
-    opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
-    filter 0.5s ease;
-  transition-delay: calc(var(--r, 0) * 80ms);
+@keyframes cinema-ascii-in {
+  from { opacity: 0; transform: translateY(0.8rem); filter: blur(6px); }
+  to { opacity: 1; transform: none; filter: none; }
 }
 
 .cinema-type {
@@ -2875,14 +2874,14 @@ a.cinema-card:active {
   .cinema-ascii.ascii,
   .cinema-climax .ascii-hero { font-size: 0.48rem; }
   .cinema-type-out { font-size: 1.05rem; }
-  .cinema-stage { height: 280vh; }
+  .cinema-stage { height: 360vh; }
   .cinema-term {
     width: min(88vw, 20rem) !important;
-    --tx: 5% !important;
+    left: 5% !important;
   }
-  .cinema-term:nth-child(1) { --ty: 5% !important; }
-  .cinema-term:nth-child(2) { --ty: 24% !important; }
-  .cinema-term:nth-child(3) { --ty: 44% !important; }
+  .cinema-term:nth-child(1) { top: 5% !important; }
+  .cinema-term:nth-child(2) { top: 24% !important; }
+  .cinema-term:nth-child(3) { top: 44% !important; }
   .cinema-term:nth-child(4),
   .cinema-term:nth-child(5) { display: none; }
 }
