@@ -126,7 +126,7 @@ const ttyName: Record<string, string> = {
           <span class="tdot tdot-r"></span>
           <span class="tdot tdot-y"></span>
           <span class="tdot tdot-g"></span>
-          <span class="tname">guest@zew0z: ~/portfolio</span>
+          <span class="tname">guest@zew0z: ~/portfolio/clients</span>
         </div>
         <div class="pf-ls" role="list">
           <div class="pf-ls-head" aria-hidden="true">
@@ -174,12 +174,12 @@ const ttyName: Record<string, string> = {
           <span class="tdot tdot-r"></span>
           <span class="tdot tdot-y"></span>
           <span class="tdot tdot-g"></span>
-          <span class="tname">guest@zew0z: ~/portfolio</span>
+          <span class="tname">guest@zew0z: ~/portfolio/disciplines</span>
         </div>
         <div class="pf-cat-body">
           {disciplines.map((item) => (
             <article class="pf-stanza" style={`--tile: ${item.hue}`}>
-              <h3 class="pf-stanza-title">== {item.title.toLowerCase()} ==</h3>
+              <h3 class="pf-stanza-title"># {item.title.toLowerCase()}</h3>
               <p class="pf-desc">{item.desc}</p>
             </article>
           ))}

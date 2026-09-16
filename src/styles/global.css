@@ -1174,7 +1174,7 @@ a.header-tty:active { transform: translateY(1px); }
 
 .pf-ascii {
   margin: 0.45rem 0 0.85rem;
-  font-size: clamp(0.72rem, 1.7vw, 1.05rem);
+  font-size: clamp(0.85rem, 2.1vw, 1.28rem);
   line-height: 1.18;
   color: var(--green);
   overflow: hidden;
@@ -1226,6 +1226,8 @@ a.header-tty:active { transform: translateY(1px); }
 }
 
 .pf-term {
+  display: flex;
+  flex-direction: column;
   border-left: 3px solid var(--tile, var(--teal));
   height: 100%;
   transition: border-color 0.2s ease, transform 0.18s ease;
@@ -1242,6 +1244,7 @@ a.header-tty:active { transform: translateY(1px); }
   gap: 0.7rem;
   padding: 1.05rem 1.15rem 1.15rem;
   min-width: 0;
+  flex: 1;
 }
 
 .pf-title-lg,
