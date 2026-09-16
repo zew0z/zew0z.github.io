@@ -1,16 +1,44 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+const routes = [
+  { href: '/', mode: 'drwx', name: '~' },
+  { href: '/portfolio.html', mode: 'drwx', name: 'portfolio' },
+  { href: '/writeups.html', mode: 'drwx', name: 'writeups' },
+  { href: '/#playground', mode: '-rwx', name: 'guest-shell' },
+  { href: '/feed.xml', mode: '-rw-', name: 'feed.xml' },
+];
 ---
 
 <BaseLayout title="404 :: zew0z" description="page not found">
   <section class="err-hero">
-    <h1 class="err-code">404</h1>
-    <p class="err-line">cat: /{Astro.url.pathname}: No such file or directory</p>
-    <p class="err-sub">the path you requested doesn't exist on this host. even nmap found nothing.</p>
-    <div class="hero-links">
-      <a class="btn-primary" href="/">home</a>
-      <a class="btn-ghost" href="/writeups.html">writeups</a>
-      <a class="btn-ghost" href="/portfolio.html">portfolio</a>
+    <div class="container">
+      <div class="term err-term">
+        <div class="term-chrome" aria-hidden="true">
+          <span class="tdot tdot-r"></span>
+          <span class="tdot tdot-y"></span>
+          <span class="tdot tdot-g"></span>
+          <span class="tname">guest@zew0z: ~</span>
+        </div>
+        <pre class="err-dump" id="err-dump"><span class="err-prompt">guest@zew0z:~$</span> cat <span id="err-path">/missing</span>
+<span class="err-fail">cat: <span id="err-fail-path">/missing</span>: No such file or directory</span>
+
+<span class="err-prompt">guest@zew0z:~$</span> ls /
+{routes.map((r) => (
+  <><a class="err-ls" href={r.href}>{r.mode}  {r.name}</a>{'\n'}</>
+))}
+</pre>
+      </div>
+      <p class="err-sub">even nmap found nothing. pick a directory that exists.</p>
     </div>
   </section>
+  <script is:inline>
+    (function () {
+      var path = location.pathname || '/missing';
+      var a = document.getElementById('err-path');
+      var b = document.getElementById('err-fail-path');
+      if (a) a.textContent = path;
+      if (b) b.textContent = path;
+    })();
+  </script>
 </BaseLayout>

@@ -1191,4 +1191,12 @@
       });
   })();
 
+  function focusIfHash() {
+    if (location.hash === '#playground' || location.hash === '#guest-term') {
+      input.focus();
+    }
+  }
+  focusIfHash();
+  window.addEventListener('hashchange', focusIfHash);
+
 })();
