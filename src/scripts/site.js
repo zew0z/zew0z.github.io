@@ -409,7 +409,7 @@
   /* ---------- scroll reveal ---------- */
 
   if (!reduceMotion && 'IntersectionObserver' in window) {
-    var revealTargets = document.querySelectorAll('.preview-section, .playground, .ach-grid > .ach, .page-hero');
+    var revealTargets = document.querySelectorAll('.preview-section, .playground, .ach-grid > .ach, .page-hero, .pf-group');
     revealTargets.forEach(function (el) { el.classList.add('reveal'); });
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
