@@ -57,7 +57,7 @@ export const portfolioItems: PortfolioItem[] = [
     title: 'Headless Shopify Framework',
     chip: 'open source',
     star: true,
-    desc: "An open-source headless commerce starter: Shopify's engine behind a fully custom storefront front. Decoupled, fast, and free for anyone to build on.",
+    desc: "An open-source headless commerce starter: Shopify's engine behind a fully custom storefront. Decoupled, fast, and free for anyone to build on.",
     tags: ['shopify', 'headless', 'open source'],
   },
   {

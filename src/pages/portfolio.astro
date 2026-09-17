@@ -1,15 +1,24 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ShellPrompt from '../components/ShellPrompt.astro';
+import AsciiArt from '../components/AsciiArt.astro';
 import { Icon } from 'astro-icon/components';
+import { WORK_BANNER } from '../lib/ascii';
 import { portfolioItems } from '../lib/portfolio';
 
 const tools = portfolioItems.filter((item) => item.group === 'tools');
 const clients = portfolioItems.filter((item) => item.group === 'clients');
 const disciplines = portfolioItems.filter((item) => item.group === 'disciplines');
 const [feature, ...restTools] = tools;
+const nl = '\n';
 
 const starTip = { tabindex: '0', role: 'note', 'aria-label': 'with the help of my AI agent team' };
+
+const ttyName: Record<string, string> = {
+  Sectape: 'sectape',
+  'Skroutz XML Sync Framework': 'skroutz-sync',
+  'Headless Shopify Framework': 'shopify-headless',
+};
 ---
 
 <BaseLayout
@@ -17,67 +26,91 @@ const starTip = { tabindex: '0', role: 'note', 'aria-label': 'with the help of m
   description="Shipped tools, client stores, AI agent pipelines, and the skills behind them."
   crumb="/portfolio"
 >
-  <section class="page-hero">
-    <div class="container page-hero-inner">
-      <ShellPrompt path="~/portfolio" command="ls -la" />
-      <h1 class="page-title">portfolio <span class="count">:: {portfolioItems.length} entries</span></h1>
-      <p class="page-lede">
-        shipped tools, client sites, and the skills behind them. stars mark work done with my AI agent team.
-      </p>
-      <p class="pf-total" aria-hidden="true">total {portfolioItems.length} :: 3 dirs</p>
+  <section class="page-hero pf-hero">
+    <div class="container pf-hero-grid">
+      <div class="pf-hero-copy">
+        <ShellPrompt path="~/portfolio" command="ls -la" />
+        <h1 class="visually-hidden">portfolio</h1>
+        <AsciiArt art={WORK_BANNER} class="pf-ascii" label="work ascii banner" />
+        <p class="page-lede">
+          shipped tools, client stores, and the skills behind them. stars mark work done with my AI agent team.
+        </p>
+      </div>
+      <aside class="term pf-index" aria-label="directory index">
+        <div class="term-chrome" aria-hidden="true">
+          <span class="tdot tdot-r"></span>
+          <span class="tdot tdot-y"></span>
+          <span class="tdot tdot-g"></span>
+          <span class="tname">guest@zew0z: ~/portfolio</span>
+        </div>
+        <pre class="cinema-ls pf-index-ls"><span class="cinema-ls-head"># ls -la{nl}</span><span class="cinema-ls-row case-thm">drwx  tools/{nl}</span><span class="cinema-ls-row case-htb">drwx  clients/{nl}</span><span class="cinema-ls-row pf-disc">drwx  disciplines/{nl}</span></pre>
+        <dl class="whoami-strip">
+          <div><dt>tools</dt><dd>{tools.length}</dd></div>
+          <div><dt>clients</dt><dd>{clients.length}</dd></div>
+          <div><dt>disciplines</dt><dd>{disciplines.length}</dd></div>
+          <div><dt>status</dt><dd class="is-live">shipping</dd></div>
+        </dl>
+      </aside>
     </div>
   </section>
 
   <section class="pf-group">
     <div class="container">
-      <ShellPrompt path="~/portfolio" command="ls tools/" />
-      <h2 class="visually-hidden">tools and frameworks</h2>
+      <h2 class="pf-path">./tools</h2>
       <div class="pf-tools">
-        <article class="pf-feature" style={`--tile: ${feature.hue}`}>
-          <div class="pf-feature-head">
-            <span class="ach-icon" aria-hidden="true"><Icon name={feature.icon} /></span>
+        <article class="term pf-term is-feature" style={`--tile: ${feature.hue}`}>
+          <div class="term-chrome" aria-hidden="true">
+            <span class="tdot tdot-r"></span>
+            <span class="tdot tdot-y"></span>
+            <span class="tdot tdot-g"></span>
+            <span class="tname">zew0z@box: ~/tools/{ttyName[feature.title] ?? 'tool'}</span>
+          </div>
+          <div class="pf-term-body">
             <h3 class="pf-title-lg">
               {feature.title}
               {feature.chip && <span class="wl-chip">{feature.chip}</span>}
             </h3>
-          </div>
-          <p class="pf-desc">{feature.desc}</p>
-          {feature.run && (
-            <pre class="pf-run" aria-hidden="true"><span class="t-dim">$</span> {feature.run}<span class="shell-cursor"></span></pre>
-          )}
-          {feature.meta && (
-            <dl class="pf-meta" aria-hidden="true">
-              {feature.meta.map(([k, v]) => (
-                <div class="pf-meta-row"><dt>{k}</dt><dd>{v}</dd></div>
-              ))}
-            </dl>
-          )}
-          <div class="pf-tags">
-            {feature.tags.map((t) => <span class="tag">#{t}</span>)}
+            <p class="pf-desc">{feature.desc}</p>
+            {feature.run && (
+              <pre class="pf-run"><span class="t-dim">$</span> {feature.run}<span class="shell-cursor"></span></pre>
+            )}
+            {feature.meta && (
+              <dl class="whoami-strip pf-term-meta">
+                {feature.meta.map(([k, v]) => (
+                  <div><dt>{k}</dt><dd>{v}</dd></div>
+                ))}
+              </dl>
+            )}
+            <p class="pf-hash" aria-hidden="true">{feature.tags.map((t) => `#${t}`).join('  ')}</p>
           </div>
         </article>
         {restTools.map((item) => (
-          <article class="pf-tool" style={`--tile: ${item.hue}`}>
-            <h3 class="pf-title">
-              <span class="pf-tool-icon" aria-hidden="true"><Icon name={item.icon} /></span>
-              {item.title}
-              {item.chip && <span class="wl-chip">{item.chip}</span>}
-              {item.star && (
-                <span class="star-tip" {...starTip}>
-                  <Icon name="tabler:star-filled" />
-                  <span class="tip" aria-hidden="true">with the help of my AI agent team</span>
-                </span>
-              )}
-            </h3>
-            <p class="pf-desc">
-              {item.desc}
-              {item.links && item.links.map((l, i) => (
-                <>{i > 0 && ', '}<a href={l.href} target="_blank" rel="noopener">{l.label}</a></>
-              ))}
-              {item.descAfter && ` ${item.descAfter}`}
-            </p>
-            <div class="pf-tags">
-              {item.tags.slice(0, 2).map((t) => <span class="tag">#{t}</span>)}
+          <article class="term pf-term" style={`--tile: ${item.hue}`}>
+            <div class="term-chrome" aria-hidden="true">
+              <span class="tdot tdot-r"></span>
+              <span class="tdot tdot-y"></span>
+              <span class="tdot tdot-g"></span>
+              <span class="tname">zew0z@box: ~/tools/{ttyName[item.title] ?? 'tool'}</span>
+            </div>
+            <div class="pf-term-body">
+              <h3 class="pf-title">
+                {item.title}
+                {item.chip && <span class="wl-chip">{item.chip}</span>}
+                {item.star && (
+                  <span class="star-tip" {...starTip}>
+                    <Icon name="tabler:star-filled" />
+                    <span class="tip" aria-hidden="true">with the help of my AI agent team</span>
+                  </span>
+                )}
+              </h3>
+              <p class="pf-desc">
+                {item.desc}
+                {item.links && item.links.map((l, i) => (
+                  <>{i > 0 && ', '}<a href={l.href} target="_blank" rel="noopener">{l.label}</a></>
+                ))}
+                {item.descAfter && ` ${item.descAfter}`}
+              </p>
+              <p class="pf-hash" aria-hidden="true">{item.tags.slice(0, 2).map((t) => `#${t}`).join('  ')}</p>
             </div>
           </article>
         ))}
@@ -87,46 +120,74 @@ const starTip = { tabindex: '0', role: 'note', 'aria-label': 'with the help of m
 
   <section class="pf-group">
     <div class="container">
-      <ShellPrompt path="~/portfolio" command="ls clients/" />
-      <h2 class="visually-hidden">client stores</h2>
-      <div class="pf-files" role="list">
-        {clients.map((item) => (
-          <a class="pf-file" role="listitem" style={`--tile: ${item.hue}`} href={item.link} target="_blank" rel="noopener">
-            <span class="pf-file-main">
-              <span class="pf-file-name">
-                {item.title} <span class="ext" aria-hidden="true">↗</span>
-                {item.chip && <span class="wl-chip">{item.chip}</span>}
-                {item.star && (
-                  <span class="star-tip" {...starTip}>
-                    <Icon name="tabler:star-filled" />
-                    <span class="tip" aria-hidden="true">with the help of my AI agent team</span>
-                  </span>
-                )}
+      <h2 class="pf-path">./clients</h2>
+      <div class="term pf-listing">
+        <div class="term-chrome" aria-hidden="true">
+          <span class="tdot tdot-r"></span>
+          <span class="tdot tdot-y"></span>
+          <span class="tdot tdot-g"></span>
+          <span class="tname">guest@zew0z: ~/portfolio/clients</span>
+        </div>
+        <div class="pf-ls" role="list">
+          <div class="pf-ls-head" aria-hidden="true">
+            <span>mode</span>
+            <span>name</span>
+            <span>note</span>
+          </div>
+          {clients.map((item) => (
+            <a
+              class="pf-ls-row"
+              role="listitem"
+              style={`--tile: ${item.hue}`}
+              href={item.link}
+              target="_blank"
+              rel="noopener"
+            >
+              <span class="pf-ls-mode" aria-hidden="true">lrwx</span>
+              <span class="pf-ls-main">
+                <span class="pf-ls-name">
+                  {item.title}
+                  <span class="ext" aria-hidden="true">↗</span>
+                  {item.chip && <span class="wl-chip">{item.chip}</span>}
+                  {item.star && (
+                    <span class="star-tip" {...starTip}>
+                      <Icon name="tabler:star-filled" />
+                      <span class="tip" aria-hidden="true">with the help of my AI agent team</span>
+                    </span>
+                  )}
+                </span>
+                <span class="pf-ls-desc">{item.desc}</span>
               </span>
-              <span class="pf-file-desc">{item.desc}</span>
-            </span>
-            <span class="pf-file-tag" aria-hidden="true">#{item.tags[0]}</span>
-          </a>
-        ))}
+              <span class="pf-ls-note" aria-hidden="true">#{item.tags[0]}</span>
+            </a>
+          ))}
+        </div>
       </div>
     </div>
   </section>
 
   <section class="pf-group pf-group-last">
     <div class="container">
-      <ShellPrompt path="~/portfolio" command="cat disciplines/*" />
-      <h2 class="visually-hidden">disciplines</h2>
-      <div class="pf-stats">
-        {disciplines.map((item) => (
-          <article class="pf-stat" style={`--tile: ${item.hue}`}>
-            <h3 class="pf-stat-title">
-              <span class="pf-stat-icon" aria-hidden="true"><Icon name={item.icon} /></span>
-              {item.title}
-            </h3>
-            <p class="pf-stat-desc">{item.desc}</p>
-          </article>
-        ))}
+      <h2 class="pf-path">./disciplines</h2>
+      <div class="term pf-cat">
+        <div class="term-chrome" aria-hidden="true">
+          <span class="tdot tdot-r"></span>
+          <span class="tdot tdot-y"></span>
+          <span class="tdot tdot-g"></span>
+          <span class="tname">guest@zew0z: ~/portfolio/disciplines</span>
+        </div>
+        <div class="pf-cat-body">
+          {disciplines.map((item) => (
+            <article class="pf-stanza" style={`--tile: ${item.hue}`}>
+              <h3 class="pf-stanza-title"># {item.title.toLowerCase()}</h3>
+              <p class="pf-desc">{item.desc}</p>
+            </article>
+          ))}
+        </div>
       </div>
+      <p class="pf-exit">
+        <a href="/writeups.html">cd ../writeups</a>
+      </p>
     </div>
   </section>
 </BaseLayout>
