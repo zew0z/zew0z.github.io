@@ -19,6 +19,158 @@ const ttyName: Record<string, string> = {
   'Skroutz XML Sync Framework': 'skroutz-sync',
   'Headless Shopify Framework': 'shopify-headless',
 };
+
+const bootLines = [
+  { kind: 'dim', text: 'guest@zew0z:~/portfolio$ ls -la' },
+  { kind: 'head', text: 'total 9' },
+  { kind: 'ok', text: 'drwxr-xr-x  3 zew0z pwn  tools/' },
+  { kind: 'ok', text: 'drwxr-xr-x  3 zew0z pwn  clients/' },
+  { kind: 'ok', text: 'drwxr-xr-x  3 zew0z pwn  disciplines/' },
+  { kind: 'ok', text: '-rw-r--r--  1 zew0z pwn  README' },
+  { kind: 'dim', text: 'guest@zew0z:~/portfolio$ cat README' },
+  { kind: 'go', text: 'shipped work. continue.' },
+];
+
+const cascadeTerms = [
+  {
+    title: 'record@lab:~',
+    hue: 'teal',
+    x: '6%',
+    y: '8%',
+    w: '22rem',
+    rot: '-1.2deg',
+    z: 4,
+    lines: [
+      { t: 'cmd', v: '$ sectape record' },
+      { t: 'out', v: 'capturing session…' },
+      { t: 'out', v: 'every cmd + stdout' },
+      { t: 'ok', v: '[ ok ] audit trail written' },
+    ],
+  },
+  {
+    title: 'feeds@store:~',
+    hue: 'amber',
+    x: '48%',
+    y: '16%',
+    w: '23rem',
+    rot: '1.1deg',
+    z: 5,
+    lines: [
+      { t: 'cmd', v: '$ python feeds.py --to skroutz' },
+      { t: 'out', v: 'products  prices  stock' },
+      { t: 'out', v: 'bathify.gr  painfix.gr' },
+      { t: 'ok', v: '[ ok ] feeds live' },
+    ],
+  },
+  {
+    title: 'shop@headless:~',
+    hue: 'green',
+    x: '14%',
+    y: '52%',
+    w: '22rem',
+    rot: '-0.8deg',
+    z: 3,
+    lines: [
+      { t: 'cmd', v: '$ shopify theme push' },
+      { t: 'out', v: 'custom storefront, shopify engine' },
+      { t: 'out', v: 'preview → production' },
+      { t: 'ok', v: '[ ok ] storefront shipped' },
+    ],
+  },
+];
+
+const beats = [
+  ...bootLines.map((_, i) => ({ kind: 'boot', i })),
+  ...cascadeTerms.map((_, i) => ({ kind: 'swarm', i })),
+  { kind: 'climax', i: 0 },
+];
+
+function beatTop(beat: { kind: string; i: number }) {
+  if (beat.kind === 'boot') {
+    const last = Math.max(1, bootLines.length - 1);
+    return 8 + (beat.i / last) * 26;
+  }
+  if (beat.kind === 'swarm') {
+    const last = Math.max(1, cascadeTerms.length - 1);
+    return 42 + (beat.i / last) * 14;
+  }
+  return 62;
+}
+
+const typeLine = 'shipped tools. client stores. agent pipelines.';
+const typeLine2 = 'stars mark the agent-team work.';
+
+function bootParts(text: string) {
+  const m = text.match(/^(\[[^\]]+\])\s(.*)$/);
+  if (!m) return { ts: '', body: text, ok: false };
+  const ok = /\s\[ ok \]\s*$/.test(m[2]);
+  return {
+    ts: m[1],
+    body: ok ? m[2].replace(/\s\[ ok \]\s*$/, '') : m[2],
+    ok,
+  };
+}
+
+const FALL_GLYPHS = '0123456789abcdef│─┌┐└┘┬┴┼┤├█▓▒░<>/$#*+=.~';
+function fallRng(seed: number) {
+  return function next() {
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function makeFallCol(seed: number, len: number) {
+  const rand = fallRng(seed);
+  const chars: string[] = [];
+  for (let i = 0; i < len; i++) {
+    chars.push(FALL_GLYPHS[Math.floor(rand() * FALL_GLYPHS.length)]);
+  }
+  const body = chars.join('\n');
+  return `${body}\n${body}`;
+}
+
+const fallCols = Array.from({ length: 16 }, (_, i) => {
+  const rand = fallRng(2100 + i * 97);
+  return {
+    x: 48 + i * 3.2 + (rand() * 1.4 - 0.7),
+    dur: 14 + rand() * 16,
+    delay: -(rand() * 18),
+    hue: i % 5 === 0 ? 'green' : i % 4 === 0 ? 'teal' : i % 3 === 0 ? 'ink' : 'dim',
+    text: makeFallCol(400 + i * 13, 42),
+  };
+});
+
+const fallStrings = [
+  { x: 53, dur: 11, delay: -1, text: '$ sectape record' },
+  { x: 62, dur: 14, delay: -4, text: 'python feeds.py --to skroutz' },
+  { x: 58, dur: 12, delay: -2.5, text: 'shopify theme push' },
+  { x: 70, dur: 16, delay: -7, text: 'guest@zew0z:~/portfolio$ ls -la' },
+  { x: 55, dur: 13, delay: -9, text: 'drwx  tools/' },
+  { x: 76, dur: 10, delay: -3, text: 'lrwx  crewvista.gr' },
+  { x: 64, dur: 15, delay: -6, text: 'cat README' },
+  { x: 59, dur: 12, delay: -11, text: '# stars mark agent-team work' },
+  { x: 82, dur: 13, delay: -5, text: 'mit  python  cli' },
+  { x: 67, dur: 17, delay: -8, text: 'headless storefront [ ok ]' },
+  { x: 72, dur: 11, delay: -13, text: 'bathify.gr  painfix.gr' },
+  { x: 78, dur: 14, delay: -10, text: 'drwx  clients/' },
+  { x: 54, dur: 16, delay: -15, text: 'drwx  disciplines/' },
+  { x: 73, dur: 12, delay: -12, text: 'cd ../writeups' },
+  { x: 61, dur: 13, delay: -14, text: 'status: shipping' },
+  { x: 80, dur: 11, delay: -16, text: 'audit trail written' },
+  { x: 66, dur: 15, delay: -1.5, text: 'pts/work  guest session' },
+];
+
+const fallWords = [
+  { x: 52, dur: 16, delay: -2, word: 'WORK' },
+  { x: 60, dur: 13, delay: -6, word: 'SHIP' },
+  { x: 68, dur: 15, delay: -3, word: 'CLI' },
+  { x: 76, dur: 12, delay: -8, word: 'FEED' },
+  { x: 57, dur: 18, delay: -11, word: 'SHOP' },
+  { x: 84, dur: 14, delay: -5, word: 'SYNC' },
+  { x: 64, dur: 17, delay: -9, word: 'TTY' },
+  { x: 72, dur: 14, delay: -4, word: 'OSS' },
+];
 ---
 
 <BaseLayout
@@ -26,35 +178,138 @@ const ttyName: Record<string, string> = {
   description="Shipped tools, client stores, AI agent pipelines, and the skills behind them."
   crumb="/portfolio"
 >
-  <section class="page-hero pf-hero">
-    <div class="container pf-hero-grid">
-      <div class="pf-hero-copy">
-        <ShellPrompt path="~/portfolio" command="ls -la" />
-        <h1 class="visually-hidden">portfolio</h1>
-        <AsciiArt art={WORK_BANNER} class="pf-ascii" label="work ascii banner" />
-        <p class="page-lede">
-          shipped tools, client stores, and the skills behind them. stars mark work done with my AI agent team.
-        </p>
+  <div id="cinema" class="cinema cinema-work">
+    <section class="cinema-stage" id="cinema-stage" aria-label="portfolio listing">
+      <div class="cinema-beats" aria-hidden="true">
+        {beats.map((beat) => (
+          <div
+            class="cinema-beat"
+            data-kind={beat.kind}
+            data-i={beat.i}
+            style={`top: ${beatTop(beat)}%`}
+          />
+        ))}
       </div>
-      <aside class="term pf-index" aria-label="directory index">
-        <div class="term-chrome" aria-hidden="true">
-          <span class="tdot tdot-r"></span>
-          <span class="tdot tdot-y"></span>
-          <span class="tdot tdot-g"></span>
-          <span class="tname">guest@zew0z: ~/portfolio</span>
-        </div>
-        <pre class="cinema-ls pf-index-ls"><span class="cinema-ls-head"># ls -la{nl}</span><span class="cinema-ls-row case-thm">drwx  tools/{nl}</span><span class="cinema-ls-row case-htb">drwx  clients/{nl}</span><span class="cinema-ls-row pf-disc">drwx  disciplines/{nl}</span></pre>
-        <dl class="whoami-strip">
-          <div><dt>tools</dt><dd>{tools.length}</dd></div>
-          <div><dt>clients</dt><dd>{clients.length}</dd></div>
-          <div><dt>disciplines</dt><dd>{disciplines.length}</dd></div>
-          <div><dt>status</dt><dd class="is-live">shipping</dd></div>
-        </dl>
-      </aside>
-    </div>
-  </section>
 
-  <section class="pf-group">
+      <div class="cinema-sticky">
+        <div class="cinema-fall" id="cinema-fall" aria-hidden="true">
+          {fallCols.map((col) => (
+            <pre
+              class={`cinema-fall-col hue-${col.hue}`}
+              style={`--x:${col.x}%;--dur:${col.dur}s;--delay:${col.delay}s`}
+            >{col.text}</pre>
+          ))}
+          {fallStrings.map((str) => (
+            <span
+              class="cinema-fall-str"
+              style={`--x:${str.x}%;--dur:${str.dur}s;--delay:${str.delay}s`}
+            >{str.text}</span>
+          ))}
+          {fallWords.map((w) => (
+            <pre
+              class="cinema-fall-word"
+              style={`--x:${w.x}%;--dur:${w.dur}s;--delay:${w.delay}s`}
+            >{Array.from({ length: 8 }, () => w.word.split('').join('\n')).join('\n\n')}</pre>
+          ))}
+        </div>
+        <div class="cinema-scan" aria-hidden="true"></div>
+
+        <div class="cinema-boot-layer">
+          <pre class="cinema-boot-log" id="boot-log" aria-hidden="true">{bootLines.map((line, i) => {
+              const p = bootParts(line.text);
+              return (
+                <span class={`cinema-boot-line boot-${line.kind}`} data-boot-line={i}>
+                  {p.ts ? <span class="boot-ts">{p.ts} </span> : null}{p.body}{p.ok ? <span class="boot-st"> [ ok ]</span> : null}{nl}
+                </span>
+              );
+            })}</pre>
+          <div class="cinema-pct-wrap">
+            <p class="cinema-pct-label" id="boot-label">listing</p>
+            <p class="cinema-pct" id="boot-pct">00</p>
+            <div class="cinema-pct-bar" aria-hidden="true">
+              <div class="cinema-boot-fill" id="boot-fill"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cinema-swarm" id="cascade-rail">
+          {cascadeTerms.map((term, i) => (
+            <article
+              class={`cinema-term hue-${term.hue}`}
+              data-cascade={i}
+              style={`--tx:${term.x};--ty:${term.y};--tw:${term.w};--rot:${term.rot};--z:${term.z};--i:${i}`}
+            >
+              <div class="cinema-term-chrome" aria-hidden="true">
+                <span class="tdot tdot-r"></span>
+                <span class="tdot tdot-y"></span>
+                <span class="tdot tdot-g"></span>
+                <span class="tname">{term.title}</span>
+              </div>
+              <pre class="cinema-term-body">{term.lines.map((line) => (
+                  <span class={`cinema-term-line is-${line.t}`}>{line.v}{nl}</span>
+                ))}</pre>
+            </article>
+          ))}
+        </div>
+
+        <div class="cinema-climax" id="ascii-reveal">
+          <h1 class="hero-name visually-hidden">portfolio</h1>
+          <AsciiArt art={WORK_BANNER} class="ascii-hero cinema-ascii" label="work ascii banner" />
+          <div class="cinema-type" aria-live="polite" data-type-line={typeLine} data-type-line-2={typeLine2}>
+            <div class="cinema-type-row">
+              <span class="cinema-type-prompt" aria-hidden="true">guest@zew0z:~$</span>
+              <p class="cinema-type-out" id="type-out"></p>
+              <span class="cinema-type-cursor" id="type-cursor-1" aria-hidden="true"></span>
+            </div>
+            <div class="cinema-type-row" id="type-row-2">
+              <span class="cinema-type-prompt is-hash" aria-hidden="true">#</span>
+              <p class="cinema-type-out cinema-type-out-2" id="type-out-2"></p>
+              <span class="cinema-type-cursor is-dim" id="type-cursor-2" aria-hidden="true"></span>
+            </div>
+            <p class="cinema-type-go" id="type-go">
+              <a href="#tools">./tools</a>
+            </p>
+          </div>
+        </div>
+
+        <div class="cinema-hud" aria-hidden="true">
+          <span id="boot-hud-tty" data-idle="pts/work">pts/work</span>
+          <span id="boot-hud-pct">00%</span>
+          <span>3 tools</span>
+          <span>guest@zew0z</span>
+        </div>
+        <p class="visually-hidden">Scroll to list the portfolio, then continue down the page.</p>
+      </div>
+    </section>
+
+    <section class="cinema-land" aria-label="directory index">
+      <div class="container pf-hero-grid">
+        <div class="pf-hero-copy">
+          <ShellPrompt path="~/portfolio" command="ls -la" />
+          <p class="page-lede">
+            the catalog. tools, client stores, and the skills behind them.
+          </p>
+        </div>
+        <aside class="term pf-index cinema-card card-stats" aria-label="directory index">
+          <div class="term-chrome" aria-hidden="true">
+            <span class="tdot tdot-r"></span>
+            <span class="tdot tdot-y"></span>
+            <span class="tdot tdot-g"></span>
+            <span class="tname">guest@zew0z: ~/portfolio</span>
+          </div>
+          <pre class="cinema-ls pf-index-ls"><span class="cinema-ls-head"># ls -la{nl}</span><span class="cinema-ls-row case-thm">drwx  tools/{nl}</span><span class="cinema-ls-row case-htb">drwx  clients/{nl}</span><span class="cinema-ls-row pf-disc">drwx  disciplines/{nl}</span></pre>
+          <dl class="whoami-strip">
+            <div><dt>tools</dt><dd>{tools.length}</dd></div>
+            <div><dt>clients</dt><dd>{clients.length}</dd></div>
+            <div><dt>disciplines</dt><dd>{disciplines.length}</dd></div>
+            <div><dt>status</dt><dd class="is-live">shipping</dd></div>
+          </dl>
+        </aside>
+      </div>
+    </section>
+  </div>
+
+  <section class="pf-group" id="tools">
     <div class="container">
       <h2 class="pf-path">./tools</h2>
       <div class="pf-tools">
@@ -118,7 +373,7 @@ const ttyName: Record<string, string> = {
     </div>
   </section>
 
-  <section class="pf-group">
+  <section class="pf-group" id="clients">
     <div class="container">
       <h2 class="pf-path">./clients</h2>
       <div class="term pf-listing">
@@ -166,7 +421,7 @@ const ttyName: Record<string, string> = {
     </div>
   </section>
 
-  <section class="pf-group pf-group-last">
+  <section class="pf-group pf-group-last" id="disciplines">
     <div class="container">
       <h2 class="pf-path">./disciplines</h2>
       <div class="term pf-cat">
@@ -190,4 +445,6 @@ const ttyName: Record<string, string> = {
       </p>
     </div>
   </section>
+
+  <script src="../scripts/cinematic.js"></script>
 </BaseLayout>

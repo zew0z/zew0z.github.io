@@ -23,6 +23,7 @@
   var typeRow2 = document.getElementById('type-row-2');
   var typeCur1 = document.getElementById('type-cursor-1');
   var hudTty = document.getElementById('boot-hud-tty');
+  var ttyIdle = hudTty ? (hudTty.getAttribute('data-idle') || hudTty.textContent || 'tty1') : 'tty1';
   var fall = document.getElementById('cinema-fall');
   var asciiPre = climax ? climax.querySelector('.ascii-hero') : null;
 
@@ -54,7 +55,7 @@
       stage.classList.add('is-booted');
       if (labelEl) labelEl.textContent = 'online';
     }
-    if (hudTty && !stage.classList.contains('is-swarm')) hudTty.textContent = 'tty1';
+    if (hudTty && !stage.classList.contains('is-swarm')) hudTty.textContent = ttyIdle;
   }
 
   function setSwarm(idx) {
@@ -209,7 +210,8 @@
     cinema.querySelectorAll('.cinema-card').forEach(function (c) { c.classList.add('is-in'); });
   }
 
-  var skipCinema = location.hash === '#playground' || location.hash === '#guest-term';
+  var skipHashes = ['#playground', '#guest-term', '#tools', '#clients', '#disciplines'];
+  var skipCinema = skipHashes.indexOf(location.hash) !== -1;
 
   if (reduce || skipCinema) {
     freezeAll();
