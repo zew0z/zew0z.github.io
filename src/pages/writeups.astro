@@ -1,10 +1,17 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ShellPrompt from '../components/ShellPrompt.astro';
+import AsciiArt from '../components/AsciiArt.astro';
 import WriteupCatalog from '../components/WriteupCatalog.astro';
+import { WRITEUPS_BANNER } from '../lib/ascii';
 import { getWriteups, postUrl, searchItem, shortTitle } from '../lib/writeups';
 
 const posts = await getWriteups();
+const nl = '\n';
+
+const thmCount = posts.filter((p) => p.data.platform === 'thm').length;
+const htbCount = posts.filter((p) => p.data.platform === 'htb').length;
+const blogCount = posts.filter((p) => p.data.platform === 'blog').length;
 
 // the record so far: every room as a tick on one timeline.
 // proportional positioning, but with a minimum visual gap so clusters
@@ -35,13 +42,32 @@ const ticks = adjusted.map(({ post, pos }) => ({
   description="CTF and lab writeups - searchable, spoiler-gated, every room documented."
   crumb="/writeups"
 >
-  <section class="page-hero">
-    <div class="container page-hero-inner page-hero-wide">
-      <ShellPrompt path="~/writeups" command="find . -name '*.md' | wc -l" />
-      <h1 class="page-title">writeups <span class="count">:: {posts.length} files</span></h1>
-      <p class="page-lede">
-        every room fully documented. flags and passwords never printed; solutions sit behind a spoiler gate.
-      </p>
+  <section class="page-hero pf-hero">
+    <div class="container pf-hero-grid">
+      <div class="pf-hero-copy">
+        <ShellPrompt path="~/writeups" command="ls *.md | wc -l" />
+        <h1 class="visually-hidden">writeups</h1>
+        <AsciiArt art={WRITEUPS_BANNER} class="pf-ascii wu-ascii" label="writeups ascii banner" />
+        <p class="page-lede">
+          every room fully documented. flags stay offline; solutions sit behind a spoiler gate.
+        </p>
+      </div>
+      <aside class="term pf-index" aria-label="directory index">
+        <div class="term-chrome" aria-hidden="true">
+          <span class="tdot tdot-r"></span>
+          <span class="tdot tdot-y"></span>
+          <span class="tdot tdot-g"></span>
+          <span class="tname">guest@zew0z: ~/writeups</span>
+        </div>
+        <pre class="cinema-ls pf-index-ls"><span class="cinema-ls-head"># ls -la{nl}</span><span class="cinema-ls-row case-thm">drwx  thm/{nl}</span><span class="cinema-ls-row case-htb">drwx  htb/{nl}</span><span class="cinema-ls-row case-blog">drwx  blog/{nl}</span></pre>
+        <dl class="whoami-strip">
+          <div><dt>rooms</dt><dd>{posts.length}</dd></div>
+          <div><dt>thm</dt><dd>{thmCount}</dd></div>
+          <div><dt>htb</dt><dd>{htbCount}</dd></div>
+          <div><dt>blog</dt><dd>{blogCount}</dd></div>
+          <div><dt>status</dt><dd class="is-live">catalogued</dd></div>
+        </dl>
+      </aside>
     </div>
   </section>
 

@@ -2,15 +2,52 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ShellPrompt from '../components/ShellPrompt.astro';
 import AsciiArt from '../components/AsciiArt.astro';
+import PortfolioStill from '../components/PortfolioStill.astro';
 import { Icon } from 'astro-icon/components';
 import { WORK_BANNER } from '../lib/ascii';
 import { portfolioItems } from '../lib/portfolio';
+import type { ImageMetadata } from 'astro';
+
+import sectapeStill from '../assets/img/tools/sectape-session.png';
+import shopifyStill from '../assets/img/tools/shopify-headless.jpg';
+import crewvistaStill from '../assets/img/clients/crewvista.jpg';
+import alabasterStill from '../assets/img/clients/alabasterskin.jpg';
+import totemicaStill from '../assets/img/clients/totemica.jpg';
 
 const tools = portfolioItems.filter((item) => item.group === 'tools');
 const clients = portfolioItems.filter((item) => item.group === 'clients');
 const disciplines = portfolioItems.filter((item) => item.group === 'disciplines');
 const [feature, ...restTools] = tools;
+const [featureClient, ...restClients] = clients;
 const nl = '\n';
+
+const stills: Record<string, { src: ImageMetadata; alt: string; caption: string }> = {
+  sectape: {
+    src: sectapeStill,
+    alt: 'sectape html export of a lab-notes session, commands and notes on a dark tape',
+    caption: 'lab-notes.html',
+  },
+  'shopify-headless': {
+    src: shopifyStill,
+    alt: 'aura headless shopify catalog with product cards and cart chrome',
+    caption: 'storefront.tsx',
+  },
+  crewvista: {
+    src: crewvistaStill,
+    alt: 'crewvista.gr homepage',
+    caption: 'crewvista.gr',
+  },
+  alabasterskin: {
+    src: alabasterStill,
+    alt: 'alabasterskin.gr storefront',
+    caption: 'alabasterskin.gr',
+  },
+  totemica: {
+    src: totemicaStill,
+    alt: 'totemica.gr storefront',
+    caption: 'totemica.gr',
+  },
+};
 
 const starTip = { tabindex: '0', role: 'note', 'aria-label': 'with the help of my AI agent team' };
 
@@ -65,6 +102,15 @@ const ttyName: Record<string, string> = {
             <span class="tdot tdot-g"></span>
             <span class="tname">zew0z@box: ~/tools/{ttyName[feature.title] ?? 'tool'}</span>
           </div>
+          {feature.still && stills[feature.still] && (
+            <PortfolioStill
+              src={stills[feature.still].src}
+              alt={stills[feature.still].alt}
+              caption={stills[feature.still].caption}
+              eager
+              sizes="(max-width: 960px) 100vw, 58vw"
+            />
+          )}
           <div class="pf-term-body">
             <h3 class="pf-title-lg">
               {feature.title}
@@ -92,6 +138,14 @@ const ttyName: Record<string, string> = {
               <span class="tdot tdot-g"></span>
               <span class="tname">zew0z@box: ~/tools/{ttyName[item.title] ?? 'tool'}</span>
             </div>
+            {item.still && stills[item.still] && (
+              <PortfolioStill
+                src={stills[item.still].src}
+                alt={stills[item.still].alt}
+                caption={stills[item.still].caption}
+                sizes="(max-width: 960px) 100vw, 38vw"
+              />
+            )}
             <div class="pf-term-body">
               <h3 class="pf-title">
                 {item.title}
@@ -121,47 +175,84 @@ const ttyName: Record<string, string> = {
   <section class="pf-group">
     <div class="container">
       <h2 class="pf-path">./clients</h2>
-      <div class="term pf-listing">
-        <div class="term-chrome" aria-hidden="true">
-          <span class="tdot tdot-r"></span>
-          <span class="tdot tdot-y"></span>
-          <span class="tdot tdot-g"></span>
-          <span class="tname">guest@zew0z: ~/portfolio/clients</span>
-        </div>
-        <div class="pf-ls" role="list">
-          <div class="pf-ls-head" aria-hidden="true">
-            <span>mode</span>
-            <span>name</span>
-            <span>note</span>
+      <div class="pf-clients">
+        <a
+          class="term pf-term pf-client is-feature"
+          style={`--tile: ${featureClient.hue}`}
+          href={featureClient.link}
+          target="_blank"
+          rel="noopener"
+        >
+          <div class="term-chrome" aria-hidden="true">
+            <span class="tdot tdot-r"></span>
+            <span class="tdot tdot-y"></span>
+            <span class="tdot tdot-g"></span>
+            <span class="tname">guest@zew0z: ~/portfolio/clients/{featureClient.title}</span>
           </div>
-          {clients.map((item) => (
-            <a
-              class="pf-ls-row"
-              role="listitem"
-              style={`--tile: ${item.hue}`}
-              href={item.link}
-              target="_blank"
-              rel="noopener"
-            >
-              <span class="pf-ls-mode" aria-hidden="true">lrwx</span>
-              <span class="pf-ls-main">
-                <span class="pf-ls-name">
-                  {item.title}
-                  <span class="ext" aria-hidden="true">↗</span>
-                  {item.chip && <span class="wl-chip">{item.chip}</span>}
-                  {item.star && (
-                    <span class="star-tip" {...starTip}>
-                      <Icon name="tabler:star-filled" />
-                      <span class="tip" aria-hidden="true">with the help of my AI agent team</span>
-                    </span>
-                  )}
+          {featureClient.still && stills[featureClient.still] && (
+            <PortfolioStill
+              src={stills[featureClient.still].src}
+              alt={stills[featureClient.still].alt}
+              caption={stills[featureClient.still].caption}
+              eager
+              sizes="(max-width: 960px) 100vw, 58vw"
+            />
+          )}
+          <div class="pf-term-body">
+            <h3 class="pf-title-lg">
+              {featureClient.title}
+              <span class="ext" aria-hidden="true">↗</span>
+              {featureClient.chip && <span class="wl-chip">{featureClient.chip}</span>}
+              {featureClient.star && (
+                <span class="star-tip" {...starTip}>
+                  <Icon name="tabler:star-filled" />
+                  <span class="tip" aria-hidden="true">with the help of my AI agent team</span>
                 </span>
-                <span class="pf-ls-desc">{item.desc}</span>
-              </span>
-              <span class="pf-ls-note" aria-hidden="true">#{item.tags[0]}</span>
-            </a>
-          ))}
-        </div>
+              )}
+            </h3>
+            <p class="pf-desc">{featureClient.desc}</p>
+            <p class="pf-hash" aria-hidden="true">{featureClient.tags.map((t) => `#${t}`).join('  ')}</p>
+          </div>
+        </a>
+        {restClients.map((item) => (
+          <a
+            class="term pf-term pf-client"
+            style={`--tile: ${item.hue}`}
+            href={item.link}
+            target="_blank"
+            rel="noopener"
+          >
+            <div class="term-chrome" aria-hidden="true">
+              <span class="tdot tdot-r"></span>
+              <span class="tdot tdot-y"></span>
+              <span class="tdot tdot-g"></span>
+              <span class="tname">guest@zew0z: ~/portfolio/clients/{item.title}</span>
+            </div>
+            {item.still && stills[item.still] && (
+              <PortfolioStill
+                src={stills[item.still].src}
+                alt={stills[item.still].alt}
+                caption={stills[item.still].caption}
+                sizes="(max-width: 960px) 100vw, 38vw"
+              />
+            )}
+            <div class="pf-term-body">
+              <h3 class="pf-title">
+                {item.title}
+                <span class="ext" aria-hidden="true">↗</span>
+                {item.chip && <span class="wl-chip">{item.chip}</span>}
+                {item.star && (
+                  <span class="star-tip" {...starTip}>
+                    <Icon name="tabler:star-filled" />
+                    <span class="tip" aria-hidden="true">with the help of my AI agent team</span>
+                  </span>
+                )}
+              </h3>
+              <p class="pf-desc">{item.desc}</p>
+              <p class="pf-hash" aria-hidden="true">{item.tags.slice(0, 2).map((t) => `#${t}`).join('  ')}</p>
+            </div>
+          </a>
+        ))}
       </div>
     </div>
   </section>
