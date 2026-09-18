@@ -93,6 +93,7 @@ const gated = post.data.platform !== 'blog';
     </section>
 
     <div class="container post-body">
+      <div class="post-read">
       {gated && (
       <div class="spoiler-gate" hidden>
         <p class="spoiler-head"><Icon name="tabler:alert-triangle" /> spoiler warning</p>
@@ -179,6 +180,7 @@ const gated = post.data.platform !== 'blog';
         <p>back :: <a href="/writeups.html">writeups</a></p>
         <p class="post-kofi">learned something? <a href="https://ko-fi.com/zew0z" target="_blank" rel="noopener">buy me a coffee</a> :: ko-fi.com/zew0z</p>
       </footer>
+      </div>
     </div>
   </article>
 </BaseLayout>

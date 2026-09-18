@@ -2110,10 +2110,10 @@ a.pf-term:hover .ext {
 .whoami-strip .is-gated { color: var(--amber); }
 
 .post-body {
-  max-width: 46rem;
   padding-top: 1.6rem;
   padding-bottom: 4.5rem;
 }
+.post-read { max-width: 46rem; }
 
 .post-crumb {
   margin: 0 0 1.2rem;
@@ -2685,6 +2685,10 @@ body:has(.err-hero) main {
 }
 .err-hero .container {
   width: 100%;
+}
+.err-hero .pf-hero-grid { align-items: center; }
+.err-ascii {
+  font-size: clamp(1.05rem, 2.8vw, 1.85rem);
 }
 .err-term {
   margin: 0;
