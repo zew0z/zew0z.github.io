@@ -85,6 +85,18 @@ const beats = [
   { kind: 'climax', i: 0 },
 ];
 
+function beatTop(beat: { kind: string; i: number }) {
+  if (beat.kind === 'boot') {
+    const last = Math.max(1, bootLines.length - 1);
+    return 8 + (beat.i / last) * 26;
+  }
+  if (beat.kind === 'swarm') {
+    const last = Math.max(1, cascadeTerms.length - 1);
+    return 42 + (beat.i / last) * 14;
+  }
+  return 62;
+}
+
 const typeLine = 'shipped tools. client stores. agent pipelines.';
 const typeLine2 = 'stars mark the agent-team work.';
 
@@ -169,12 +181,12 @@ const fallWords = [
   <div id="cinema" class="cinema cinema-work">
     <section class="cinema-stage" id="cinema-stage" aria-label="portfolio listing">
       <div class="cinema-beats" aria-hidden="true">
-        {beats.map((beat, n) => (
+        {beats.map((beat) => (
           <div
             class="cinema-beat"
             data-kind={beat.kind}
             data-i={beat.i}
-            style={`top: ${((n + 0.15) / (beats.length + 4)) * 100}%`}
+            style={`top: ${beatTop(beat)}%`}
           />
         ))}
       </div>
@@ -245,7 +257,7 @@ const fallWords = [
           <AsciiArt art={WORK_BANNER} class="ascii-hero cinema-ascii" label="work ascii banner" />
           <div class="cinema-type" aria-live="polite" data-type-line={typeLine} data-type-line-2={typeLine2}>
             <div class="cinema-type-row">
-              <span class="cinema-type-prompt" aria-hidden="true">guest@zew0z:~/portfolio$</span>
+              <span class="cinema-type-prompt" aria-hidden="true">guest@zew0z:~$</span>
               <p class="cinema-type-out" id="type-out"></p>
               <span class="cinema-type-cursor" id="type-cursor-1" aria-hidden="true"></span>
             </div>
@@ -261,7 +273,7 @@ const fallWords = [
         </div>
 
         <div class="cinema-hud" aria-hidden="true">
-          <span id="boot-hud-tty">pts/work</span>
+          <span id="boot-hud-tty" data-idle="pts/work">pts/work</span>
           <span id="boot-hud-pct">00%</span>
           <span>3 tools</span>
           <span>guest@zew0z</span>

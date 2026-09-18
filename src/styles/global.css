@@ -1167,7 +1167,7 @@ a.header-tty:active { transform: translateY(1px); }
 .pf-group[id] { scroll-margin-top: calc(var(--header-h) + 0.8rem); }
 
 /* work cinema: shorter listing stage, WORK ascii at display size */
-.cinema-work .cinema-stage { height: 220vh; }
+.cinema-work .cinema-stage { height: 300vh; }
 .cinema-work .cinema-sticky {
   background:
     radial-gradient(ellipse 80% 70% at 18% 30%, rgba(52, 211, 153, 0.08), transparent 55%),
@@ -1180,6 +1180,12 @@ a.header-tty:active { transform: translateY(1px); }
   line-height: 1.12;
 }
 .cinema-work .cinema-type-prompt { font-size: 0.78rem; }
+.cinema-work .cinema-type-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 0.55rem;
+}
 .cinema-work .page-lede { max-width: 46ch; }
 .cinema-work .cinema-land {
   min-height: 0;
@@ -1199,6 +1205,7 @@ a.header-tty:active { transform: translateY(1px); }
 .cinema-work .cinema-type-go a:hover {
   color: var(--bg0);
   background: var(--green);
+  border-bottom-color: transparent;
 }
 .cinema-work .cinema-type-go a:focus-visible {
   outline-color: var(--green);
@@ -3828,7 +3835,7 @@ a.cinema-card .cinema-card-meta {
   }
   .cinema-type-out { font-size: 1.05rem; }
   .cinema-stage { height: 280vh; }
-  .cinema-work .cinema-stage { height: 190vh; }
+  .cinema-work .cinema-stage { height: 260vh; }
   .cinema-term {
     width: min(78vw, 18.5rem) !important;
   }
