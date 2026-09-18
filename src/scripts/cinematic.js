@@ -209,7 +209,8 @@
     cinema.querySelectorAll('.cinema-card').forEach(function (c) { c.classList.add('is-in'); });
   }
 
-  var skipCinema = location.hash === '#playground' || location.hash === '#guest-term';
+  var skipHashes = ['#playground', '#guest-term', '#tools', '#clients', '#disciplines'];
+  var skipCinema = skipHashes.indexOf(location.hash) !== -1;
 
   if (reduce || skipCinema) {
     freezeAll();
