@@ -1,5 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import ShellPrompt from '../components/ShellPrompt.astro';
+import AsciiArt from '../components/AsciiArt.astro';
+import { LOST_BANNER } from '../lib/ascii';
 
 const routes = [
   { href: '/', mode: 'drwx', name: '~' },
@@ -11,9 +14,15 @@ const routes = [
 ---
 
 <BaseLayout title="404 :: zew0z" description="page not found">
-  <section class="err-hero">
-    <div class="container">
-      <div class="term err-term">
+  <section class="page-hero pf-hero err-hero">
+    <div class="container pf-hero-grid">
+      <div class="pf-hero-copy">
+        <ShellPrompt path="~" command="cat /this-page-does-not-exist.html" />
+        <h1 class="visually-hidden">404, page not found</h1>
+        <AsciiArt art={LOST_BANNER} class="pf-ascii err-ascii" label="lost ascii banner" />
+        <p class="page-lede">even nmap found nothing. pick a directory that exists.</p>
+      </div>
+      <aside class="term pf-index err-term" aria-label="missing path dump">
         <div class="term-chrome" aria-hidden="true">
           <span class="tdot tdot-r"></span>
           <span class="tdot tdot-y"></span>
@@ -32,8 +41,7 @@ const routes = [
             ))}
           </ul>
         </div>
-      </div>
-      <p class="err-sub">even nmap found nothing. pick a directory that exists.</p>
+      </aside>
     </div>
   </section>
   <script is:inline>
