@@ -1,5 +1,5 @@
 ---
-import { postUrl, readMinutes, shortTitle, type Writeup } from '../lib/writeups';
+import { postSlug, postUrl, readMinutes, shortTitle, type Writeup } from '../lib/writeups';
 
 interface Props {
   posts: Writeup[];
@@ -7,17 +7,22 @@ interface Props {
 }
 
 const { posts, searchable = true } = Astro.props;
+const [featured, ...rest] = posts;
 
 // platform badge + difficulty already carry this info; show only distinctive tags
 const BOILERPLATE_TAGS = new Set(['tryhackme', 'htb', 'hackthebox', 'ctf', 'blog', 'writeup', 'writeups', 'cybersecurity']);
 const displayTags = (tags: string[]) => tags.filter((t) => !BOILERPLATE_TAGS.has(t)).slice(0, 3);
+
+function haystack(post: Writeup): string {
+  return `${post.data.title} ${post.data.description} ${post.data.tags.join(' ')} ${post.body || ''}`.toLowerCase();
+}
 ---
 
 {searchable && (
   <div class="catalog-tools">
     <div class="search-wrap">
       <span class="search-icon" aria-hidden="true">&gt;_</span>
-      <input class="search-input" id="search-input" type="search" placeholder="search the work: sudo, stego, wordpress…" aria-label="search writeups" autocomplete="off" spellcheck="false" />
+      <input class="search-input" id="search-input" type="search" placeholder="search rooms…" aria-label="search writeups" autocomplete="off" spellcheck="false" />
       <span class="search-key" aria-hidden="true">/</span>
     </div>
     <div class="chip-row" role="group" aria-label="filter by platform">
@@ -33,12 +38,54 @@ const displayTags = (tags: string[]) => tags.filter((t) => !BOILERPLATE_TAGS.has
   <p class="result-line" id="result-line" role="status">showing all {posts.length}</p>
 )}
 
+{featured && (
+  <article
+    class={`term wu-feature case-${featured.data.platform}`}
+    data-platform={featured.data.platform}
+    data-haystack={haystack(featured)}
+  >
+    <div class="term-chrome" aria-hidden="true">
+      <span class="tdot tdot-r"></span>
+      <span class="tdot tdot-y"></span>
+      <span class="tdot tdot-g"></span>
+      <span class="tname">guest@zew0z: ~/writeups/{postSlug(featured)}.md</span>
+    </div>
+    <div class="wu-feature-body">
+      <div class="wu-feature-copy">
+        <p class="pf-path">./latest</p>
+        <div class="case-top">
+          <h2 class="case-title"><a href={postUrl(featured)}>{shortTitle(featured)}</a></h2>
+          <span class={`badge badge-${featured.data.platform}`}>{featured.data.platform}</span>
+          {featured.data.difficulty && <span class={`diff diff-${featured.data.difficulty.replace(' ', '-')}`}>{featured.data.difficulty}</span>}
+        </div>
+        <p class="case-desc">{featured.data.description}</p>
+        <div class="case-tags">
+          {displayTags(featured.data.tags).map((t) => <button class="tag" type="button" data-q={t}>#{t}</button>)}
+        </div>
+      </div>
+      <div class="wu-feature-meta">
+        <pre class="pf-run" aria-hidden="true"><span class="t-dim">$</span> cat {postSlug(featured)}.md<span class="shell-cursor"></span></pre>
+        <dl class="whoami-strip pf-term-meta">
+          <div><dt>date</dt><dd>{featured.data.date.toISOString().slice(0, 10)}</dd></div>
+          <div><dt>read</dt><dd>~{readMinutes(featured)} min</dd></div>
+          {featured.data.room && (
+            <div>
+              <dt>room</dt>
+              <dd><a href={`https://tryhackme.com/room/${featured.data.room}`} target="_blank" rel="noopener">open ↗</a></dd>
+            </div>
+          )}
+        </dl>
+      </div>
+    </div>
+  </article>
+)}
+
 <div class="case-list" id="case-list">
-  {posts.map((post) => (
+  {rest.map((post) => (
     <article
       class={`case case-${post.data.platform}`}
       data-platform={post.data.platform}
-      data-haystack={`${post.data.title} ${post.data.description} ${post.data.tags.join(' ')} ${post.body || ''}`.toLowerCase()}
+      data-haystack={haystack(post)}
     >
       <div class="case-spine" aria-hidden="true"></div>
       <div class="case-main">

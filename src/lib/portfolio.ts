@@ -18,6 +18,8 @@ export type PortfolioItem = {
   run?: string;
   /** factual meta rows (key/value), rendered mono inside the feature cell */
   meta?: [string, string][];
+  /** key into the still map on portfolio.astro (astro image pipeline) */
+  still?: 'sectape' | 'shopify-headless' | 'crewvista' | 'alabasterskin' | 'totemica';
 };
 
 export const portfolioItems: PortfolioItem[] = [
@@ -29,6 +31,7 @@ export const portfolioItems: PortfolioItem[] = [
     chip: 'own tool',
     desc: 'A terminal-session recorder I designed and built. It captures every command and its output so security work stays auditable and reproducible - made for CTF labs, useful anywhere a shell runs.',
     run: 'sectape record',
+    still: 'sectape',
     meta: [
       ['lang', 'python'],
       ['license', 'mit'],
@@ -58,6 +61,7 @@ export const portfolioItems: PortfolioItem[] = [
     chip: 'open source',
     star: true,
     desc: "An open-source headless commerce starter: Shopify's engine behind a fully custom storefront. Decoupled, fast, and free for anyone to build on.",
+    still: 'shopify-headless',
     tags: ['shopify', 'headless', 'open source'],
   },
   {
@@ -66,6 +70,7 @@ export const portfolioItems: PortfolioItem[] = [
     hue: 'var(--sky)',
     title: 'crewvista.gr',
     link: 'https://crewvista.gr',
+    still: 'crewvista',
     chip: 'in progress',
     star: true,
     desc: 'Maintaining and extending the platform ahead of its public release: upgrades, fixes and release prep, shipped continuously.',
@@ -77,6 +82,7 @@ export const portfolioItems: PortfolioItem[] = [
     hue: 'var(--coral)',
     title: 'alabasterskin.gr',
     link: 'https://alabasterskin.gr',
+    still: 'alabasterskin',
     desc: 'WordPress + WooCommerce work for a skincare brand: catalog, checkout flow, and the daily care a live store needs.',
     tags: ['wordpress', 'woocommerce'],
   },
@@ -86,6 +92,7 @@ export const portfolioItems: PortfolioItem[] = [
     hue: 'var(--violet)',
     title: 'totemica.gr',
     link: 'https://totemica.gr',
+    still: 'totemica',
     desc: 'A full WordPress + WooCommerce build, theme to checkout - plus the ongoing maintenance that keeps it selling.',
     tags: ['wordpress', 'woocommerce', 'full build'],
   },

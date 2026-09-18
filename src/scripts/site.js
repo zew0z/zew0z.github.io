@@ -332,7 +332,7 @@
 
   var input = document.getElementById('search-input');
   if (input) {
-    var rows = Array.prototype.slice.call(document.querySelectorAll('#case-list .case'));
+    var rows = Array.prototype.slice.call(document.querySelectorAll('#case-list .case, .wu-feature'));
     var line = document.getElementById('result-line');
     var emptyBox = document.getElementById('case-empty');
     var resetBtn = document.getElementById('search-reset');
@@ -367,7 +367,7 @@
     });
 
     /* tag pills on case cards double as quick filters */
-    document.querySelectorAll('#case-list .tag[data-q]').forEach(function (tag) {
+    document.querySelectorAll('#case-list .tag[data-q], .wu-feature .tag[data-q]').forEach(function (tag) {
       tag.addEventListener('click', function () {
         input.value = tag.getAttribute('data-q');
         apply();
