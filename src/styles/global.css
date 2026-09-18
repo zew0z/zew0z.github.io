@@ -1770,6 +1770,37 @@ a.pf-term:hover .ext {
 .case-htb { --spine: var(--green); }
 .case-blog { --spine: var(--violet); }
 
+.case.has-cover {
+  grid-template-rows: auto 1fr;
+  gap: 0;
+}
+.case.has-cover .case-spine { grid-row: 1 / -1; }
+.case-cover {
+  grid-column: 2 / -1;
+  grid-row: 1;
+  margin: 0;
+  background: var(--bg0);
+  border-bottom: 1px solid var(--line);
+}
+.case-cover a {
+  display: block;
+  color: inherit;
+}
+.case-cover a:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: -2px;
+}
+.case-cover img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 5.5;
+  object-fit: cover;
+  object-position: left top;
+}
+.case.has-cover .case-main { grid-column: 2; grid-row: 2; }
+.case.has-cover .case-side { grid-column: 3; grid-row: 2; }
+
 .case-main { padding: 1.15rem 0 1.15rem 1.35rem; min-width: 0; }
 
 .case-top {
@@ -3733,7 +3764,8 @@ a.cinema-card .cinema-card-meta {
   .cinema-hud { display: none !important; }
   .cinema-type-cursor { animation: none !important; opacity: 0; }
   .wu-feature:hover,
-  .pf-term:hover { transform: none; }
+  .pf-term:hover,
+  .case:hover { transform: none; }
   .header-tty::after,
   .wm-cursor { animation: none !important; opacity: 1; }
   .site-header::after,
@@ -3848,6 +3880,9 @@ a.cinema-card .cinema-card-meta {
   .footer-msg { grid-column: 1 / -1; white-space: normal; }
 
   .case { grid-template-columns: 4px 1fr; }
+  .case.has-cover .case-cover { grid-column: 2; grid-row: 1; }
+  .case.has-cover .case-main { grid-column: 2; grid-row: 2; }
+  .case.has-cover .case-side { grid-column: 2; grid-row: 3; }
   .pf-ls-head { display: none; }
   .pf-ls-row,
   .pf-ls-head {
