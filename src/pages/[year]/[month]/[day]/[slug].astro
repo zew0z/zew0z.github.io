@@ -2,6 +2,7 @@
 import { render } from 'astro:content';
 import { Icon } from 'astro-icon/components';
 import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import ShellPrompt from '../../../../components/ShellPrompt.astro';
 import { getWriteups, postSlug, postUrl, readMinutes, shortTitle } from '../../../../lib/writeups';
 
 export async function getStaticPaths() {
@@ -30,117 +31,154 @@ const older = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 const { Content, headings } = await render(post);
 const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 const platformLabel = { thm: 'tryhackme', htb: 'hackthebox', blog: 'blog' }[post.data.platform];
+const slug = postSlug(post);
+const fileName = `${slug}.md`;
+const gated = post.data.platform !== 'blog';
 ---
 
 <BaseLayout
   title={`${post.data.title} :: zew0z`}
   description={post.data.description}
-  crumb={`/writeups/${postSlug(post)}`}
-  ogImage={new URL(`/og/${postSlug(post)}.png`, Astro.site).href}
+  crumb={`/writeups/${slug}`}
+  ogImage={new URL(`/og/${slug}.png`, Astro.site).href}
 >
-  <article class="post container">
-    <nav class="post-crumb" aria-label="breadcrumb">
-      <a href="/writeups.html">~/writeups</a> / {post.data.platform} / {shortTitle(post).toLowerCase().replace(/\s+/g, '-')}.md
-    </nav>
-
-    <header>
-      <h1 class="post-title">{shortTitle(post)}</h1>
-      <p class="post-meta">
-        <span>{post.data.date.toISOString().slice(0, 10)}</span>
-        <span class="sep">/</span>
-        <span><span class={`badge badge-${post.data.platform}`}>{post.data.platform}</span> {platformLabel}</span>
-        {post.data.difficulty && (
-          <span class="sep">/</span>
-        )}
-        {post.data.difficulty && <span class={`diff diff-${post.data.difficulty.replace(' ', '-')}`}>{post.data.difficulty}</span>}
-        {post.data.room && (
-          <span class="sep">/</span>
-        )}
-        {post.data.room && <a href={`https://tryhackme.com/room/${post.data.room}`} target="_blank" rel="noopener">room ↗</a>}
-        <span class="sep">/</span>
-        <span>~{readMinutes(post)} min read</span>
-      </p>
-      <hr class="spectrum" />
-    </header>
-
-    {post.data.platform !== 'blog' && (
-    <div class="spoiler-gate" hidden>
-      <p class="spoiler-head"><Icon name="tabler:alert-triangle" /> spoiler warning</p>
-      <p class="spoiler-text">
-        this writeup walks the whole room: commands, paths and screenshots that contain answers.
-        want the full experience? go play it first, then come back and compare notes.
-      </p>
-      <div class="spoiler-actions">
-        <button class="spoiler-reveal" type="button">show me the writeup</button>
-        <a class="spoiler-back" href="/writeups.html">take me back to the catalog</a>
-      </div>
-      <p class="spoiler-note">even after revealing, screenshots stay blurred until you click them - answers usually live in the images.</p>
-    </div>
-    )}
-
-    <div class="spoiler-zone" id="spoiler-zone">
-      <div class="prose">
-      {toc.length >= 3 && (
-        <details class="toc">
-          <summary>cat index.md</summary>
-          <ul class="toc-list">
-            {toc.map((h) => (
-              <li class={h.depth === 3 ? 'toc-h3' : ''}>
-                <a href={`#${h.slug}`}>{h.text}</a>
-              </li>
-            ))}
-          </ul>
-        </details>
-      )}
-      <Content />
-      </div>
-
-      {post.data.tools.length > 0 && (
-        <div class="loot">
-          <p class="loot-head"># loot :: tools that did the work</p>
-          <div class="loot-tags">
-            {post.data.tools.map((t) => <span class="tag">#{t}</span>)}
-          </div>
+  <article class="post-session">
+    <section class="page-hero pf-hero post-hero">
+      <div class="container pf-hero-grid">
+        <div class="pf-hero-copy">
+          <ShellPrompt path="~/writeups" command={`cat ${fileName}`} />
+          <nav class="post-crumb" aria-label="breadcrumb">
+            <a href="/writeups.html">~/writeups</a>
+            <span aria-hidden="true"> / {post.data.platform} / {fileName}</span>
+          </nav>
+          <h1 class="post-title">{shortTitle(post)}</h1>
+          <p class="page-lede">{post.data.description}</p>
         </div>
+        <aside class="term pf-index post-stat" aria-label="session meta">
+          <div class="term-chrome" aria-hidden="true">
+            <span class="tdot tdot-r"></span>
+            <span class="tdot tdot-y"></span>
+            <span class="tdot tdot-g"></span>
+            <span class="tname">guest@zew0z: ~/writeups/{fileName}</span>
+          </div>
+          <pre class="pf-run" aria-hidden="true"><span class="t-dim">$</span> stat {fileName}<span class="shell-cursor"></span></pre>
+          <dl class="whoami-strip">
+            <div><dt>date</dt><dd>{post.data.date.toISOString().slice(0, 10)}</dd></div>
+            <div>
+              <dt>platform</dt>
+              <dd><span class={`badge badge-${post.data.platform}`}>{post.data.platform}</span> {platformLabel}</dd>
+            </div>
+            {post.data.difficulty && (
+              <div>
+                <dt>diff</dt>
+                <dd><span class={`diff diff-${post.data.difficulty.replace(' ', '-')}`}>{post.data.difficulty}</span></dd>
+              </div>
+            )}
+            <div><dt>read</dt><dd>~{readMinutes(post)} min</dd></div>
+            {post.data.room && (
+              <div>
+                <dt>room</dt>
+                <dd>
+                  <a href={`https://tryhackme.com/room/${post.data.room}`} target="_blank" rel="noopener">open ↗</a>
+                </dd>
+              </div>
+            )}
+            <div>
+              <dt>status</dt>
+              <dd class={gated ? 'is-gated' : 'is-live'}>{gated ? 'gated' : 'open'}</dd>
+            </div>
+          </dl>
+        </aside>
+      </div>
+    </section>
+
+    <div class="container post-body">
+      {gated && (
+      <div class="spoiler-gate" hidden>
+        <p class="spoiler-head"><Icon name="tabler:alert-triangle" /> spoiler warning</p>
+        <p class="spoiler-text">
+          this writeup walks the whole room: commands, paths and screenshots that contain answers.
+          want the full experience? go play it first, then come back and compare notes.
+        </p>
+        <div class="spoiler-actions">
+          <button class="spoiler-reveal" type="button">show me the writeup</button>
+          <a class="spoiler-back" href="/writeups.html">take me back to the catalog</a>
+        </div>
+        <p class="spoiler-note">even after revealing, screenshots stay blurred until you click them - answers usually live in the images.</p>
+      </div>
       )}
+
+      <div class="spoiler-zone" id="spoiler-zone">
+        {toc.length >= 3 && (
+          <nav class="term toc-term" aria-label="table of contents">
+            <div class="term-chrome" aria-hidden="true">
+              <span class="tdot tdot-r"></span>
+              <span class="tdot tdot-y"></span>
+              <span class="tdot tdot-g"></span>
+              <span class="tname">guest@zew0z: ~/writeups$ cat index.md</span>
+            </div>
+            <pre class="toc-prompt" aria-hidden="true"><span class="t-dim">$</span> cat index.md</pre>
+            <ul class="toc-list">
+              {toc.map((h) => (
+                <li class={h.depth === 3 ? 'toc-h3' : ''}>
+                  <a href={`#${h.slug}`}>{h.text}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
+
+        <div class="prose">
+          <Content />
+        </div>
+
+        {post.data.tools.length > 0 && (
+          <div class="loot">
+            <p class="loot-head"># loot :: tools that did the work</p>
+            <div class="loot-tags">
+              {post.data.tools.map((t) => <span class="tag">#{t}</span>)}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {gated && (
+        <script is:inline>
+          /* apply the spoiler blur synchronously so content never flashes unblurred */
+          (function () {
+            var accepted = false;
+            try { accepted = localStorage.getItem('zew0z-spoilers') === '1'; } catch (e) {}
+            if (accepted) return;
+            var zone = document.getElementById('spoiler-zone');
+            var gate = document.querySelector('.spoiler-gate');
+            if (zone) zone.classList.add('is-spoilered');
+            if (gate) gate.hidden = false;
+          })();
+        </script>
+      )}
+
+      <footer class="post-footer">
+        <nav class="post-pager" aria-label="adjacent writeups">
+          {older ? (
+            <a class="post-pager-item" href={postUrl(older)}>
+              <span class="post-pager-dir">older</span>
+              <span class="post-pager-title">{shortTitle(older)}</span>
+            </a>
+          ) : (
+            <p class="post-pager-item is-end">oldest writeup. everyone starts somewhere.</p>
+          )}
+          {newer ? (
+            <a class="post-pager-item is-next" href={postUrl(newer)}>
+              <span class="post-pager-dir">newer</span>
+              <span class="post-pager-title">{shortTitle(newer)}</span>
+            </a>
+          ) : (
+            <p class="post-pager-item is-end is-next">newest writeup. you are at the front of the line.</p>
+          )}
+        </nav>
+        <p>back :: <a href="/writeups.html">writeups</a></p>
+        <p class="post-kofi">learned something? <a href="https://ko-fi.com/zew0z" target="_blank" rel="noopener">buy me a coffee</a> :: ko-fi.com/zew0z</p>
+      </footer>
     </div>
-
-    {post.data.platform !== 'blog' && (
-      <script is:inline>
-        /* apply the spoiler blur synchronously so content never flashes unblurred */
-        (function () {
-          var accepted = false;
-          try { accepted = localStorage.getItem('zew0z-spoilers') === '1'; } catch (e) {}
-          if (accepted) return;
-          var zone = document.getElementById('spoiler-zone');
-          var gate = document.querySelector('.spoiler-gate');
-          if (zone) zone.classList.add('is-spoilered');
-          if (gate) gate.hidden = false;
-        })();
-      </script>
-    )}
-
-    <footer class="post-footer">
-      <nav class="post-pager" aria-label="adjacent writeups">
-        {older ? (
-          <a class="post-pager-item" href={postUrl(older)}>
-            <span class="post-pager-dir">older</span>
-            <span class="post-pager-title">{shortTitle(older)}</span>
-          </a>
-        ) : (
-          <p class="post-pager-item is-end">oldest writeup. everyone starts somewhere.</p>
-        )}
-        {newer ? (
-          <a class="post-pager-item is-next" href={postUrl(newer)}>
-            <span class="post-pager-dir">newer</span>
-            <span class="post-pager-title">{shortTitle(newer)}</span>
-          </a>
-        ) : (
-          <p class="post-pager-item is-end is-next">newest writeup. you are at the front of the line.</p>
-        )}
-      </nav>
-      <p>back :: <a href="/writeups.html">writeups</a></p>
-      <p class="post-kofi">learned something? <a href="https://ko-fi.com/zew0z" target="_blank" rel="noopener">buy me a coffee</a> :: ko-fi.com/zew0z</p>
-    </footer>
   </article>
 </BaseLayout>

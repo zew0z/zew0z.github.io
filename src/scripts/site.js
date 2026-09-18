@@ -220,30 +220,38 @@
 
   if (prose) {
     /* per-screenshot spoilers: images start blurred, click to toggle.
-       answers live in the images, so this applies even after the gate is revealed */
+       answers live in the images, so this applies even after the gate is revealed.
+       chrome lives outside the blur so spoilers read as files, not gray slabs. */
+    var shotIdx = 0;
     prose.querySelectorAll('img').forEach(function (img) {
       if (img.closest('.img-spoiler')) return;
-      var wrap = document.createElement('div');
-      wrap.className = 'img-spoiler is-blurred';
-      var btn = document.createElement('button');
+      shotIdx += 1;
+      var file = shotIdx === 1 ? 'screenshot.png' : 'screenshot-' + shotIdx + '.png';
+      var hiddenLabel = file + ' - click to reveal';
+      var shownLabel = file + ' - click to hide';
+      var wrap = make('div', 'img-spoiler is-blurred term');
+      var chrome = make('div', 'term-chrome');
+      chrome.setAttribute('aria-hidden', 'true');
+      chrome.appendChild(make('span', 'tdot tdot-r'));
+      chrome.appendChild(make('span', 'tdot tdot-y'));
+      chrome.appendChild(make('span', 'tdot tdot-g'));
+      var tname = make('span', 'tname', hiddenLabel);
+      chrome.appendChild(tname);
+      var btn = make('button', 'img-btn');
       btn.type = 'button';
-      btn.className = 'img-btn';
-      btn.setAttribute('aria-label', 'screenshot blurred to avoid spoilers. activate to reveal');
-      var veil = document.createElement('span');
-      veil.className = 'img-veil';
-      veil.setAttribute('aria-hidden', 'true');
-      veil.appendChild(make('span', 'veil-chip', 'screenshot :: click to reveal'));
+      btn.setAttribute('aria-label', file + ' blurred to avoid spoilers. activate to reveal');
+      if (!img.getAttribute('alt')) {
+        img.setAttribute('alt', 'writeup screenshot, blurred until revealed');
+      }
       img.parentNode.insertBefore(wrap, img);
       btn.appendChild(img);
-      btn.appendChild(veil);
+      wrap.appendChild(chrome);
       wrap.appendChild(btn);
       btn.addEventListener('click', function () {
         var blurred = wrap.classList.toggle('is-blurred');
-        veil.querySelector('.veil-chip').textContent = blurred
-          ? 'screenshot :: click to reveal'
-          : 'screenshot :: click to hide';
+        tname.textContent = blurred ? hiddenLabel : shownLabel;
         btn.setAttribute('aria-label', blurred
-          ? 'screenshot blurred to avoid spoilers. activate to reveal'
+          ? file + ' blurred to avoid spoilers. activate to reveal'
           : 'spoiler screenshot revealed. activate to hide again');
       });
     });
