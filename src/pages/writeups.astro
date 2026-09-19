@@ -19,7 +19,7 @@ const thmSample = thm.slice(0, 3).map((p) => postSlug(p));
 const htbSample = htb.slice(0, 2).map((p) => postSlug(p));
 
 const bootLines = [
-  { kind: 'dim', text: 'guest@zew0z:~/writeups$ find . -name \'*.md\' | wc -l' },
+  { kind: 'dim', text: 'guest@zew0z:~/writeups$ ls *.md | wc -l' },
   { kind: 'head', text: String(posts.length) },
   { kind: 'ok', text: `drwxr-xr-x  ${thmCount} zew0z pwn  thm/` },
   { kind: 'ok', text: `drwxr-xr-x  ${htbCount} zew0z pwn  htb/` },
