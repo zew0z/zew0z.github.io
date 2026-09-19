@@ -4,18 +4,171 @@ import ShellPrompt from '../components/ShellPrompt.astro';
 import AsciiArt from '../components/AsciiArt.astro';
 import WriteupCatalog from '../components/WriteupCatalog.astro';
 import { WRITEUPS_BANNER } from '../lib/ascii';
-import { getWriteups, postUrl, searchItem, shortTitle } from '../lib/writeups';
+import { getWriteups, postSlug, postUrl, searchItem, shortTitle } from '../lib/writeups';
 
 const posts = await getWriteups();
 const nl = '\n';
 
-const thmCount = posts.filter((p) => p.data.platform === 'thm').length;
-const htbCount = posts.filter((p) => p.data.platform === 'htb').length;
-const blogCount = posts.filter((p) => p.data.platform === 'blog').length;
+const thm = posts.filter((p) => p.data.platform === 'thm');
+const htb = posts.filter((p) => p.data.platform === 'htb');
+const blog = posts.filter((p) => p.data.platform === 'blog');
+const thmCount = thm.length;
+const htbCount = htb.length;
+const blogCount = blog.length;
+const thmSample = thm.slice(0, 3).map((p) => postSlug(p));
+const htbSample = htb.slice(0, 2).map((p) => postSlug(p));
+
+const bootLines = [
+  { kind: 'dim', text: 'guest@zew0z:~/writeups$ find . -name \'*.md\' | wc -l' },
+  { kind: 'head', text: String(posts.length) },
+  { kind: 'ok', text: `drwxr-xr-x  ${thmCount} zew0z pwn  thm/` },
+  { kind: 'ok', text: `drwxr-xr-x  ${htbCount} zew0z pwn  htb/` },
+  { kind: 'ok', text: `drwxr-xr-x  ${blogCount} zew0z pwn  blog/` },
+  { kind: 'ok', text: '-rw-r--r--  1 zew0z pwn  .motd' },
+  { kind: 'dim', text: 'guest@zew0z:~/writeups$ cat .motd' },
+  { kind: 'go', text: 'flags stay offline. continue.' },
+];
+
+const cascadeTerms = [
+  {
+    title: 'thm@lab:~',
+    hue: 'teal',
+    x: '6%',
+    y: '8%',
+    w: '22rem',
+    rot: '-1.2deg',
+    z: 4,
+    lines: [
+      { t: 'cmd', v: '$ ls thm/' },
+      ...thmSample.map((slug) => ({ t: 'out' as const, v: slug })),
+      { t: 'ok', v: `[ ok ] ${thmCount} rooms indexed` },
+    ],
+  },
+  {
+    title: 'htb@box:~',
+    hue: 'green',
+    x: '48%',
+    y: '16%',
+    w: '22rem',
+    rot: '1.1deg',
+    z: 5,
+    lines: [
+      { t: 'cmd', v: '$ ls htb/' },
+      ...(htbSample.length ? htbSample.map((slug) => ({ t: 'out' as const, v: slug })) : [{ t: 'out' as const, v: '(empty)' }]),
+      { t: 'ok', v: `[ ok ] ${htbCount} ${htbCount === 1 ? 'box' : 'boxes'} indexed` },
+    ],
+  },
+  {
+    title: 'gate@writeups:~',
+    hue: 'amber',
+    x: '14%',
+    y: '52%',
+    w: '22.5rem',
+    rot: '-0.8deg',
+    z: 3,
+    lines: [
+      { t: 'cmd', v: '$ cat .motd' },
+      { t: 'out', v: 'flags stay offline' },
+      { t: 'out', v: 'spoilers sit behind the gate' },
+      { t: 'ok', v: '[ ok ] gates armed' },
+    ],
+  },
+];
+
+const beats = [
+  ...bootLines.map((_, i) => ({ kind: 'boot', i })),
+  ...cascadeTerms.map((_, i) => ({ kind: 'swarm', i })),
+  { kind: 'climax', i: 0 },
+];
+
+function beatTop(beat: { kind: string; i: number }) {
+  if (beat.kind === 'boot') {
+    const last = Math.max(1, bootLines.length - 1);
+    return 8 + (beat.i / last) * 26;
+  }
+  if (beat.kind === 'swarm') {
+    const last = Math.max(1, cascadeTerms.length - 1);
+    return 42 + (beat.i / last) * 14;
+  }
+  return 62;
+}
+
+const typeLine = 'every room documented. flags stay offline.';
+const typeLine2 = 'solutions sit behind a spoiler gate.';
+
+function bootParts(text: string) {
+  const m = text.match(/^(\[[^\]]+\])\s(.*)$/);
+  if (!m) return { ts: '', body: text, ok: false };
+  const ok = /\s\[ ok \]\s*$/.test(m[2]);
+  return {
+    ts: m[1],
+    body: ok ? m[2].replace(/\s\[ ok \]\s*$/, '') : m[2],
+    ok,
+  };
+}
+
+const FALL_GLYPHS = '0123456789abcdef│─┌┐└┘┬┴┼┤├█▓▒░<>/$#*+=.~';
+function fallRng(seed: number) {
+  return function next() {
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function makeFallCol(seed: number, len: number) {
+  const rand = fallRng(seed);
+  const chars: string[] = [];
+  for (let i = 0; i < len; i++) {
+    chars.push(FALL_GLYPHS[Math.floor(rand() * FALL_GLYPHS.length)]);
+  }
+  const body = chars.join('\n');
+  return `${body}\n${body}`;
+}
+
+const fallCols = Array.from({ length: 16 }, (_, i) => {
+  const rand = fallRng(3100 + i * 97);
+  return {
+    x: 48 + i * 3.2 + (rand() * 1.4 - 0.7),
+    dur: 14 + rand() * 16,
+    delay: -(rand() * 18),
+    hue: i % 5 === 0 ? 'teal' : i % 4 === 0 ? 'green' : i % 3 === 0 ? 'ink' : 'dim',
+    text: makeFallCol(600 + i * 13, 42),
+  };
+});
+
+const fallStrings = [
+  { x: 53, dur: 11, delay: -1, text: 'find . -name \'*.md\'' },
+  { x: 62, dur: 14, delay: -4, text: 'spoiler gates armed' },
+  { x: 58, dur: 12, delay: -2.5, text: 'wiki pickle-rick' },
+  { x: 70, dur: 16, delay: -7, text: 'guest@zew0z:~/writeups$ ls' },
+  { x: 55, dur: 13, delay: -9, text: 'drwx  thm/' },
+  { x: 76, dur: 10, delay: -3, text: 'drwx  htb/' },
+  { x: 64, dur: 15, delay: -6, text: 'cat .motd' },
+  { x: 59, dur: 12, delay: -11, text: '# flags stay offline' },
+  { x: 82, dur: 13, delay: -5, text: 'thm top 8%' },
+  { x: 67, dur: 17, delay: -8, text: 'grep -l sudo *.md' },
+  { x: 72, dur: 11, delay: -13, text: 'drwx  blog/' },
+  { x: 78, dur: 14, delay: -10, text: 'cat index.md' },
+  { x: 54, dur: 16, delay: -15, text: 'rooms catalogued' },
+  { x: 73, dur: 12, delay: -12, text: 'cd ../portfolio' },
+  { x: 61, dur: 13, delay: -14, text: 'status: catalogued' },
+  { x: 80, dur: 11, delay: -16, text: 'gates armed [ ok ]' },
+  { x: 66, dur: 15, delay: -1.5, text: 'pts/rooms  guest session' },
+];
+
+const fallWords = [
+  { x: 52, dur: 16, delay: -2, word: 'ROOM' },
+  { x: 60, dur: 13, delay: -6, word: 'THM' },
+  { x: 68, dur: 15, delay: -3, word: 'HTB' },
+  { x: 76, dur: 12, delay: -8, word: 'WIKI' },
+  { x: 57, dur: 18, delay: -11, word: 'GATE' },
+  { x: 84, dur: 14, delay: -5, word: 'CTF' },
+  { x: 64, dur: 17, delay: -9, word: 'BOX' },
+  { x: 72, dur: 14, delay: -4, word: 'LAB' },
+];
 
 // the record so far: every room as a tick on one timeline.
-// proportional positioning, but with a minimum visual gap so clusters
-// (8 rooms in 3 days) stay readable instead of stacking into one blob
 const firstDate = posts[posts.length - 1].data.date.valueOf();
 const span = Math.max(Date.now() - firstDate, 86400000);
 const days = Math.round(span / 86400000);
@@ -42,34 +195,137 @@ const ticks = adjusted.map(({ post, pos }) => ({
   description="CTF and lab writeups - searchable, spoiler-gated, every room documented."
   crumb="/writeups"
 >
-  <section class="page-hero pf-hero">
-    <div class="container pf-hero-grid">
-      <div class="pf-hero-copy">
-        <ShellPrompt path="~/writeups" command="ls *.md | wc -l" />
-        <h1 class="visually-hidden">writeups</h1>
-        <AsciiArt art={WRITEUPS_BANNER} class="pf-ascii wu-ascii" label="writeups ascii banner" />
-        <p class="page-lede">
-          every room fully documented. flags stay offline; solutions sit behind a spoiler gate.
-        </p>
+  <div id="cinema" class="cinema cinema-labs">
+    <section class="cinema-stage" id="cinema-stage" aria-label="writeups listing">
+      <div class="cinema-beats" aria-hidden="true">
+        {beats.map((beat) => (
+          <div
+            class="cinema-beat"
+            data-kind={beat.kind}
+            data-i={beat.i}
+            style={`top: ${beatTop(beat)}%`}
+          />
+        ))}
       </div>
-      <aside class="term pf-index" aria-label="directory index">
-        <div class="term-chrome" aria-hidden="true">
-          <span class="tdot tdot-r"></span>
-          <span class="tdot tdot-y"></span>
-          <span class="tdot tdot-g"></span>
-          <span class="tname">guest@zew0z: ~/writeups</span>
+
+      <div class="cinema-sticky">
+        <div class="cinema-fall" id="cinema-fall" aria-hidden="true">
+          {fallCols.map((col) => (
+            <pre
+              class={`cinema-fall-col hue-${col.hue}`}
+              style={`--x:${col.x}%;--dur:${col.dur}s;--delay:${col.delay}s`}
+            >{col.text}</pre>
+          ))}
+          {fallStrings.map((str) => (
+            <span
+              class="cinema-fall-str"
+              style={`--x:${str.x}%;--dur:${str.dur}s;--delay:${str.delay}s`}
+            >{str.text}</span>
+          ))}
+          {fallWords.map((w) => (
+            <pre
+              class="cinema-fall-word"
+              style={`--x:${w.x}%;--dur:${w.dur}s;--delay:${w.delay}s`}
+            >{Array.from({ length: 8 }, () => w.word.split('').join('\n')).join('\n\n')}</pre>
+          ))}
         </div>
-        <pre class="cinema-ls pf-index-ls"><span class="cinema-ls-head"># ls -la{nl}</span><span class="cinema-ls-row case-thm">drwx  thm/{nl}</span><span class="cinema-ls-row case-htb">drwx  htb/{nl}</span><span class="cinema-ls-row case-blog">drwx  blog/{nl}</span></pre>
-        <dl class="whoami-strip">
-          <div><dt>rooms</dt><dd>{posts.length}</dd></div>
-          <div><dt>thm</dt><dd>{thmCount}</dd></div>
-          <div><dt>htb</dt><dd>{htbCount}</dd></div>
-          <div><dt>blog</dt><dd>{blogCount}</dd></div>
-          <div><dt>status</dt><dd class="is-live">catalogued</dd></div>
-        </dl>
-      </aside>
-    </div>
-  </section>
+        <div class="cinema-scan" aria-hidden="true"></div>
+
+        <div class="cinema-boot-layer">
+          <pre class="cinema-boot-log" id="boot-log" aria-hidden="true">{bootLines.map((line, i) => {
+              const p = bootParts(line.text);
+              return (
+                <span class={`cinema-boot-line boot-${line.kind}`} data-boot-line={i}>
+                  {p.ts ? <span class="boot-ts">{p.ts} </span> : null}{p.body}{p.ok ? <span class="boot-st"> [ ok ]</span> : null}{nl}
+                </span>
+              );
+            })}</pre>
+          <div class="cinema-pct-wrap">
+            <p class="cinema-pct-label" id="boot-label">listing</p>
+            <p class="cinema-pct" id="boot-pct">00</p>
+            <div class="cinema-pct-bar" aria-hidden="true">
+              <div class="cinema-boot-fill" id="boot-fill"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cinema-swarm" id="cascade-rail">
+          {cascadeTerms.map((term, i) => (
+            <article
+              class={`cinema-term hue-${term.hue}`}
+              data-cascade={i}
+              style={`--tx:${term.x};--ty:${term.y};--tw:${term.w};--rot:${term.rot};--z:${term.z};--i:${i}`}
+            >
+              <div class="cinema-term-chrome" aria-hidden="true">
+                <span class="tdot tdot-r"></span>
+                <span class="tdot tdot-y"></span>
+                <span class="tdot tdot-g"></span>
+                <span class="tname">{term.title}</span>
+              </div>
+              <pre class="cinema-term-body">{term.lines.map((line) => (
+                  <span class={`cinema-term-line is-${line.t}`}>{line.v}{nl}</span>
+                ))}</pre>
+            </article>
+          ))}
+        </div>
+
+        <div class="cinema-climax" id="ascii-reveal">
+          <h1 class="hero-name visually-hidden">writeups</h1>
+          <AsciiArt art={WRITEUPS_BANNER} class="ascii-hero cinema-ascii" label="writeups ascii banner" />
+          <div class="cinema-type" aria-live="polite" data-type-line={typeLine} data-type-line-2={typeLine2}>
+            <div class="cinema-type-row">
+              <span class="cinema-type-prompt" aria-hidden="true">guest@zew0z:~$</span>
+              <p class="cinema-type-out" id="type-out"></p>
+              <span class="cinema-type-cursor" id="type-cursor-1" aria-hidden="true"></span>
+            </div>
+            <div class="cinema-type-row" id="type-row-2">
+              <span class="cinema-type-prompt is-hash" aria-hidden="true">#</span>
+              <p class="cinema-type-out cinema-type-out-2" id="type-out-2"></p>
+              <span class="cinema-type-cursor is-dim" id="type-cursor-2" aria-hidden="true"></span>
+            </div>
+            <p class="cinema-type-go" id="type-go">
+              <a href="#catalog">./catalog</a>
+            </p>
+          </div>
+        </div>
+
+        <div class="cinema-hud" aria-hidden="true">
+          <span id="boot-hud-tty" data-idle="pts/rooms">pts/rooms</span>
+          <span id="boot-hud-pct">00%</span>
+          <span>{posts.length} rooms</span>
+          <span>guest@zew0z</span>
+        </div>
+        <p class="visually-hidden">Scroll to list the writeups, then continue down the page.</p>
+      </div>
+    </section>
+
+    <section class="cinema-land" aria-label="directory index">
+      <div class="container pf-hero-grid">
+        <div class="pf-hero-copy">
+          <ShellPrompt path="~/writeups" command="ls *.md | wc -l" />
+          <p class="page-lede">
+            the catalog. every room documented, flags stay offline.
+          </p>
+        </div>
+        <aside class="term pf-index cinema-card card-stats" aria-label="directory index">
+          <div class="term-chrome" aria-hidden="true">
+            <span class="tdot tdot-r"></span>
+            <span class="tdot tdot-y"></span>
+            <span class="tdot tdot-g"></span>
+            <span class="tname">guest@zew0z: ~/writeups</span>
+          </div>
+          <pre class="cinema-ls pf-index-ls"><span class="cinema-ls-head"># ls -la{nl}</span><span class="cinema-ls-row case-thm">drwx  thm/{nl}</span><span class="cinema-ls-row case-htb">drwx  htb/{nl}</span><span class="cinema-ls-row case-blog">drwx  blog/{nl}</span></pre>
+          <dl class="whoami-strip">
+            <div><dt>rooms</dt><dd>{posts.length}</dd></div>
+            <div><dt>thm</dt><dd>{thmCount}</dd></div>
+            <div><dt>htb</dt><dd>{htbCount}</dd></div>
+            <div><dt>blog</dt><dd>{blogCount}</dd></div>
+            <div><dt>status</dt><dd class="is-live">catalogued</dd></div>
+          </dl>
+        </aside>
+      </div>
+    </section>
+  </div>
 
   <section class="record-strip">
     <div class="container">
@@ -109,4 +365,5 @@ const ticks = adjusted.map(({ post, pos }) => ({
   </section>
 
   <script id="site-data" type="application/json" set:html={JSON.stringify({ posts: posts.map(searchItem) })} />
+  <script src="../scripts/cinematic.js"></script>
 </BaseLayout>

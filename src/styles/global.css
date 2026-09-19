@@ -1164,6 +1164,42 @@ a.header-tty:active { transform: translateY(1px); }
 
 .pf-hero { padding-bottom: 0.4rem; }
 .pf-hero .page-lede { max-width: 46ch; }
+#catalog { scroll-margin-top: calc(var(--header-h) + 0.8rem); }
+
+/* labs cinema: rooms listing, WRITEUPS ascii at catalog size */
+.cinema-labs .cinema-stage { height: 300vh; }
+.cinema-labs .cinema-sticky {
+  background:
+    radial-gradient(ellipse 80% 70% at 18% 30%, rgba(45, 212, 191, 0.08), transparent 55%),
+    radial-gradient(ellipse 50% 50% at 90% 80%, rgba(167, 139, 250, 0.05), transparent 50%),
+    var(--bg0);
+}
+.cinema-labs .cinema-ascii.ascii,
+.cinema-labs .cinema-climax .ascii-hero {
+  font-size: clamp(0.62rem, 2.05vw, 1.22rem);
+  line-height: 1.14;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.cinema-labs .cinema-type-prompt { font-size: 0.78rem; }
+.cinema-labs .cinema-type-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 0.55rem;
+}
+.cinema-labs .page-lede { max-width: 46ch; }
+.cinema-labs .cinema-land {
+  min-height: 0;
+  padding: 2.2rem 0 0.2rem;
+}
+.cinema-labs .cinema-land .cinema-card.card-stats {
+  grid-area: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  height: auto;
+}
 .pf-hero .shell-prompt {
   white-space: normal;
   overflow: visible;
@@ -3900,8 +3936,13 @@ a.cinema-card .cinema-card-meta {
   }
   .cinema-ascii.ascii,
   .cinema-climax .ascii-hero { font-size: 0.48rem; }
+  .cinema-labs .cinema-ascii.ascii,
+  .cinema-labs .cinema-climax .ascii-hero {
+    font-size: clamp(0.38rem, 3.1vw, 0.62rem);
+  }
   .cinema-type-out { font-size: 1.05rem; }
   .cinema-stage { height: 280vh; }
+  .cinema-labs .cinema-stage { height: 260vh; }
   .cinema-term {
     width: min(78vw, 18.5rem) !important;
   }
