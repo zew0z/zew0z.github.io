@@ -8,7 +8,6 @@ import { getWriteups, postSlug, searchItem } from '../lib/writeups';
 
 const posts = await getWriteups();
 const writeupCount = posts.length;
-const projectCount = portfolioItems.length;
 const nl = '\n';
 
 const bootLines = [
@@ -251,13 +250,10 @@ const fallWords = [
         <div class="cinema-scan" aria-hidden="true"></div>
 
         <div class="cinema-boot-layer">
+          {/* keep each line's markup on one row: whitespace inside <pre> renders */}
           <pre class="cinema-boot-log" id="boot-log" aria-hidden="true">{bootLines.map((line, i) => {
               const p = bootParts(line.text);
-              return (
-                <span class={`cinema-boot-line boot-${line.kind}`} data-boot-line={i}>
-                  {p.ts ? <span class="boot-ts">{p.ts} </span> : null}{p.body}{p.ok ? <span class="boot-st"> [ ok ]</span> : null}{nl}
-                </span>
-              );
+              return <span class={`cinema-boot-line boot-${line.kind}`} data-boot-line={i}>{p.ts ? <span class="boot-ts">{p.ts} </span> : null}{p.body}{p.ok ? <span class="boot-st"> [ ok ]</span> : null}</span>;
             })}</pre>
           <div class="cinema-pct-wrap">
             <p class="cinema-pct-label" id="boot-label">loading</p>
@@ -337,7 +333,7 @@ const fallWords = [
           <pre class="cinema-ls" aria-hidden="true"><span class="cinema-ls-head"># ls -1{nl}</span>{listingWork.map((item) => (
               <span class="cinema-ls-row">{item.group === 'clients' ? 'lrwx' : '-rwx'}  {item.title}{nl}</span>
             ))}</pre>
-          <span class="cinema-card-meta">{projectCount} entries</span>
+          <span class="cinema-card-meta">{listingWork.length} shipped</span>
         </a>
 
         <aside class="cinema-card card-stats" aria-label="stats">

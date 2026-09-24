@@ -632,7 +632,7 @@
         row('usage: ascii <name>', 't-gray');
         return;
       }
-      if (ASCII_ART[name]) { lines(ASCII_ART[name], name === 'trophy' && !isRoot ? 't-yellow' : 't-green'); return; }
+      if (ASCII_ART[name]) { lines(ASCII_ART[name], (name === 'trophy' && !isRoot ? 't-yellow' : 't-green') + ' t-art'); return; }
       row("ascii: no art named '" + name + "'. try: " + names.join(' '), 't-red');
     },
 
@@ -712,7 +712,7 @@
 
     clear: function () { out.textContent = ''; },
 
-    banner: function () { lines(BANNER, 't-green'); },
+    banner: function () { lines(BANNER, 't-green t-art'); },
 
     motd: function () { lines(FILES.motd); },
 
@@ -1134,12 +1134,12 @@
   /* ---------- greeting ---------- */
 
   if (isRoot) {
-    lines(BANNER, 't-green');
+    lines(BANNER, 't-green t-art');
     row('welcome back, root. the shell kept your seat warm.', 't-orange');
     if (!myName) row('claim your spot on the flag board: register <name>', 't-yellow');
     row([{ t: "type ", c: 't-gray' }, { t: 'help', c: 't-green' }, { t: " for commands. show off with ", c: 't-gray' }, { t: 'leaderboard', c: 't-green' }, { t: ' or ', c: 't-gray' }, { t: 'achievements', c: 't-green' }, { t: '.', c: 't-gray' }]);
   } else {
-    lines(BANNER, 't-aqua');
+    lines(BANNER, 't-aqua t-art');
     row('zew0z guest shell v2.0 -- unauthorized access actively encouraged.', 't-gray');
     row([{ t: "type ", c: 't-gray' }, { t: 'help', c: 't-green' }, { t: " to see what this thing can do. rumor: three flags hide in here.", c: 't-gray' }]);
   }

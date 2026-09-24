@@ -1443,13 +1443,9 @@ a.header-tty:active { transform: translateY(1px); }
   display: block;
   width: 100%;
   height: auto;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 1440 / 820;
   object-fit: cover;
   object-position: top center;
-}
-
-.pf-term.is-feature .pf-still img {
-  aspect-ratio: 16 / 11;
 }
 
 .pf-still-cap {
@@ -1464,13 +1460,42 @@ a.header-tty:active { transform: translateY(1px); }
 
 .pf-clients {
   display: grid;
-  grid-template-columns: 1.35fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 0.85rem;
   margin-top: 0.85rem;
   align-items: stretch;
 }
 
-.pf-clients .is-feature { grid-row: span 2; }
+.pf-clients .is-feature {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+}
+.pf-clients .is-feature .term-chrome { grid-column: 1 / -1; }
+.pf-clients .is-feature .pf-still {
+  border-bottom: 0;
+  border-right: 1px solid var(--line);
+}
+.pf-clients .is-feature .pf-term-body {
+  justify-content: center;
+  padding: 1.6rem 1.7rem;
+}
+.pf-clients .is-feature .pf-hash { margin-top: 0.4rem; }
+
+/* sectape: the still absorbs spare height instead of a gap above the tags */
+.pf-tools .pf-term.is-feature .pf-still {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.pf-tools .pf-term.is-feature .pf-still img {
+  flex: 1 1 0;
+  min-height: 17rem;
+  aspect-ratio: auto;
+}
+.pf-tools .pf-term.is-feature .pf-term-body { flex: 0 0 auto; }
 
 a.pf-term {
   color: inherit;
@@ -1963,6 +1988,8 @@ a.pf-term:hover .ext {
 
 .term-row { white-space: pre-wrap; overflow-wrap: break-word; min-height: 1.1em; }
 .term-row.cmd { margin-top: 0.45rem; }
+/* ascii art never wraps; it shrinks to fit narrow terminals instead */
+.term-row.t-art { white-space: pre; overflow-wrap: normal; font-size: min(1em, 2.35vw); line-height: 1.25; }
 
 .term-line {
   display: flex;
@@ -3245,7 +3272,7 @@ a.post-pager-item:active { transform: translateY(1px); }
 
 .cinema-ascii.ascii,
 .cinema-climax .ascii-hero {
-  font-size: clamp(0.52rem, 1.8vw, 1.12rem);
+  font-size: clamp(0.52rem, 1.9vw, 1.5rem);
   line-height: 1.12;
   margin: 0;
   max-width: 100%;
@@ -3388,9 +3415,8 @@ a.post-pager-item:active { transform: translateY(1px); }
 }
 
 .cinema-land {
-  padding: 3.2rem 0 2.4rem;
+  padding: 3.6rem 0 3.6rem;
   border-top: 1px solid var(--line);
-  min-height: calc(100dvh - 3.75rem);
 }
 
 .cinema-land-grid {
@@ -3768,7 +3794,10 @@ a.cinema-card .cinema-card-meta {
   .pf-tools,
   .pf-clients { grid-template-columns: 1fr; }
   .pf-term.is-feature,
-  .pf-clients .is-feature { grid-row: auto; }
+  .pf-clients .is-feature { grid-row: auto; display: flex; }
+  .pf-clients .is-feature .pf-still { border-right: 0; border-bottom: 1px solid var(--line); }
+  .pf-clients .is-feature .pf-term-body { padding: 1.05rem 1.15rem 1.15rem; }
+  .pf-tools .pf-term.is-feature .pf-still img { flex: none; min-height: 0; aspect-ratio: 1440 / 820; }
   .work-listing-head,
   .work-row {
     grid-template-columns: 1fr auto;
@@ -3784,7 +3813,7 @@ a.cinema-card .cinema-card-meta {
 }
 
 @media (max-width: 860px) {
-  .playground-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .playground-grid { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
   .hero-grid { grid-template-columns: 1fr; gap: 1.6rem; align-items: start; }
   .hero { min-height: 0; padding: 2.2rem 0 2rem; }
   .hero-panel { order: 2; }
