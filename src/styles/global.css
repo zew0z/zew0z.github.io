@@ -2975,11 +2975,12 @@ a.post-pager-item:active { transform: translateY(1px); }
 .cinema-boot-layer {
   position: absolute;
   inset: 0;
-  z-index: 1;
+  z-index: 6;
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(12rem, 0.85fr);
-  gap: 1.5rem;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.85rem;
   align-items: start;
+  align-content: start;
   min-width: 0;
   max-width: 100%;
   padding: 2.2rem clamp(1.1rem, 4vw, 3.2rem) 2rem;
@@ -3005,15 +3006,17 @@ a.post-pager-item:active { transform: translateY(1px); }
   min-width: 0;
   max-width: 100%;
   font-family: var(--font-mono);
-  font-size: clamp(0.68rem, 1.35vw, 0.88rem);
-  line-height: 1.72;
-  color: var(--ink3);
-  white-space: pre;
-  overflow-x: auto;
+  font-size: 0.72rem;
+  line-height: 1.55;
+  color: var(--ink2);
+  white-space: normal;
+  overflow: visible;
   position: relative;
   z-index: 1;
-  padding: 0.15rem 1.6rem 0.4rem 0;
-  background: linear-gradient(90deg, var(--bg0) 0%, var(--bg0) 62%, color-mix(in srgb, var(--bg0) 70%, transparent) 86%, transparent 100%);
+  padding: 0.15rem 0 0.4rem;
+  background: none;
+  -webkit-mask-image: none;
+  mask-image: none;
 }
 
 .cinema-boot-line {
@@ -3021,18 +3024,47 @@ a.post-pager-item:active { transform: translateY(1px); }
 }
 
 .cinema-boot-line.is-on {
-  display: block;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 0.55rem;
+  row-gap: 0.12rem;
+  align-items: baseline;
+  max-width: 100%;
+  min-width: 0;
+  white-space: normal;
+  overflow: visible;
   animation: cinema-boot-tick 0.18s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.cinema-boot-line.is-head::after {
+.cinema-boot-line.is-on:has(.boot-st) {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+}
+
+.cinema-boot-line .boot-ts,
+.cinema-boot-line .boot-st {
+  white-space: nowrap;
+}
+
+.cinema-boot-line .boot-msg {
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+.cinema-boot-line .boot-st {
+  color: var(--green);
+  justify-self: end;
+}
+
+.cinema-boot-line.is-head .boot-msg::after {
   content: '█';
   margin-left: 0.4rem;
   color: var(--teal);
   animation: cinema-blink 1s steps(1) infinite;
 }
 
-.cinema-stage.is-booted .cinema-boot-line.is-head::after {
+.cinema-stage.is-booted .cinema-boot-line.is-head .boot-msg::after {
   content: none;
 }
 
@@ -3052,12 +3084,13 @@ a.post-pager-item:active { transform: translateY(1px); }
 .boot-st { color: var(--green); }
 
 .cinema-pct-wrap {
-  justify-self: end;
-  align-self: center;
-  text-align: right;
+  justify-self: start;
+  align-self: start;
+  text-align: left;
   min-width: 0;
+  max-width: 100%;
   position: relative;
-  padding: 0.8rem 0.15rem 1rem 1.4rem;
+  padding: 0.35rem 0 0.6rem;
   transition: opacity 0.45s ease;
   z-index: 1;
 }
@@ -3069,6 +3102,26 @@ a.post-pager-item:active { transform: translateY(1px); }
   z-index: -1;
   pointer-events: none;
   background: radial-gradient(ellipse at 78% 48%, var(--bg0) 0%, color-mix(in srgb, var(--bg0) 86%, transparent) 46%, transparent 74%);
+}
+
+@media (min-width: 861px) {
+  .cinema-boot-layer {
+    z-index: 1;
+    grid-template-columns: minmax(0, 1.15fr) minmax(12rem, 0.85fr);
+    gap: 1.5rem;
+  }
+  .cinema-pct-wrap {
+    justify-self: end;
+    align-self: center;
+    text-align: right;
+    padding: 0.8rem 0.15rem 1rem 1.4rem;
+  }
+  .cinema-boot-log {
+    font-size: clamp(0.68rem, 1.35vw, 0.88rem);
+    line-height: 1.72;
+    padding-right: 1.6rem;
+    background: linear-gradient(90deg, var(--bg0) 0%, var(--bg0) calc(100% - 1.6rem), transparent 100%);
+  }
 }
 
 .cinema-pct-label {
@@ -3820,43 +3873,19 @@ a.cinema-card .cinema-card-meta {
     align-items: center;
     justify-content: flex-start;
   }
-  /* vignette and scanlines sit at z-index 4 and were swallowing the
-     right edge of the log ("PREEMPT", "[ ok ]") even when the glyphs
-     were inside the box. the log paints above that fade. */
-  .cinema-sticky::after {
-    background: radial-gradient(ellipse at 50% 40%, transparent 74%, rgba(5, 8, 16, 0.4) 100%);
-  }
-  .cinema-boot-layer {
-    z-index: 6;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0.6rem;
-  }
+  .cinema-sticky::after { opacity: 0; }
+  .cinema-pct-wrap::before { content: none; }
   .cinema-pct { font-size: clamp(4.2rem, 22vw, 7rem); }
-  .cinema-pct-wrap { justify-self: start; text-align: left; }
+  .cinema-boot-line.boot-dim { color: var(--ink2); }
   .cinema-boot-log {
     white-space: normal;
     overflow: visible;
-    font-size: 0.72rem;
-    line-height: 1.55;
-    background: transparent;
-    padding-right: 0;
+    background-image: none;
+    background-color: transparent;
+    -webkit-mask-image: none;
+    mask-image: none;
   }
-  .cinema-boot-line.is-on {
-    display: block;
-    max-width: 100%;
-    white-space: normal;
-    overflow: visible;
-  }
-  .cinema-boot-line .boot-ts { white-space: nowrap; }
-  .cinema-boot-line .boot-msg {
-    white-space: normal;
-    overflow-wrap: break-word;
-    word-break: normal;
-  }
-  .cinema-boot-line .boot-st {
-    white-space: nowrap;
-    margin-left: 0.35rem;
-  }
+  .cinema-boot-line.is-on { display: grid; }
 }
 
 @media (max-width: 720px) {

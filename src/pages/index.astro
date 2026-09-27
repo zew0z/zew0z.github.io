@@ -142,13 +142,10 @@ const typeLine2 = 'security writeups, client stores, an agent team.';
 
 function bootParts(text: string) {
   const m = text.match(/^(\[[^\]]+\])\s(.*)$/);
-  if (!m) return { ts: '', body: text, ok: false };
+  if (!m) return { ts: '', body: text.replace(/\s+/g, ' ').trim(), ok: false };
   const ok = /\s\[ ok \]\s*$/.test(m[2]);
-  return {
-    ts: m[1],
-    body: ok ? m[2].replace(/\s\[ ok \]\s*$/, '') : m[2],
-    ok,
-  };
+  const raw = ok ? m[2].replace(/\s*\[ ok \]\s*$/, '') : m[2];
+  return { ts: m[1], body: raw.replace(/\s+/g, ' ').trim(), ok };
 }
 const listingPosts = posts;
 const listingWork = portfolioItems.filter((item) => item.group !== 'disciplines');
@@ -255,11 +252,10 @@ const fallWords = [
         <div class="cinema-scan" aria-hidden="true"></div>
 
         <div class="cinema-boot-layer">
-          {/* keep each line's markup on one row: whitespace inside <pre> renders */}
-          <pre class="cinema-boot-log" id="boot-log" aria-hidden="true">{bootLines.map((line, i) => {
+          <div class="cinema-boot-log" id="boot-log" aria-hidden="true">{bootLines.map((line, i) => {
               const p = bootParts(line.text);
-              return <span class={`cinema-boot-line boot-${line.kind}`} data-boot-line={i}>{p.ts ? <span class="boot-ts">{p.ts} </span> : null}<span class="boot-msg">{p.body}</span>{p.ok ? <span class="boot-st"> [ ok ]</span> : null}</span>;
-            })}</pre>
+              return <span class={`cinema-boot-line boot-${line.kind}`} data-boot-line={i}>{p.ts ? <span class="boot-ts">{p.ts}</span> : null}<span class="boot-msg">{p.body}</span>{p.ok ? <span class="boot-st">[ ok ]</span> : null}</span>;
+            })}</div>
           <div class="cinema-pct-wrap">
             <p class="cinema-pct-label" id="boot-label">loading</p>
             <p class="cinema-pct" id="boot-pct">00</p>
