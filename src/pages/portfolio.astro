@@ -9,6 +9,7 @@ import { portfolioItems } from '../lib/portfolio';
 import type { ImageMetadata } from 'astro';
 
 import sectapeStill from '../assets/img/tools/sectape-session.png';
+import skroutzStill from '../assets/img/tools/skroutz-feed.jpg';
 import shopifyStill from '../assets/img/tools/shopify-headless.jpg';
 import crewvistaStill from '../assets/img/clients/crewvista.jpg';
 import alabasterStill from '../assets/img/clients/alabasterskin.jpg';
@@ -27,6 +28,11 @@ const stills: Record<string, { src: ImageMetadata; alt: string; caption: string 
     alt: 'sectape html export of a lab-notes session, commands and notes on a dark tape',
     caption: 'lab-notes.html',
   },
+  'skroutz-feed': {
+    src: skroutzStill,
+    alt: 'skroutz xml data feed spec showing product name, stock quantity, and wholesale price fields',
+    caption: 'xml_feed.xml',
+  },
   'shopify-headless': {
     src: shopifyStill,
     alt: 'aura headless shopify catalog with product cards and cart chrome',
@@ -34,7 +40,7 @@ const stills: Record<string, { src: ImageMetadata; alt: string; caption: string 
   },
   crewvista: {
     src: crewvistaStill,
-    alt: 'crewvista.gr homepage',
+    alt: 'crewvista.gr homepage with nav, full headline, and the why-us band',
     caption: 'crewvista.gr',
   },
   alabasterskin: {
