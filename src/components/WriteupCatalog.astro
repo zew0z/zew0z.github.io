@@ -1,4 +1,6 @@
 ---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 import { postSlug, postUrl, readMinutes, shortTitle, type Writeup } from '../lib/writeups';
 
 interface Props {
@@ -15,6 +17,29 @@ const displayTags = (tags: string[]) => tags.filter((t) => !BOILERPLATE_TAGS.has
 
 function haystack(post: Writeup): string {
   return `${post.data.title} ${post.data.description} ${post.data.tags.join(' ')} ${post.body || ''}`.toLowerCase();
+}
+
+const coverFiles = import.meta.glob<{ default: ImageMetadata }>('../assets/img/covers/*.jpg', { eager: true });
+
+const COVER_BY_SLUG: Record<string, { file: string; alt: string }> = {
+  'bounty-hacker-tryhackme': { file: 'bounty-hacker', alt: 'tryhackme room title still for bounty hacker' },
+  'agent-sudo-tryhackme': { file: 'agent-sudo', alt: 'tryhackme room title still for agent sudo' },
+  'crack-the-hash-tryhackme': { file: 'crack-the-hash', alt: 'tryhackme room title still for crack the hash' },
+  'c4ptur3-th3-fl4g-tryhackme': { file: 'c4ptur3', alt: 'tryhackme room title still for c4ptur3-th3-fl4g' },
+  'simple-ctf-tryhackme': { file: 'simple-ctf', alt: 'apache default title screen from the simple ctf room' },
+  'mr-robot-ctf': { file: 'mr-robot', alt: 'tryhackme room title still for mr robot' },
+  'pickle-rick-ctf': { file: 'pickle-rick', alt: 'tryhackme room title still for pickle rick' },
+  'rootme': { file: 'rootme', alt: 'platform-colored title still for the rootme writeup' },
+  'flag-command-htb': { file: 'flag-command', alt: 'blurred title still of the flag command challenge screen' },
+  'ai-ruined-my-life': { file: 'ai-ruined-my-life', alt: 'platform-colored title still for the blog post' },
+};
+
+function coverOf(post: Writeup): { src: ImageMetadata; alt: string } | null {
+  const spec = COVER_BY_SLUG[postSlug(post)];
+  if (!spec) return null;
+  const mod = coverFiles[`../assets/img/covers/${spec.file}.jpg`];
+  if (!mod) return null;
+  return { src: mod.default, alt: spec.alt };
 }
 ---
 
@@ -81,13 +106,29 @@ function haystack(post: Writeup): string {
 )}
 
 <div class="case-list" id="case-list">
-  {rest.map((post) => (
+  {rest.map((post) => {
+    const cover = coverOf(post);
+    return (
     <article
-      class={`case case-${post.data.platform}`}
+      class={`case case-${post.data.platform}${cover ? ' has-cover' : ''}`}
       data-platform={post.data.platform}
       data-haystack={haystack(post)}
     >
       <div class="case-spine" aria-hidden="true"></div>
+      {cover && (
+        <figure class="case-cover">
+          <a href={postUrl(post)} tabindex="-1">
+            <Image
+              src={cover.src}
+              alt={cover.alt}
+              widths={[480, 800, 1200]}
+              sizes="(max-width: 720px) 100vw, 42rem"
+              loading="lazy"
+              decoding="async"
+            />
+          </a>
+        </figure>
+      )}
       <div class="case-main">
         <div class="case-top">
           <h2 class="case-title"><a href={postUrl(post)}>{shortTitle(post)}</a></h2>
@@ -107,7 +148,8 @@ function haystack(post: Writeup): string {
         {post.data.room && <a href={`https://tryhackme.com/room/${post.data.room}`} target="_blank" rel="noopener">room ↗</a>}
       </div>
     </article>
-  ))}
+    );
+  })}
 </div>
 
 {searchable && (

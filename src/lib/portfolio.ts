@@ -19,7 +19,7 @@ export type PortfolioItem = {
   /** factual meta rows (key/value), rendered mono inside the feature cell */
   meta?: [string, string][];
   /** key into the still map on portfolio.astro (astro image pipeline) */
-  still?: 'sectape' | 'shopify-headless' | 'crewvista' | 'alabasterskin' | 'totemica';
+  still?: 'sectape' | 'skroutz-feed' | 'shopify-headless' | 'crewvista' | 'alabasterskin' | 'totemica';
 };
 
 export const portfolioItems: PortfolioItem[] = [
@@ -51,6 +51,7 @@ export const portfolioItems: PortfolioItem[] = [
       { label: 'painfix.gr', href: 'https://painfix.gr' },
     ],
     descAfter: 'and more. Hardened across client stores, then generalized into a reusable framework built to sell.',
+    still: 'skroutz-feed',
     tags: ['python', 'production feeds', 'client work'],
   },
   {

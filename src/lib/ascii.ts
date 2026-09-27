@@ -46,6 +46,12 @@ export const WORK_BANNER = [
   '▀▀▀▀▀▀▀ ▀▀▀▀ ▀  ▀ ▀ ▀',
 ].join('\n');
 
+export const LOST_BANNER = [
+  '█     █▀▀█ █▀▀ ▀▀█▀▀',
+  '█     █  █ ▀▀█   █  ',
+  '▀▀▀▀▀ ▀▀▀▀ ▀▀▀   ▀  ',
+].join('\n');
+
 export function promptPath(path = '~'): string {
   return `guest@zew0z:${path}$`;
 }
