@@ -3820,34 +3820,42 @@ a.cinema-card .cinema-card-meta {
     align-items: center;
     justify-content: flex-start;
   }
-  .cinema-boot-layer { grid-template-columns: minmax(0, 1fr); gap: 0.6rem; }
+  /* vignette and scanlines sit at z-index 4 and were swallowing the
+     right edge of the log ("PREEMPT", "[ ok ]") even when the glyphs
+     were inside the box. the log paints above that fade. */
+  .cinema-sticky::after {
+    background: radial-gradient(ellipse at 50% 40%, transparent 74%, rgba(5, 8, 16, 0.4) 100%);
+  }
+  .cinema-boot-layer {
+    z-index: 6;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.6rem;
+  }
   .cinema-pct { font-size: clamp(4.2rem, 22vw, 7rem); }
   .cinema-pct-wrap { justify-self: start; text-align: left; }
   .cinema-boot-log {
     white-space: normal;
-    overflow-x: hidden;
-    font-size: 0.68rem;
+    overflow: visible;
+    font-size: 0.72rem;
     line-height: 1.55;
-    background: var(--bg0);
+    background: transparent;
     padding-right: 0;
   }
   .cinema-boot-line.is-on {
-    display: flex;
-    align-items: baseline;
-    gap: 0.45rem;
-    min-width: 0;
+    display: block;
+    max-width: 100%;
+    white-space: normal;
+    overflow: visible;
   }
-  .cinema-boot-line .boot-ts { flex: none; white-space: nowrap; }
+  .cinema-boot-line .boot-ts { white-space: nowrap; }
   .cinema-boot-line .boot-msg {
-    min-width: 0;
-    flex: 1 1 auto;
     white-space: normal;
     overflow-wrap: break-word;
+    word-break: normal;
   }
   .cinema-boot-line .boot-st {
-    flex: none;
-    margin-left: auto;
     white-space: nowrap;
+    margin-left: 0.35rem;
   }
 }
 
