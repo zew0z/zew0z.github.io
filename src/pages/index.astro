@@ -108,10 +108,15 @@ const cascadeTerms = [
   },
 ];
 
+/* percentages of the stage, not one beat per kernel line.
+   boot and the swarm still sequence; the ascii hold starts before the stage ends
+   so a normal scroll lands the wordmark instead of one typewriter letter. */
 const beats = [
-  ...bootLines.map((_, i) => ({ kind: 'boot', i })),
-  ...cascadeTerms.map((_, i) => ({ kind: 'swarm', i })),
-  { kind: 'climax', i: 0 },
+  { kind: 'boot', i: 5, top: 48, h: 16 },
+  { kind: 'boot', i: 11, top: 56, h: 16 },
+  { kind: 'boot', i: bootLines.length - 1, top: 62, h: 16 },
+  { kind: 'swarm', i: cascadeTerms.length - 1, top: 68, h: 16 },
+  { kind: 'climax', i: 0, top: 74, h: 28 },
 ];
 
 const logos = [
@@ -216,12 +221,12 @@ const fallWords = [
   <div id="cinema" class="cinema">
     <section class="cinema-stage" id="cinema-stage" aria-label="system boot">
       <div class="cinema-beats" aria-hidden="true">
-        {beats.map((beat, n) => (
+        {beats.map((beat) => (
           <div
             class="cinema-beat"
             data-kind={beat.kind}
             data-i={beat.i}
-            style={`top: ${((n + 0.15) / (beats.length + 4)) * 100}%`}
+            style={`top:${beat.top}%;height:${beat.h}vh`}
           />
         ))}
       </div>
@@ -253,7 +258,7 @@ const fallWords = [
           {/* keep each line's markup on one row: whitespace inside <pre> renders */}
           <pre class="cinema-boot-log" id="boot-log" aria-hidden="true">{bootLines.map((line, i) => {
               const p = bootParts(line.text);
-              return <span class={`cinema-boot-line boot-${line.kind}`} data-boot-line={i}>{p.ts ? <span class="boot-ts">{p.ts} </span> : null}{p.body}{p.ok ? <span class="boot-st"> [ ok ]</span> : null}</span>;
+              return <span class={`cinema-boot-line boot-${line.kind}`} data-boot-line={i}>{p.ts ? <span class="boot-ts">{p.ts} </span> : null}<span class="boot-msg">{p.body}</span>{p.ok ? <span class="boot-st"> [ ok ]</span> : null}</span>;
             })}</pre>
           <div class="cinema-pct-wrap">
             <p class="cinema-pct-label" id="boot-label">loading</p>
@@ -290,12 +295,12 @@ const fallWords = [
           <div class="cinema-type" aria-live="polite" data-type-line={typeLine} data-type-line-2={typeLine2}>
             <div class="cinema-type-row">
               <span class="cinema-type-prompt" aria-hidden="true">guest@zew0z:~$</span>
-              <p class="cinema-type-out" id="type-out"></p>
+              <p class="cinema-type-out" id="type-out">{typeLine}</p>
               <span class="cinema-type-cursor" id="type-cursor-1" aria-hidden="true"></span>
             </div>
             <div class="cinema-type-row" id="type-row-2">
               <span class="cinema-type-prompt is-hash" aria-hidden="true">#</span>
-              <p class="cinema-type-out cinema-type-out-2" id="type-out-2"></p>
+              <p class="cinema-type-out cinema-type-out-2" id="type-out-2">{typeLine2}</p>
               <span class="cinema-type-cursor is-dim" id="type-cursor-2" aria-hidden="true"></span>
             </div>
             <p class="cinema-type-go" id="type-go">
@@ -365,7 +370,7 @@ const fallWords = [
             and keeps score of what you unlock.
           </p>
           <pre class="ascii-hint" aria-hidden="true">{shellHint}</pre>
-          <p class="mono-hint">rumor: <code>cat flag.txt</code> is not the way. view-source is.</p>
+          <p class="mono-hint">rumor: <code>cat flag.txt</code> is not the way. <span class="mono-keep">view-source is.</span></p>
         </div>
         <div>
           <div class="term" id="guest-term">
