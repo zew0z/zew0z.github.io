@@ -109,7 +109,7 @@
     asciiPre.setAttribute('data-ascii', original);
     if (reduce) return;
     var glyphs = '01█▓▒░╔╗╚╝║═#*$<>/\\+=';
-    var frames = 14;
+    var frames = 8;
     var f = 0;
     function tick() {
       var out = '';
@@ -122,58 +122,24 @@
       }
       asciiPre.textContent = out;
       f += 1;
-      if (f <= frames) window.setTimeout(tick, 38);
+      if (f <= frames) window.setTimeout(tick, 28);
       else asciiPre.textContent = original;
     }
     tick();
   }
 
-  function typeInto(el, text, done) {
-    if (!el) {
-      if (done) done();
-      return;
-    }
-    if (reduce) {
-      el.textContent = text;
-      if (done) done();
-      return;
-    }
-    var i = 0;
-    function tick() {
-      el.textContent = text.slice(0, i);
-      i += 1;
-      if (i <= text.length) window.setTimeout(tick, 16 + Math.random() * 28);
-      else if (done) done();
-    }
-    tick();
-  }
-
-  function typeLine() {
+  function showLandedCopy() {
     if (typed || !typeBox || !typeOut) return;
     typed = true;
     var text = typeBox.getAttribute('data-type-line') || '';
     var text2 = typeBox.getAttribute('data-type-line-2') || '';
+    typeOut.textContent = text;
+    if (typeOut2) typeOut2.textContent = text2;
+    if (typeRow2) typeRow2.classList.add('is-on');
+    if (typeCur1) typeCur1.classList.add('is-off');
     typeBox.classList.add('is-in');
-    if (reduce) {
-      typeOut.textContent = text;
-      if (typeOut2) typeOut2.textContent = text2;
-      if (typeRow2) typeRow2.classList.add('is-on');
-      var typeGoR = document.getElementById('type-go');
-      if (typeGoR) typeGoR.classList.add('is-on');
-      return;
-    }
-    window.setTimeout(function () {
-      typeInto(typeOut, text, function () {
-        if (typeCur1) typeCur1.classList.add('is-off');
-        if (typeRow2) typeRow2.classList.add('is-on');
-        window.setTimeout(function () {
-          typeInto(typeOut2, text2, function () {
-            var typeGo = document.getElementById('type-go');
-            if (typeGo) typeGo.classList.add('is-on');
-          });
-        }, 220);
-      });
-    }, 420);
+    var typeGo = document.getElementById('type-go');
+    if (typeGo) typeGo.classList.add('is-on');
   }
 
   function setClimax() {
@@ -184,7 +150,7 @@
     scrambleAscii();
     stage.classList.add('is-climax');
     if (climax) climax.classList.add('is-in');
-    typeLine();
+    showLandedCopy();
   }
 
   function freezeAll() {
@@ -228,7 +194,7 @@
           else if (kind === 'climax') setClimax();
         });
       },
-      { threshold: 0.4, rootMargin: '0px 0px -15% 0px' }
+      { threshold: 0, rootMargin: '0px' }
     );
     beats.forEach(function (b) { io.observe(b); });
   }
